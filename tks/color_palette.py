@@ -23,7 +23,7 @@ except ImportError:
     import tkFont as font
 
 from tks.color_var import ColorVar
-from tks.color_funcs import rgb_to_hex_string, hex_string_to_tuple
+from tks.color_funcs import rgb_to_hex_string, hex_string_to_rgb
 
 
 def rgb_to_hsv(color):
@@ -75,11 +75,11 @@ class ColorInfo():
         self.color_names = names
 
 
-class PaletteSelector(tk.Frame, object):
+class PaletteSelector(ttk.Frame, object):
     def __init__(self, master,
                  variable=None,
                  height=400):
-        super(PaletteSelector, self).__init__(master)
+        super(PaletteSelector, self).__init__(master, style='tks.TFrame')
 
         if variable is not None:
             self._color_var = variable
@@ -98,7 +98,7 @@ class PaletteSelector(tk.Frame, object):
         self._current_database = self._color_databases[db]
         self._current_database_var = tk.StringVar(value=db)
         
-        header_frame = ttk.Frame(self)
+        header_frame = ttk.Frame(self, style='tks.TFrame')
         l = ttk.Label(header_frame, text='Palette:', anchor=tk.W)
         l.grid(row=0, column=0, padx=(4, 4))
         
@@ -342,7 +342,7 @@ class PaletteSelector(tk.Frame, object):
                 self._canvas.itemconfigure(old_tag, outline=old_rct_color)
             
             rgb_hex = self._canvas.itemcget(tag, 'fill')
-            color = hex_string_to_tuple(rgb_hex)
+            color = hex_string_to_rgb(rgb_hex)
             #color = self._current_database.lookup_name(color_name)
             if color is None:
                 color = (1.0, 1.0, 1.0)

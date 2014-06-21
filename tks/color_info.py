@@ -17,7 +17,7 @@ except ImportError:
 class ColorInfo(ttk.Frame):
     def __init__(self, master,
                  variable):
-        ttk.Frame.__init__(self, master)
+        super(ColorInfo, self).__init__(master, style='tks.TFrame')
                 
         ttk.Style().configure('nchInfo.TLabel',
                               relief=tk.SUNKEN)
@@ -33,10 +33,10 @@ class ColorInfo(ttk.Frame):
         l.grid(row=0, column=0, sticky=tk.NSEW, padx=2, pady=2)
 
     def _color_var_changed(self, *args):
-        info = self._color_info()
+        info = self.color_info()
         self._color_info_var.set(info)
 
-    def _color_info(self):
+    def color_info(self):
         rgb = self._color_var.get()
         hsv = colorsys.rgb_to_hsv(*rgb)
         yiq = colorsys.rgb_to_yiq(*rgb)

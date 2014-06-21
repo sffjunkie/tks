@@ -12,7 +12,6 @@ def rgb_to_hex_string(value):
     
     R, G and B should be in the range 0.0 - 1.0
     """ 
-    
     color = ''.join(map(lambda x: '%02x' % x, [x * 255 for x in value]))
     return '#%s' % color
     
@@ -25,8 +24,7 @@ def rgb_to_rgb_string(value):
     
     R, G and B should be in the range 0.0 - 1.0
     """ 
-    
-    value = 'rgb(%s)' % (','.join(['%.02f' % x for x in value]))
+    value = 'rgb(%s)' % (','.join(['%.03f' % x for x in value]))
     return value
     
     
@@ -38,9 +36,8 @@ def rgb_to_hsv_string(value):
     
     R, G and B should be in the range 0.0 - 1.0
     """ 
-    
     hsv = colorsys.rgb_to_hsv(*value)
-    hsv = 'hsv(%s)' % (','.join(['%.02f' % x for x in hsv]))
+    hsv = 'hsv(%s)' % (','.join(['%.03f' % x for x in hsv]))
     return hsv
     
     
@@ -52,9 +49,8 @@ def rgb_to_hls_string(value):
     
     R, G and B should be in the range 0.0 - 1.0
     """ 
-    
     hls = colorsys.rgb_to_hls(*value)
-    hls = 'hls(%s)' % (','.join(['%.02f' % x for x in hls]))
+    hls = 'hls(%s)' % (','.join(['%.03f' % x for x in hls]))
     return hls
 
 
@@ -62,7 +58,6 @@ def hex_string_to_rgb(value):
     """Convert from a hex color string of the form `#abc` or `#abcdef` to an
     RGB tuple
     """
-    
     for ch in value[1:]:
         if ch not in string.hexdigits:
             return None
@@ -89,8 +84,8 @@ def hex_string_to_rgb(value):
 
 
 def clamped_tuple(value):
-    """Clamps the values in a tuple between 0.0 and 1.0"""
-    
+    """Clamps the values in a tuple between 0.0 and 1.0
+    """
     def clamp(value):
         value = float(value)
         return min(max(0.0, value), 1.0)
@@ -129,7 +124,6 @@ def rgb_tints(rgb, base_factor, count):
     :param count: The number of tints to return
     :type count: int
     """ 
-    
     factor = base_factor
     tints = []
     number_to_calc = (2 * count) - 1
@@ -162,7 +156,6 @@ def rgb_tint(rgb, factor=0.8):
                    the tint
     :type factor:  float
     """
-    
     r = rgb[0]
     r += ((1.0 - r) * factor)
     if r > 1.0:
@@ -191,7 +184,6 @@ def rgb_shades(rgb, base_factor, count):
     :param count: The number of shades to return
     :type count: int
     """ 
-    
     factor = base_factor
     shades = []
     number_to_calc = (2 * count) - 1
@@ -223,5 +215,4 @@ def rgb_shade(rgb, factor=.8):
                    the shade
     :type factor:  float
     """
-    
     return rgb[0] * factor, rgb[1] * factor, rgb[2] * factor

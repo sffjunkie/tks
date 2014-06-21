@@ -1,14 +1,11 @@
 # This code is taken from the Tkinter drag and drop module included in versions
-# of Python. It has been changed to use the button specific events for release
-# and motion. This is done because for example '<Motion>' events do not appear
-# to be generated on Windows. 
+# of Python. It has been changed to...
+#
+# 1. Use the button specific events for release and motion. This is done because
+#    for example '<Motion>' events do not appear # to be generated on Windows.
+# 2. Define cursors to be used 
 
 import sys
-
-try:
-    import tkinter as tk
-except ImportError:
-    import Tkinter as tk
 
 if 'win32' in sys.platform:
     CURSOR_FORBIDDEN = 'no'

@@ -18,7 +18,7 @@ from tks.color_var import ColorVar
 class ColorSlider(ttk.Frame, object):
     def __init__(self, master,
                  variable=None):
-        super(ColorSlider, self).__init__(master)
+        super(ColorSlider, self).__init__(master, style='tks.TFrame')
 
         if variable is not None:
             self._color_var = variable
@@ -32,7 +32,7 @@ class ColorSlider(ttk.Frame, object):
     
         elem1, elem2, elem3 = self.from_rgb(self._color_var.get())
         
-        self._elem1_var = tk.DoubleVar(value='%.02f' % elem1)
+        self._elem1_var = tk.DoubleVar(value=elem1)
         lbl = ttk.Label(self, text=self.__labels__[0])
         lbl.grid(row=0, column=0, padx=4)
         
@@ -48,7 +48,7 @@ class ColorSlider(ttk.Frame, object):
                               command=self._elem1_update)
         self._elem1_scale.grid(row=0, column=2, sticky=tk.EW, padx=4)
         
-        self._elem2_var = tk.DoubleVar(value='%.02f' % elem2)
+        self._elem2_var = tk.DoubleVar(value=elem2)
         lbl = ttk.Label(self, text=self.__labels__[1])
         lbl.grid(row=1, column=0, padx=4)
         
@@ -64,7 +64,7 @@ class ColorSlider(ttk.Frame, object):
                               command=self._elem2_update)
         self._elem2_scale.grid(row=1, column=2, sticky=tk.EW, padx=4)
         
-        self._elem3_var = tk.DoubleVar(value='%.02f' % elem3)
+        self._elem3_var = tk.DoubleVar(value=elem3)
         lbl = ttk.Label(self, text=self.__labels__[2])
         lbl.grid(row=2, column=0, padx=4)
         
@@ -90,17 +90,17 @@ class ColorSlider(ttk.Frame, object):
 
     def _elem1_update(self, value):        
         self._internal_color_change = True
-        self._elem1_var.set('%.02f' % float(value))
+        self._elem1_var.set(float(value))
         self._internal_color_change = False
 
     def _elem2_update(self, value):        
         self._internal_color_change = True
-        self._elem2_var.set('%.02f' % float(value))
+        self._elem2_var.set(float(value))
         self._internal_color_change = False
 
     def _elem3_update(self, value):        
         self._internal_color_change = True
-        self._elem3_var.set('%.02f' % float(value))
+        self._elem3_var.set(float(value))
         self._internal_color_change = False
     
     def _tk_validate_var(self, P, i, V):
@@ -127,9 +127,9 @@ class ColorSlider(ttk.Frame, object):
         if not self._internal_color_change:
             rgb = self._color_var.get()
             value = self.from_rgb(rgb)
-            self._elem1_var.set('%.02f' % value[0])
-            self._elem2_var.set('%.02f' % value[1])
-            self._elem3_var.set('%.02f' % value[2])
+            self._elem1_var.set(value[0])
+            self._elem2_var.set(value[1])
+            self._elem3_var.set(value[2])
         self._internal_color_change = False
 
 

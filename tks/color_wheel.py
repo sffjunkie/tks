@@ -31,7 +31,7 @@ class ColorWheel(ttk.Frame, object):
     def __init__(self, master,
                  variable=None,
                  radius=DEFAULT_RADIUS):
-        super(ColorWheel, self).__init__(master)
+        super(ColorWheel, self).__init__(master, style='tks.TFrame')
         
         self._hue_degrees = 0.0
         

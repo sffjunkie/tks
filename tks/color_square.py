@@ -18,9 +18,8 @@ from tks.tooltip import ToolTip
 __all__ = ['ColorSquare']
 
 
-#TODO: Change watch_variable to a mode with '', 'r', 'w', 'rw'
-class ColorSquare(tk.Frame, object):
-    """Displays a colored rectangle and a hex description of the color
+class ColorSquare(ttk.Frame, object):
+    """Displays a colored rectangle and a text description of the color
     below it. A popup menu is provided to copy the hex, RGB, HSV and HLS
     representations of the color.
     
@@ -31,37 +30,42 @@ class ColorSquare(tk.Frame, object):
                      then the color is written to the variable on a mouse
                      click.
     :type mode:      str
+    :param color_info: The color information to display under the square as a
+                       text representation of the color. The elements are
+                       specified as a tuple where the following strings can be
+                       provided
+                       
+                       'rgbhex', 'rgb', 'hsv', 'hls' 
+    :param dnd_target: If True then the square ersponds to colors being dropped
+                       on
+    :type dnd_target:  bool
+    :param dnd_source: If True the square works as a drag and drop source
+    :type dnd_source:  bool
     """
-    
     def __init__(self, master,
                  variable=None,
                  mode='rw',
-                 size=100,
-                 info_text=('rgbhex',),
+                 color_info=('rgbhex',),
                  dnd_target=True,
                  dnd_source=True):
-        self._master = master
-        self._display_text = info_text
-        super(ColorSquare, self).__init__(master)
+        self.master = master
+        self.color_info = color_info
+        super(ColorSquare, self).__init__(master, style='tks.TFrame')
         
         self._canvas = tk.Canvas(self,
-                                width=size, height=size,
-                                borderwidth='1.0',
-                                relief=tk.SUNKEN)
+                                 width=100, height=100,
+                                 borderwidth='1.0',
+                                 relief=tk.SUNKEN)
         
-        self._canvas.grid(row=0, column=0, sticky=tk.EW)
-        self._canvas.rgb_to_hex_string = self._hex_string
-        self._canvas.rgb_to_rgb_string = self._rgb_string
-        self._canvas.rgb_to_hsv_string = self._hsv_string
-        self._canvas.rgb_to_hls_string = self._hls_string
+        self._canvas.grid(row=0, column=0)
         self._blank_label_color = self._canvas.cget('bg')
         
-        self._tooltip = ToolTip(self._canvas, msg_func=self._color_info)
-        self._popup = ColorPopupMenu(self._canvas)
+        self._tooltip = ToolTip(self._canvas, msg_func=self._color_info_func)
+        self._popup = ColorPopupMenu(self)
 
         self._internal_color_change = False
         
-        self._text = ttk.Label(self, width=13,
+        self._text = ttk.Label(self,
                                justify=tk.CENTER,
                                anchor=tk.CENTER)
         self._text.grid(row=1, column=0, sticky=tk.EW)
@@ -117,6 +121,7 @@ class ColorSquare(tk.Frame, object):
         self._canvas_cursor = self._canvas['cursor']
         if self._dnd_target and source is not self and hasattr(source, 'rgb'):
             self._canvas['cursor'] = self.dnd_cursor or dnd.CURSOR_WIDGET
+            self._canvas['relief'] = tk.RAISED
         else:
             self._canvas['cursor'] = dnd.CURSOR_FORBIDDEN
             #self._canvas.focus_set()
@@ -126,6 +131,7 @@ class ColorSquare(tk.Frame, object):
 
     def dnd_leave(self, source, event):
         self._canvas['cursor'] = self._canvas_cursor
+        self._canvas['relief'] = tk.SUNKEN
 
     def dnd_commit(self, source, event):
         if self._dnd_target and hasattr(source, 'rgb'):
@@ -157,46 +163,31 @@ class ColorSquare(tk.Frame, object):
         
     def _update(self):
         if self.rgb:
-            hs = self._hex_string()
-            self._canvas['bg'] = hs
-            
-            t = ''
-            for text in self._display_text:
-                if text == 'rgbhex':
-                    t1 = self._hex_string()
-                elif text == 'rgb':
-                    t1 = self._rgb_string()
-                elif text == 'hsv':
-                    t1 = self._hsv_string()
-                elif text == 'hls':
-                    t1 = self._hls_string()
-                    
-                t = t + '%s\n' % t1
-            self._text['text'] = t
+            self._canvas['bg'] = color_funcs.rgb_to_hex_string(self.rgb)
+            self._text['text'] = self._color_info_text()
         else:
             self._canvas['bg'] = self._blank_label_color
             self._text['text'] = ''
-        
-    def _hex_string(self):
-        return color_funcs.rgb_to_hex_string(self.rgb)
-        
-    def _rgb_string(self):
-        return color_funcs.rgb_to_rgb_string(self.rgb)
-        
-    def _hsv_string(self):
-        return color_funcs.rgb_to_hsv_string(self.rgb)
-        
-    def _hls_string(self):
-        return color_funcs.rgb_to_hls_string(self.rgb)
     
-    def _color_info(self):
-        if self._value is not None:
-            r = '%s\n%s\n%s\n%s' % (self._hex_string(),
-                                self._rgb_string(),
-                                self._hsv_string(),
-                                self._hls_string())
+    def _color_info_text(self):
+        t = ''
+        for info in self.color_info:
+            if info == 'rgbhex':
+                t1 = color_funcs.rgb_to_hex_string(self.rgb)
+            elif info == 'rgb':
+                t1 = color_funcs.rgb_to_rgb_string(self.rgb)
+            elif info == 'hsv':
+                t1 = color_funcs.rgb_to_hsv_string(self.rgb)
+            elif info == 'hls':
+                t1 = color_funcs.rgb_to_hls_string(self.rgb)
+                
+            t = t + '%s\n' % t1
             
-            return r
+        return t
+    
+    def _color_info_func(self):
+        if self.rgb is not None:
+            return self._color_info_text()
         else:
             return None
     
@@ -211,27 +202,32 @@ class ColorSquare(tk.Frame, object):
 
 
 class ColorPopupMenu(tk.Menu, object):
-    def __init__(self, master):
-        self._master = master
-        super(ColorPopupMenu, self).__init__(master, tearoff=0)
+    def __init__(self, square):
+        self._square = square
+        super(ColorPopupMenu, self).__init__(square.master, tearoff=0)
+        
         self.add_command(label='Copy Hex Color', command=self._copy_hex)
         self.add_command(label='Copy RGB Color', command=self._copy_rgb)
         self.add_command(label='Copy HSV Color', command=self._copy_hsv)
         self.add_command(label='Copy HLS Color', command=self._copy_hls)
         
     def _copy_hex(self, *args):
-        self._master.clipboard_clear()
-        self._master.clipboard_append(self._master.rgb_to_hex_string())
+        self._square.master.clipboard_clear()
+        text = color_funcs.rgb_to_hex_string(self._square.rgb)
+        self._square.master.clipboard_append(text)
     
     def _copy_rgb(self, *args):
-        self._master.clipboard_clear()
-        self._master.clipboard_append(self._master.rgb_to_rgb_string())
+        self._square.master.clipboard_clear()
+        text = color_funcs.rgb_to_rgb_string(self._square.rgb)
+        self._square.master.clipboard_append(text)
     
     def _copy_hsv(self, *args):
-        self._master.clipboard_clear()
-        self._master.clipboard_append(self._master.rgb_to_hsv_string())
+        self._square.master.clipboard_clear()
+        text = color_funcs.rgb_to_hsv_string(self._square.rgb)
+        self._square.master.clipboard_append(text)
     
     def _copy_hls(self, *args):
-        self._master.clipboard_clear()
-        self._master.clipboard_append(self._master.rgb_to_hls_string())
+        self._square.master.clipboard_clear()
+        text = color_funcs.rgb_to_hls_string(self._square.rgb)
+        self._square.master.clipboard_append(text)
         

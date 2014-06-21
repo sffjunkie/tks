@@ -21,7 +21,7 @@ TargetType = __SchemeMode('square', 'rectangle', 'circle')
 class ColorScheme(ttk.Frame, object):
     def __init__(self, master,
                  count=5):
-        super(ColorScheme, self).__init__(master)
+        super(ColorScheme, self).__init__(master, style='tks.TFrame')
     
         self._squares = []
         for x in range(count):
