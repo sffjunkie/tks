@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-05-21 12:10+0100\n"
+"POT-Creation-Date: 2014-06-23 10:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,31 +17,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: color.py:60
+#: colors.py:57
 msgid "Unrecognised start color"
 msgstr ""
 
-#: color.py:64 date.py:140
+#: colors.py:61 dates.py:160
 msgid "Select..."
 msgstr ""
 
-#: color.py:136
+#: colors.py:137
 msgid "Select a color"
 msgstr ""
 
-#: color.py:190 date.py:255 time.py:259
+#: colors.py:195 dates.py:290 times.py:279
 msgid "OK"
 msgstr ""
 
-#: color.py:193 date.py:259 time.py:262
+#: colors.py:198 dates.py:294 times.py:282
 msgid "Cancel"
 msgstr ""
 
-#: date.py:196
+#: dates.py:226
 msgid "Select a Date..."
 msgstr ""
 
-#: time.py:214
+#: times.py:231
 msgid "Select a Time..."
+msgstr ""
+
+#: times.py:410
+msgid "Seconds"
 msgstr ""
 
