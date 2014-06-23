@@ -1,3 +1,5 @@
+# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+
 try:
     from itertools import izip as zip
 except:

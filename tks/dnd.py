@@ -3,7 +3,7 @@
 #
 # 1. Use the button specific events for release and motion. This is done because
 #    for example '<Motion>' events do not appear # to be generated on Windows.
-# 2. Define cursors to be used 
+# 2. Define cursors to be used
 
 import sys
 
@@ -28,8 +28,7 @@ def dnd_start(source, event):
 
 # The class that does the work
 
-class DndHandler:
-
+class DndHandler(object):
     root = None
 
     def __init__(self, source, event):
@@ -38,7 +37,7 @@ class DndHandler:
         root = event.widget._root()
         try:
             root.__dnd
-            return # Don't start recursive dnd
+            return  # Don't start recursive dnd
         except AttributeError:
             root.__dnd = self
             self.root = root

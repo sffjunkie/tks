@@ -1,10 +1,16 @@
+# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+
+"""tkStuff - A collection of Tk widgets"""
+
 __version__ = '0.1'
 __author__ = 'Simon Kennedy <code@sffjunkie.co.uk>'
 
 import re
 
 
-class TksColors():
+class TksColors(object):
+    """A container for color names"""
+
     Fill = 'white'
     Select = '#9de5eb'
     SelectDark = '#58B1B7'
@@ -14,8 +20,22 @@ class TksColors():
 
 def parse_geometry(geom):
     """Return a width, height, x, y tuple from a Tk geometry"""
-    
-    m = re.match('(\d+)x(\d+)\+(\d+)\+(\d+)', geom)
-    if m:
-        return m.group(1, 2, 3, 4)
-    
+
+    re_match = re.match(r'(\d+)x(\d+)\+(\d+)\+(\d+)', geom)
+    if re_match:
+        return re_match.group(1, 2, 3, 4)
+
+def rect_center(rect):
+    """Return the center of a rectangle"""
+
+    return (rect[0] + ((rect[2] - rect[0]) / 2),
+            rect[1] + ((rect[3] - rect[1]) / 2))
+
+def rect_at(x, y, size, size_y=-1):
+    """Returns a rectangle centered at `x,y`. If only `size` is provided then
+    the rectangle will be a square. The dimensions will be size * 2"""
+
+    if size_y == -1:
+        size_y = size
+
+    return x - size, y - size_y, x + size, y + size_y

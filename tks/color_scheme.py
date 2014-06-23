@@ -1,4 +1,4 @@
-# Copyright 2009-2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
 
 from collections import namedtuple
 
@@ -22,9 +22,8 @@ class ColorScheme(ttk.Frame, object):
     def __init__(self, master,
                  count=5):
         super(ColorScheme, self).__init__(master, style='tks.TFrame')
-    
+
         self._squares = []
         for x in range(count):
             sq = ColorSquare(self)
             sq.grid(row=0, column=x)
-            

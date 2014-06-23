@@ -1,4 +1,6 @@
-# Copyright 2009-2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+
+"""A 3 element color variable"""
 
 try:
     import tkinter as tk
@@ -7,17 +9,19 @@ except ImportError:
 
 try:
     StringType = basestring
-except:
+except NameError:
     StringType = str
 
 
 class ColorVar(tk.Variable):
+    """A 3 element color variable"""
+
     def __init__(self, master=None, value=None, name=None):
         if value is not None:
-            value = tuple(map(float, value))
+            value = tuple([float(x) for x in value[:3]])
         else:
             value = (1.0, 0.0, 0.0)
-            
+
         tk.Variable.__init__(self, master, value, name)
 
     def get(self):
@@ -30,6 +34,6 @@ class ColorVar(tk.Variable):
     def set(self, value):
         if isinstance(value, StringType):
             value = eval(value)
-        
-        value = tuple(map(float, value))
+
+        value = tuple([float(x) for x in value[:3]])
         return tk.Variable.set(self, str(value))
