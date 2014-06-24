@@ -28,7 +28,7 @@ def rgb_to_rgb_string(value):
 
     R, G and B should be in the range 0.0 - 1.0
     """
-    value = 'rgb(%s)' % (','.join(['%.03f' % x for x in value]))
+    value = 'rgb(%s)' % (','.join(['%.02f' % x for x in value]))
     return value
 
 
@@ -41,7 +41,7 @@ def rgb_to_hsv_string(value):
     R, G and B should be in the range 0.0 - 1.0
     """
     hsv = colorsys.rgb_to_hsv(*value)
-    hsv = 'hsv(%s)' % (','.join(['%.03f' % x for x in hsv]))
+    hsv = 'hsv(%s)' % (','.join(['%.02f' % x for x in hsv]))
     return hsv
 
 
@@ -54,7 +54,7 @@ def rgb_to_hls_string(value):
     R, G and B should be in the range 0.0 - 1.0
     """
     hls = colorsys.rgb_to_hls(*value)
-    hls = 'hls(%s)' % (','.join(['%.03f' % x for x in hls]))
+    hls = 'hls(%s)' % (','.join(['%.02f' % x for x in hls]))
     return hls
 
 
