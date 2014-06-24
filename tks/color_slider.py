@@ -20,8 +20,8 @@ from tks.color_var import ColorVar
 class ColorSlider(ttk.Frame, object):
     """"Color slider base class"""
 
-    __default = (1.0, 0.0, 0.0)
-    __labels = ('R', 'G', 'B')
+    default = (1.0, 0.0, 0.0)
+    labels = ('R', 'G', 'B')
 
     def __init__(self, master,
                  variable=None):
@@ -30,7 +30,7 @@ class ColorSlider(ttk.Frame, object):
         if variable is not None:
             self._color_var = variable
         else:
-            self._color_var = ColorVar(value=self.__default)
+            self._color_var = ColorVar(value=self.default)
 
         self._color_var.trace_variable('w', self._color_var_changed)
 
@@ -40,13 +40,14 @@ class ColorSlider(ttk.Frame, object):
         elem1, elem2, elem3 = self.from_rgb(self._color_var.get())
 
         self._elem1_var = tk.DoubleVar(value=elem1)
-        lbl = ttk.Label(self, text=self.__labels[0])
+        lbl = ttk.Label(self, text=self.labels[0])
         lbl.grid(row=0, column=0, padx=4)
 
         self._elem1_entry = ttk.Entry(self, width=4,
                                       textvariable=self._elem1_var,
                                       validate='all',
-                                      validatecommand=self._validate_entry)
+                                      validatecommand=self._validate_entry,
+                                      font=('TkFixedFont',))
         self._elem1_entry.grid(row=0, column=1, padx=4)
 
         self._elem1_scale = ttk.Scale(self,
@@ -56,13 +57,14 @@ class ColorSlider(ttk.Frame, object):
         self._elem1_scale.grid(row=0, column=2, sticky=tk.EW, padx=4)
 
         self._elem2_var = tk.DoubleVar(value=elem2)
-        lbl = ttk.Label(self, text=self.__labels[1])
+        lbl = ttk.Label(self, text=self.labels[1])
         lbl.grid(row=1, column=0, padx=4)
 
         self._elem2_number = ttk.Entry(self, width=4,
                                        textvariable=self._elem2_var,
                                        validate='all',
-                                       validatecommand=self._validate_entry)
+                                       validatecommand=self._validate_entry,
+                                      font=('TkFixedFont',))
         self._elem2_number.grid(row=1, column=1, padx=4)
 
         self._elem2_scale = ttk.Scale(self,
@@ -72,13 +74,14 @@ class ColorSlider(ttk.Frame, object):
         self._elem2_scale.grid(row=1, column=2, sticky=tk.EW, padx=4)
 
         self._elem3_var = tk.DoubleVar(value=elem3)
-        lbl = ttk.Label(self, text=self.__labels[2])
+        lbl = ttk.Label(self, text=self.labels[2])
         lbl.grid(row=2, column=0, padx=4)
 
         self._elem3_entry = ttk.Entry(self, width=4,
                                       textvariable=self._elem3_var,
                                       validate='all',
-                                      validatecommand=self._validate_entry)
+                                      validatecommand=self._validate_entry,
+                                      font=('TkFixedFont',))
         self._elem3_entry.grid(row=2, column=1, padx=4)
 
         self._elem3_scale = ttk.Scale(self,
@@ -162,11 +165,10 @@ class ColorSlider(ttk.Frame, object):
 class RGBSlider(ColorSlider):
     """An RGB Color Slider"""
 
-    __labels = ('R', 'G', 'B')
-    __default = (1.0, 0.0, 0.0)
-
     def __init__(self, master,
                  variable=None):
+        self.labels = ('R', 'G', 'B')
+        self.default = (1.0, 0.0, 0.0)
         super(RGBSlider, self).__init__(master, variable)
 
     def from_rgb(self, rgb):
@@ -179,11 +181,10 @@ class RGBSlider(ColorSlider):
 class HSVSlider(ColorSlider):
     """An HSV Color Slider"""
 
-    __labels = ('H', 'S', 'V')
-    __default = (0.0, 1.0, 1.0)
-
     def __init__(self, master,
                  variable=None):
+        self.labels = ('H', 'S', 'V')
+        self.default = (0.0, 1.0, 1.0)
         super(HSVSlider, self).__init__(master, variable)
 
     def from_rgb(self, rgb):
@@ -196,11 +197,11 @@ class HSVSlider(ColorSlider):
 class HLSSlider(ColorSlider):
     """An HLS Color Slider"""
 
-    __labels = ('H', 'L', 'S')
-    __default = (0.0, 0.5, 1.0)
-
     def __init__(self, master,
                  variable=None):
+        self.labels = ('H', 'L', 'S')
+        self.default = (0.0, 0.5, 1.0)
+
         super(HLSSlider, self).__init__(master, variable)
 
     def from_rgb(self, rgb):
