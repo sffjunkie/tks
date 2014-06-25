@@ -112,6 +112,8 @@ class ColorSquare(ttk.Frame, object):
 
     @rgb.setter
     def rgb(self, value):
+        """Set the RGB tuple to display."""
+
         self._value = value
         self._update()
 
@@ -182,17 +184,23 @@ class ColorSquare(ttk.Frame, object):
             self._canvas.bind('<B1-ButtonRelease-1>', self._update_color)
 
     def _update_color(self, *args):
+        """Update our color variable."""
+
         if self._value and 'w' in self._mode and not self._dnd_started:
             self._internal_color_change = True
             self.color_var.set(self._value)
 
     def _color_var_changed(self, *args):
+        """Respond to changes to the color variable we're watching."""
+
         if not self._internal_color_change:
             self._value = self.color_var.get()
             self._update()
         self._internal_color_change = False
 
     def _update(self):
+        """Update for a new RGB value."""
+
         if self.rgb:
             self._canvas['bg'] = color_funcs.rgb_to_hex_string(self.rgb)
             self._text['text'] = self._color_info_text()
