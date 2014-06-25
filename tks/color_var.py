@@ -13,7 +13,7 @@ except NameError:
     StringType = str
 
 
-class ColorVar(tk.Variable):
+class ColorVar(tk.Variable, object):
     """A 3 element color variable"""
 
     def __init__(self, master=None, value=None, name=None):
@@ -22,7 +22,7 @@ class ColorVar(tk.Variable):
         else:
             value = (1.0, 0.0, 0.0)
 
-        tk.Variable.__init__(self, master, value, name)
+        super(ColorVar, self).__init__(master, value, name)
 
     def get(self):
         value = self._tk.globalgetvar(self._name)
