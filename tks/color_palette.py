@@ -502,7 +502,8 @@ class ColorPalette(dict):
 
         self._read_only = read_only
 
-    def _build_display_name(self, color_name):
+    @staticmethod
+    def _build_display_name(color_name):
         """Manipulate a color name so it displays more aesthetically."""
 
         split_with = ['light', 'dark', 'dim', 'medium',
