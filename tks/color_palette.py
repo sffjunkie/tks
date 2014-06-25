@@ -148,6 +148,7 @@ class PaletteSelector(ttk.Frame, object):
         self._color_width = (max_name_len + 30)
         self._column_count = math.floor(max_canvas_width / self._color_width)
         self._canvas_width = self._column_count * self._color_width
+        self._canvas_height = -1
 
         self._color_height = f.metrics()['linespace'] + 16
 
