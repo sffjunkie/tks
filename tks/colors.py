@@ -142,7 +142,7 @@ class ColorEntry(ttk.Frame, object):
         elif color_mode == 'hls':
             rgb = colorsys.hls_to_rgb(*color)
 
-        dlg = ColorDialog(self, _("Select a color"),
+        dlg = ColorDialog(self, _("Select a Color"),
                           start_color=rgb)
         self.wait_window(dlg)
         if dlg.color is not None:
