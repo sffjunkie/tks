@@ -29,8 +29,11 @@ def parse_geometry(geom):
 def rect_center(rect):
     """Return the center of a rectangle"""
 
-    return (rect[0] + ((rect[2] - rect[0]) / 2),
-            rect[1] + ((rect[3] - rect[1]) / 2))
+    left = min(rect[0], rect[2])
+    top = min(rect[1], rect[3])
+
+    return (left + abs(((rect[2] - rect[0]) / 2)),
+            top + abs(((rect[3] - rect[1]) / 2)))
 
 
 def rect_at(x, y, size, size_y=-1):
