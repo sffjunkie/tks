@@ -18,7 +18,7 @@ except ImportError:
 from tks.color_var import ColorVar
 
 class ColorSlider(ttk.Frame, object):
-    """"Color slider base class"""
+    """"Color slider base class."""
 
     default = (1.0, 0.0, 0.0)
     labels = ('R', 'G', 'B')
@@ -28,16 +28,16 @@ class ColorSlider(ttk.Frame, object):
         super(ColorSlider, self).__init__(master, style='tks.TFrame')
 
         if variable is not None:
-            self._color_var = variable
+            self.color_var = variable
         else:
-            self._color_var = ColorVar(value=self.default)
+            self.color_var = ColorVar(value=self.default)
 
-        self._color_var.trace_variable('w', self._color_var_changed)
+        self.color_var.trace_variable('w', self._color_var_changed)
 
         self._validate_entry = (self.register(self._tk_validate_var),
                                 '%P', '%V')
 
-        elem1, elem2, elem3 = self.from_rgb(self._color_var.get())
+        elem1, elem2, elem3 = self.from_rgb(self.color_var.get())
 
         self._elem1_var = tk.DoubleVar(value=elem1)
         lbl = ttk.Label(self, text=self.labels[0])
@@ -148,13 +148,13 @@ class ColorSlider(ttk.Frame, object):
                            self._elem2_var.get(),
                            self._elem3_var.get()))
 
-        self._color_var.set(rgb)
+        self.color_var.set(rgb)
 
     def _color_var_changed(self, *args):
         """When the color variable changes update each element"""
 
         if not self._internal_color_change:
-            rgb = self._color_var.get()
+            rgb = self.color_var.get()
             value = self.from_rgb(rgb)
             self._elem1_var.set(value[0])
             self._elem2_var.set(value[1])
