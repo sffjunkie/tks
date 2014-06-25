@@ -64,7 +64,7 @@ class ColorSlider(ttk.Frame, object):
                                        textvariable=self._elem2_var,
                                        validate='all',
                                        validatecommand=self._validate_entry,
-                                      font=('TkFixedFont',))
+                                       font=('TkFixedFont',))
         self._elem2_number.grid(row=1, column=1, padx=4)
 
         self._elem2_scale = ttk.Scale(self,
