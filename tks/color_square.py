@@ -17,6 +17,7 @@ except ImportError:
 
 from tks import color_funcs, dnd
 from tks.tooltip import ToolTip
+from tks.color_var import ColorVar
 
 __all__ = ['ColorSquare']
 
@@ -45,6 +46,9 @@ class ColorSquare(ttk.Frame, object):
     :param dnd_source: If True the square works as a drag and drop source
     :type dnd_source:  bool
     """
+
+    default = (1.0, 0.0, 0.0)
+
     def __init__(self, master,
                  variable=None,
                  mode='rw',
@@ -71,22 +75,23 @@ class ColorSquare(ttk.Frame, object):
 
         self._text = ttk.Label(self,
                                justify=tk.CENTER,
-                               anchor=tk.CENTER)
+                               anchor=tk.CENTER,
+                               font=('TkFixedFont',))
         self._text.grid(row=1, column=0, sticky=tk.EW)
 
         self.columnconfigure(0, weight=1)
 
+        self._mode = mode
         self._value = None
-        self._color_var = None
 
-        self._mode = None
         if variable:
-            self._mode = mode
-            self._color_var = variable
+            self.color_var = variable
             self.rgb = variable.get()
 
             if 'r' in self._mode:
-                self._color_var.trace_variable('w', self._color_var_changed)
+                self.color_var.trace_variable('w', self._color_var_changed)
+        else:
+            self.color_var = ColorVar(value=self.default)
 
         self._dnd_source = dnd_source
         self._dnd_target = dnd_target
@@ -163,7 +168,7 @@ class ColorSquare(ttk.Frame, object):
             if new_rgb != self.rgb:
                 self.rgb = new_rgb
                 if 'w' in self._mode:
-                    self._color_var.set(new_rgb)
+                    self.color_var.set(new_rgb)
         self._canvas['cursor'] = self._canvas_cursor
 
     def dnd_end(self, target, event):
@@ -179,11 +184,11 @@ class ColorSquare(ttk.Frame, object):
     def _update_color(self, *args):
         if self._value and 'w' in self._mode and not self._dnd_started:
             self._internal_color_change = True
-            self._color_var.set(self._value)
+            self.color_var.set(self._value)
 
     def _color_var_changed(self, *args):
         if not self._internal_color_change:
-            self._value = self._color_var.get()
+            self._value = self.color_var.get()
             self._update()
         self._internal_color_change = False
 

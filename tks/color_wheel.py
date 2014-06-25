@@ -40,17 +40,17 @@ class ColorWheel(ttk.Frame, object):
         self._hue_degrees = 0.0
 
         if variable is not None:
-            self._color_var = variable
+            self.color_var = variable
             self._value = variable.get()
             self._hsv = colorsys.rgb_to_hsv(*self._value)
         else:
             # Start with Red
-            self._color_var = ColorVar()
+            self.color_var = ColorVar()
             self._value = (1.0, 0.0, 0.0)
             self._hsv = (0.0, 1.0, 1.0)
-            self._color_var.set(self._value)
+            self.color_var.set(self._value)
 
-        self._color_var.trace_variable('w', self._color_var_changed)
+        self.color_var.trace_variable('w', self._color_var_changed)
 
         self._hue_to_rgb_map = []
         self._create_hue_to_rgb_map()
@@ -84,7 +84,7 @@ class ColorWheel(ttk.Frame, object):
 
         hsv = (value, self._hsv[1], self._hsv[2])
         rgb = colorsys.hsv_to_rgb(*hsv)
-        self._color_var.set(rgb)
+        self.color_var.set(rgb)
 
         self._hue_degrees = int(value * 359)
         self._hue_update_selection()
@@ -100,7 +100,7 @@ class ColorWheel(ttk.Frame, object):
 
         self._hsv = (self._hsv[0], value, self._hsv[2])
         rgb = colorsys.hsv_to_rgb(*self._hsv)
-        self._color_var.set(rgb)
+        self.color_var.set(rgb)
 
     @property
     def value(self):
@@ -113,10 +113,10 @@ class ColorWheel(ttk.Frame, object):
 
         self._hsv = (self._hsv[0], self._hsv[1], value)
         rgb = colorsys.hsv_to_rgb(*self._hsv)
-        self._color_var.set(rgb)
+        self.color_var.set(rgb)
 
     def _color_var_changed(self, *args):
-        self._value = self._color_var.get()
+        self._value = self.color_var.get()
         self._hsv = colorsys.rgb_to_hsv(*self._value)
         angle = int(self._hsv[0] * 359.0)
         if not self._internal_color_change:
@@ -232,17 +232,17 @@ class ColorWheel(ttk.Frame, object):
             rgb = colorsys.hsv_to_rgb(self._hue_degrees / 359.0, 1.0, 1.0)
             vertices = self._triangle_vertices(self._hue_degrees, self._center)
             self._sv_update_selection(vertices[0], vertices[1])
-            self._color_var.set(rgb)
+            self.color_var.set(rgb)
         elif r2 < self._triangle_radius2:
             if self._in_triangle(x, y):
                 self._sv_update_selection(x, y)
-                rgb = self._color_var.get()
+                rgb = self.color_var.get()
                 hsv = colorsys.rgb_to_hsv(*rgb)
                 s, v = self._sv_calc_from_position(x, y)
                 rgb = colorsys.hsv_to_rgb(hsv[0], s, v)
 
                 self._internal_color_change = True
-                self._color_var.set(rgb)
+                self.color_var.set(rgb)
 
     def _update_triangle(self):
         hx, hy, sx, sy, vx, vy = \

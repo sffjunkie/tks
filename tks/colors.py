@@ -45,8 +45,8 @@ class ColorEntry(ttk.Frame, object):
         self._master = master
         self._start_color = start_color
 
-        self._color_var = tk.StringVar()
-        self._entry = ttk.Entry(self, textvariable=self._color_var,
+        self.color_var = tk.StringVar()
+        self._entry = ttk.Entry(self, textvariable=self.color_var,
                                 font=text_font)
         self._entry.grid(row=0, column=0, sticky=tk.EW)
 
@@ -56,7 +56,7 @@ class ColorEntry(ttk.Frame, object):
         else:
             raise ValueError(_('Unrecognised start color'))
 
-        self._color_var.set(start_color)
+        self.color_var.set(start_color)
 
         btn = ttk.Button(self, text=_('Select...'), command=self.select_color)
         btn.grid(row=0, column=5, sticky=tk.E, padx=(6, 0))
@@ -68,7 +68,7 @@ class ColorEntry(ttk.Frame, object):
     def rgb(self):
         """RGB representation of the selected color"""
 
-        color_info = color_funcs.color_string_to_color(self._color_var.get())
+        color_info = color_funcs.color_string_to_color(self.color_var.get())
         if color_info:
             color_mode = color_info[0]
             color = color_info[1][:3]
@@ -88,7 +88,7 @@ class ColorEntry(ttk.Frame, object):
     def hsv(self):
         """HSV representation of the selected color"""
 
-        color_info = color_funcs.color_string_to_color(self._color_var.get())
+        color_info = color_funcs.color_string_to_color(self.color_var.get())
         if color_info:
             color_mode = color_info[0]
             color = color_info[1][:3]
@@ -109,7 +109,7 @@ class ColorEntry(ttk.Frame, object):
     def hls(self):
         """HLS representation of the selected color"""
 
-        color_info = color_funcs.color_string_to_color(self._color_var.get())
+        color_info = color_funcs.color_string_to_color(self.color_var.get())
         if color_info:
             color_mode = color_info[0]
             color = color_info[1][:3]
@@ -129,7 +129,7 @@ class ColorEntry(ttk.Frame, object):
     def select_color(self):
         """Display the color selection dialog"""
 
-        color_info = color_funcs.color_string_to_color(self._color_var.get())
+        color_info = color_funcs.color_string_to_color(self.color_var.get())
         if not color_info:
             color_info = color_funcs.color_string_to_color(self._start_color)
 
@@ -147,13 +147,13 @@ class ColorEntry(ttk.Frame, object):
         self.wait_window(dlg)
         if dlg.color is not None:
             if color_mode == 'rgbhex':
-                self._color_var.set(color_funcs.rgb_to_hex_string(dlg.color))
+                self.color_var.set(color_funcs.rgb_to_hex_string(dlg.color))
             elif color_mode == 'rgb':
-                self._color_var.set(color_funcs.rgb_to_rgb_string(dlg.color))
+                self.color_var.set(color_funcs.rgb_to_rgb_string(dlg.color))
             elif color_mode == 'hsv':
-                self._color_var.set(color_funcs.rgb_to_hsv_string(dlg.color))
+                self.color_var.set(color_funcs.rgb_to_hsv_string(dlg.color))
             elif color_mode == 'hls':
-                self._color_var.set(color_funcs.rgb_to_hls_string(dlg.color))
+                self.color_var.set(color_funcs.rgb_to_hls_string(dlg.color))
 
 
 class ColorDialog(tk.Toplevel, object):

@@ -49,10 +49,10 @@ class _TintAndShadeBase(ttk.Frame, object):
         self.func = None
 
         if variable is not None:
-            self._color_var = variable
-            self._color_var.trace_variable('w', self._color_var_changed)
+            self.color_var = variable
+            self.color_var.trace_variable('w', self._color_var_changed)
         else:
-            self._color_var = ColorVar()
+            self.color_var = ColorVar()
 
         self._count = count
 
@@ -61,7 +61,7 @@ class _TintAndShadeBase(ttk.Frame, object):
         self._tint_squares = []
         for idx in range(self._count):
             sq = ColorSquare(frame,
-                             variable=self._color_var,
+                             variable=self.color_var,
                              mode='w',
                              dnd_target=False)
             sq.grid(row=0, column=idx, sticky=tk.NE, padx=4, pady=4)
@@ -99,7 +99,7 @@ class _TintAndShadeBase(ttk.Frame, object):
         """Update the color squares"""
 
         if callable(self.func):
-            tints = self.func(self._color_var.get(),
+            tints = self.func(self.color_var.get(),
                               self._distance,
                               self._count)
 
