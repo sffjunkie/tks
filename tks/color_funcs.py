@@ -70,11 +70,13 @@ def hex_string_to_rgb(value):
         # The following to_iterable function is based on the
         # :func:`grouper` function in the Python standard library docs
         # http://docs.python.org/library/itertools.html
-        def to_iterable():  # pylint: disable=missing-docstring
+        def to_iterable():
+             # pylint: disable=missing-docstring
             args = [iter(value[1:])] * 2
             return tuple([int('%s%s' % t, 16) / 255 for t in zip(*args)])
     elif len(value) == 4:
-        def to_iterable():  # pylint: disable=missing-docstring
+        def to_iterable():
+            # pylint: disable=missing-docstring
             return tuple([int('%s%s' % (t, t), 16) / 255 for t in value[1:]])
     else:
         return None
@@ -103,8 +105,8 @@ def color_string_to_tuple(value):
 
 def color_string_to_color(value):
     """Convert a color string to a mode, value tuple where mode is one of
-    `rgbhex`, `rgb`, `hsv` or `hls`"""
-
+    `rgbhex`, `rgb`, `hsv` or `hls`
+    """
     if value[0] == '#':
         rgb = hex_string_to_rgb(value)
         if rgb is not None:
@@ -134,12 +136,12 @@ def rgb_tints(rgb, base_factor, count):
     distance = base_factor
     tints = []
     number_to_calc = (2 * count) - 1
-    for _idx in range(number_to_calc):
+    for dummy in range(number_to_calc):
         tints.append(rgb_tint(rgb, distance))
         distance = distance * distance
 
     # Remove any duplicates from the end
-    for _x in range(number_to_calc - 1):
+    for dummy in range(number_to_calc - 1):
         t1 = tints[-1]
         t2 = tints[-2]
 
@@ -195,12 +197,12 @@ def rgb_shades(rgb, base_factor, count):
     distance = base_factor
     shades = []
     number_to_calc = (2 * count) - 1
-    for _idx in range(number_to_calc):
+    for dummy in range(number_to_calc):
         shades.append(rgb_shade(rgb, distance))
         distance = distance * distance
 
     # Remove any duplicates from the end
-    for _x in range(number_to_calc - 1):
+    for dummy in range(number_to_calc - 1):
         s1 = shades[-1]
         s2 = shades[-2]
 
@@ -221,7 +223,7 @@ def rgb_shade(rgb, distance=.8):
     :param rgb: The RGB value for which to calculate the tint
     :type rgb:  tuple
     :param distance: Determines the distance between the specified color and
-                   the shade
+                     the shade
     :type distance:  float
     """
     return rgb[0] * distance, rgb[1] * distance, rgb[2] * distance
