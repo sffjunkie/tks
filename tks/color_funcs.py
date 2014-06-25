@@ -81,7 +81,7 @@ def hex_string_to_rgb(value):
 
     try:
         return to_iterable()
-    except:
+    except ValueError:
         return None
 
 
@@ -115,7 +115,7 @@ def color_string_to_color(value):
         try:
             t = color_string_to_tuple(value)
             return mode[:3], t
-        except:
+        except ValueError:
             return None
 
     return None
