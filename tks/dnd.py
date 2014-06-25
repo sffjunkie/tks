@@ -5,6 +5,8 @@
 #    for example '<Motion>' events do not appear # to be generated on Windows.
 # 2. Define cursors to be used
 
+"""Drag and drop handling."""
+
 import sys
 
 if 'win32' in sys.platform:
@@ -16,9 +18,10 @@ else:
 
 CURSOR_WIDGET = 'hand2'
 
-# The factory function
 
 def dnd_start(source, event):
+    """Called by widgets to start the drag and drop process."""
+
     h = DndHandler(source, event)
     if h.root:
         return h
@@ -26,9 +29,9 @@ def dnd_start(source, event):
         return None
 
 
-# The class that does the work
-
 class DndHandler(object):
+    """The drag and drop machinery."""
+
     root = None
 
     def __init__(self, source, event):
@@ -61,6 +64,8 @@ class DndHandler(object):
                 pass
 
     def on_motion(self, event):
+        """Called when the mouse moves with button 1 held down."""
+
         x, y = event.x_root, event.y_root
         target_widget = self.initial_widget.winfo_containing(x, y)
         source = self.source
@@ -88,12 +93,18 @@ class DndHandler(object):
                 self.target = new_target
 
     def on_release(self, event):
+        """Called when the mouse button is released."""
+
         self.finish(event, 1)
 
     def cancel(self, event=None):
+        """Called to cancel the drag and drop."""
+
         self.finish(event, 0)
 
     def finish(self, event, commit=0):
+        """Called to finish the drag and drop operation."""
+
         target = self.target
         source = self.source
         widget = self.initial_widget
