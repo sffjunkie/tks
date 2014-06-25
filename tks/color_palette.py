@@ -94,9 +94,9 @@ class PaletteSelector(ttk.Frame, object):
         super(PaletteSelector, self).__init__(master, style='tks.TFrame')
 
         if variable is not None:
-            self._color_var = variable
+            self.color_var = variable
         else:
-            self._color_var = ColorVar()
+            self.color_var = ColorVar()
 
         x11_colors = ColorPalette('x11.txt', read_only=True)
         css3_colors = ColorPalette('css3.txt', read_only=True)
@@ -377,7 +377,7 @@ class PaletteSelector(ttk.Frame, object):
             self._canvas.itemconfigure(tag, outline=outline)
 
             self._selected_rct_tag = tag
-            self._color_var.set(color)
+            self.color_var.set(color)
 
 
 class ColorPalette(dict):
