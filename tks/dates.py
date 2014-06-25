@@ -248,10 +248,10 @@ class DateDialog(tk.Toplevel, object):
                    instance. If :mod:`babel` is not installed ISO 8601
                    format will be used.
     :type locale:  str or :class:`babel.Locale`
-    :param target_type: TargetType.Square, TargetType.Rectangle or
-                        TargetType.Circle
-    :type target_type:  TargetType
-    :param text_font: Tk font to use. Default TkTextFont
+    :param target_type: `TargetType.Square`, `TargetType.Rectangle` or
+                        `TargetType.Circle`
+    :type target_type:  :class:`TargetType`
+    :param text_font: Tk font to use. Default ``(TkTextFont,)``
     :type text_font: tuple
     """
 
