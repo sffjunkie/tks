@@ -61,7 +61,7 @@ class ColorWheel(ttk.Frame, object):
                                  width=radius * 2 + 1,
                                  height=radius * 2 + 1)
         self._canvas.grid(row=0, column=0)
-        self._canvas.bind('<Button-1>', self._date_clicked)
+        self._canvas.bind('<Button-1>', self._canvas_clicked)
 
         self._create_wheel(radius)
         self._create_triangle()
@@ -116,6 +116,8 @@ class ColorWheel(ttk.Frame, object):
         self.color_var.set(rgb)
 
     def _color_var_changed(self, *args):
+        """Respond to changes in the color variable."""
+
         self._value = self.color_var.get()
         self._hsv = colorsys.rgb_to_hsv(*self._value)
         angle = int(self._hsv[0] * 359.0)
@@ -137,11 +139,15 @@ class ColorWheel(ttk.Frame, object):
         self._sv_update_selection(x, y)
 
     def _create_hue_to_rgb_map(self):
+        """Create a pre-calculated array of angle to hue mappings."""
+
         for angle in range(360):
             c = colorsys.hsv_to_rgb(radians(angle) / (2 * pi), 1.0, 1.0)
             self._hue_to_rgb_map.append(c)
 
     def _calculate_radii(self, radius):
+        """Calculate the radii we need."""
+
         self._outer_radius = radius
         self._outer_radius2 = pow(self._outer_radius, 2)
 
@@ -157,6 +163,8 @@ class ColorWheel(ttk.Frame, object):
         self._selection_radius = 3
 
     def _create_wheel(self, radius):
+        """Create the color wheel."""
+
         stride = (self._outer_radius * 2) + 1
         ring_buf_size = stride * stride * 4
         ring_data = bytearray(ring_buf_size)
@@ -195,6 +203,8 @@ class ColorWheel(ttk.Frame, object):
                                   tags='wheel')
 
     def _create_triangle(self):
+        """Create the saturation/value triangle that is displayed in the wheel."""
+
         stride = (self._triangle_radius * 2) + 1
         buf_size = stride * stride * 4
         self._triangle_data = bytearray(source=buf_size)
@@ -213,7 +223,11 @@ class ColorWheel(ttk.Frame, object):
                                   image=self._triangle_photoimage,
                                   tags='triangle')
 
-    def _date_clicked(self, event):
+    def _canvas_clicked(self, event):
+        """Respond to a click on the canvas by determining if the click is
+        within the outer wheel or the triangle.
+        """
+
         x = self._canvas.canvasx(event.x)
         y = self._canvas.canvasy(event.y)
 
@@ -245,6 +259,8 @@ class ColorWheel(ttk.Frame, object):
                 self.color_var.set(rgb)
 
     def _update_triangle(self):
+        """Update the triangle for the new hue."""
+
         hx, hy, sx, sy, vx, vy = \
             self._triangle_vertices(self._hue_degrees,
                                     self._triangle_radius)
@@ -330,12 +346,16 @@ class ColorWheel(ttk.Frame, object):
         self._triangle_data[:] = self._triangle_back_buffer
 
     def _update_triangle_image(self):
+        """Create a new PhotoImage for the updated triangle."""
+
         del self._triangle_photoimage
         self._triangle_photoimage = ImageTk.PhotoImage(image=self._triangle)
         self._triangle_photoimage.image_reference = self._triangle_photoimage
         self._canvas.itemconfigure('triangle', image=self._triangle_photoimage)
 
     def _triangle_vertices(self, angle, center=0):
+        """Calculate the vertices of the triangle."""
+
         angle = radians(self._hue_degrees)
         hx = floor(center + 0.5 + (cos(angle) * self._triangle_radius))
         hy = floor(center + 0.5 - (sin(angle) * self._triangle_radius))
@@ -347,6 +367,8 @@ class ColorWheel(ttk.Frame, object):
         return hx, hy, sx, sy, vx, vy
 
     def _in_triangle(self, x, y):
+        """Determine if point x,y is within the triangle."""
+
         hx, hy, sx, sy, vx, vy = \
             self._triangle_vertices(self._hue_degrees, self._center)
 
@@ -358,6 +380,8 @@ class ColorWheel(ttk.Frame, object):
         return is_in
 
     def _hue_create_selection(self):
+        """Create the circular hue selection indicator."""
+
         self._hue_x, self._hue_y = self._hue_selection_pos()
 
         rect = (self._hue_x - self._selection_radius,
@@ -372,6 +396,8 @@ class ColorWheel(ttk.Frame, object):
                                  tags='hue')
 
     def _hue_update_selection(self):
+        """Update the hue selection indicator"""
+
         pos = self._hue_selection_pos()
         offset_x = pos[0] - self._hue_x
         offset_y = pos[1] - self._hue_y
@@ -382,6 +408,8 @@ class ColorWheel(ttk.Frame, object):
         self._hue_y = pos[1]
 
     def _hue_selection_pos(self):
+        """Calculate the hue selection indicator position"""
+
         angle = radians(self._hue_degrees)
         hx = floor(self._center + 0.5 + (cos(angle) * self._hue_radius))
         hy = floor(self._center + 0.5 - (sin(angle) * self._hue_radius))
@@ -389,6 +417,8 @@ class ColorWheel(ttk.Frame, object):
         return hx, hy
 
     def _sv_create_selection(self):
+        """Create the circular saturation/value selection indicator."""
+
         # based on starting at 0 degree angle
         angle = radians(self._hue_degrees)
         self._sv_selection_x = self._center + (cos(angle) * self._triangle_radius)
@@ -407,6 +437,8 @@ class ColorWheel(ttk.Frame, object):
 
 
     def _sv_update_selection(self, x, y):
+        """Update the saturation/value selection indicator"""
+
         offset_x = x - self._sv_selection_x
         offset_y = y - self._sv_selection_y
 
@@ -415,6 +447,8 @@ class ColorWheel(ttk.Frame, object):
         self._sv_selection_y = y
 
     def _sv_calc_from_position(self, x, y):
+        """Calculate the saturation and value at position x,y"""
+
         hx, hy, sx, sy, vx, vy = \
             self._triangle_vertices(self._hue_degrees, 0)
 
@@ -471,6 +505,8 @@ class ColorWheel(ttk.Frame, object):
 
 
 def linear_interpolate(a, b, v1, v2, i):
+    """Linear interpolation"""
+
     if v1 == v2:
         return a
     else:
