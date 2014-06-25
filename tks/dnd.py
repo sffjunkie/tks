@@ -38,12 +38,12 @@ class DndHandler(object):
         if event.num > 5:
             return
         root = event.widget._root()
-        try:
-            root.__dnd
-            return  # Don't start recursive dnd
-        except AttributeError:
-            root.__dnd = self
-            self.root = root
+
+        if hasattr(root, '__dnd'):
+            return
+        root.__dnd = self
+
+        self.root = root
         self.source = source
         self.target = None
         self.initial_button = button = event.num
