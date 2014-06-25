@@ -88,9 +88,13 @@ class _TintAndShadeBase(ttk.Frame, object):
         self._update()
 
     def _color_var_changed(self, *args):
+        """Update our selves when the color variable changes."""
+
         self._update()
 
     def _factor_update(self, value):
+        """Update for new factor."""
+
         self._distance = math.floor(float(value) * 20) / 20
         self._distance_var.set('%0.2f' % self._distance)
         self._update()
