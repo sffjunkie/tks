@@ -97,7 +97,7 @@ class ColorSquare(ttk.Frame, object):
         self._dnd_target = dnd_target
         self._dnd_started = False
 
-        self.dnd_cursor = None
+        self._dnd_cursor = None
 
         self._canvas.bind('<B1-ButtonRelease-1>', self._update_color)
         self._canvas.bind('<B1-Motion>', self._start_dnd)
@@ -138,7 +138,7 @@ class ColorSquare(ttk.Frame, object):
 
         self._canvas_cursor = self._canvas['cursor']
         if self._dnd_target and source is not self and hasattr(source, 'rgb'):
-            self._canvas['cursor'] = self.dnd_cursor or dnd.CURSOR_WIDGET
+            self._canvas['cursor'] = self._dnd_cursor or dnd.CURSOR_WIDGET
             self._canvas['relief'] = tk.RAISED
         else:
             self._canvas['cursor'] = dnd.CURSOR_FORBIDDEN
