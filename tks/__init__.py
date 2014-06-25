@@ -25,11 +25,13 @@ def parse_geometry(geom):
     if re_match:
         return re_match.group(1, 2, 3, 4)
 
+
 def rect_center(rect):
     """Return the center of a rectangle"""
 
     return (rect[0] + ((rect[2] - rect[0]) / 2),
             rect[1] + ((rect[3] - rect[1]) / 2))
+
 
 def rect_at(x, y, size, size_y=-1):
     """Returns a rectangle centered at `x,y`. If only `size` is provided then
