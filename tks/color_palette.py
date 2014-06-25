@@ -394,14 +394,14 @@ class ColorPalette(dict):
             raise TypeError(('Unable to set item. '
                              'This database is read only'))
 
-        return dict.__setitem__(key, value)
+        return dict.__setitem__(self, key, value)
 
     def __delitem__(self, key, value):
         if self._read_only:
             raise TypeError(('Unable to delete item. '
                              'This database is read only'))
 
-        return dict.__setitem__(key, value)
+        return dict.__setitem__(self, key, value)
 
     def find_closest(self, rgb):
         """Find a color in the database which is the closest match"""
