@@ -242,7 +242,7 @@ class ColorPopupMenu(tk.Menu, object):
     """A popup menu which displays menu items to copy a textual representation
     of the color in the square
 
-    :param square: The square to display the popup menu for
+    :param square: The square to attach the pop up menu to
     :type square:  ColorSquare
     """
 
