@@ -28,6 +28,9 @@ except ImportError:
 from tks.color_var import ColorVar
 from tks.color_funcs import rgb_to_hex_string, hex_string_to_rgb
 
+from .i18n import language
+_ = language.gettext
+
 
 def rgb_to_intensity(key):
     """Convert an RGB color to its intensity"""
@@ -111,7 +114,7 @@ class PaletteSelector(ttk.Frame, object):
         self._current_palette_var = tk.StringVar(value=palette_name)
 
         header_frame = ttk.Frame(self, style='tks.TFrame')
-        l = ttk.Label(header_frame, text='Palette:', anchor=tk.W)
+        l = ttk.Label(header_frame, text=_('Palette:'), anchor=tk.W)
         l.grid(row=0, column=0, padx=(4, 4))
 
         c = ttk.Combobox(header_frame, width=5,
@@ -120,7 +123,7 @@ class PaletteSelector(ttk.Frame, object):
         c.grid(row=0, column=1, padx=(0, 4))
         c.bind('<<ComboboxSelected>>', self._change_palette)
 
-        l = ttk.Label(header_frame, text='Sort By:', anchor=tk.W)
+        l = ttk.Label(header_frame, text=_('Sort By:'), anchor=tk.W)
         l.grid(row=0, column=2, padx=(4, 4))
 
         self._sort_order = 'HSV'
@@ -136,7 +139,7 @@ class PaletteSelector(ttk.Frame, object):
 
         header_frame.grid(row=0, column=0, sticky=(tk.N, tk.EW), columnspan=2)
 
-        f = tkf.Font(font=('TkTextFont',))
+        f = tkf.Font(font=('TkDefaultFont',))
         max_name_len = 0
         for color_db in self._color_databases.values():
             max_name_len = max(max_name_len,
@@ -391,15 +394,15 @@ class Palette(dict):
 
     def __setitem__(self, key, value):
         if self._read_only:
-            raise TypeError(('Unable to set item. '
-                             'This database is read only'))
+            raise TypeError(_('Unable to set item. '
+                              'This database is read only'))
 
         return dict.__setitem__(self, key, value)
 
     def __delitem__(self, key, value):
         if self._read_only:
-            raise TypeError(('Unable to delete item. '
-                             'This database is read only'))
+            raise TypeError(_('Unable to delete item. '
+                              'This database is read only'))
 
         return dict.__setitem__(self, key, value)
 
@@ -425,7 +428,7 @@ class Palette(dict):
             if name in color_info.color_names:
                 return key
 
-        raise KeyError('Color name %s not in database.' % name)
+        raise KeyError(_('Color name %s not in database.') % name)
 
     def color_info(self, rgb):
         """Return a tuple of information about an RGB color"""
