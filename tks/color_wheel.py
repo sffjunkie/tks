@@ -26,11 +26,7 @@ DEFAULT_RADIUS = 125
 
 
 class ColorWheel(ttk.Frame, object):
-    """Displays an HSV color wheel
-
-    hue: 0 - 1.0, 0.0 = red, 0.33 = green, 0.66 = blue
-    angle: radians = hue * 2 * pi
-    """
+    """Displays an HSV color wheel."""
 
     def __init__(self, master,
                  variable=None,
