@@ -244,7 +244,8 @@ class TimeDialog(tk.Toplevel, object):
     def __init__(self, master, title,
                  start_time=None,
                  locale='en',
-                 show_seconds=False, ampm=None,
+                 show_seconds=False,
+                 ampm=None,
                  text_font=DEFAULT_FONT):
         super(TimeDialog, self).__init__(master)
 
