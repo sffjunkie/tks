@@ -203,7 +203,7 @@ class ColorDialog(tk.Toplevel, object):
         okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='tks.TFrame')
 
         self.ok_btn = ttk.Button(okcancel, text=_('OK'), width=10,
-                                 command=self.ok)
+                                 command=self._ok)
         self.ok_btn.grid(row=0, column=0, padx=4, pady=4)
         cancel = ttk.Button(okcancel, text=_('Cancel'), width=10,
                             command=self._cancel)
@@ -230,7 +230,7 @@ class ColorDialog(tk.Toplevel, object):
         self.grab_set()
         self.deiconify()
 
-    def ok(self, event=None):
+    def _ok(self, event=None):
         """Respond to OK button being selected"""
 
         self.color = self.color_var.get()

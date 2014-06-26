@@ -277,7 +277,7 @@ class TimeDialog(tk.Toplevel, object):
             btn_column = (2, 1)
 
         self.ok_btn = ttk.Button(okcancel, text=_('OK'), width=10,
-                                 command=self.ok)
+                                 command=self._ok)
         self.ok_btn.grid(column=btn_column[0], row=0, padx=(3, 0))
         cancel = ttk.Button(okcancel, text=_('Cancel'), width=10,
                             command=self._cancel)
@@ -303,7 +303,7 @@ class TimeDialog(tk.Toplevel, object):
         self.transient(master)
         self.grab_set()
 
-    def ok(self, event=None):
+    def _ok(self, event=None):
         """Called when the OK button is pressed"""
 
         self.time = self._selector.time

@@ -288,7 +288,7 @@ class DateDialog(tk.Toplevel, object):
             btn_column = (2, 1)
 
         self.ok_btn = ttk.Button(okcancel, text=_('OK'), width=10,
-                                 command=self.ok)
+                                 command=self._ok)
         self.ok_btn.grid(column=btn_column[0], row=0, padx=(6, 0), sticky=tk.SE)
 
         cancel = ttk.Button(okcancel, text=_('Cancel'), width=10,
@@ -316,7 +316,7 @@ class DateDialog(tk.Toplevel, object):
         self.transient(master)
         self.grab_set()
 
-    def ok(self):
+    def _ok(self):
         """Called when the OK button is pressed"""
 
         self.date = self._selector.date
