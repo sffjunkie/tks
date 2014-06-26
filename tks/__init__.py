@@ -38,7 +38,8 @@ def rect_center(rect):
 
 def rect_at(point, size, size_y=-1):
     """Returns a rectangle centred at `point`. If only `size` is provided then
-    the rectangle will be a square. The dimensions will be size * 2"""
+    the rectangle will be a square. The dimensions will be size * 2
+    """
 
     if size_y == -1:
         size_y = size
