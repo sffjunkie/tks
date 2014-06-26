@@ -27,7 +27,7 @@ def parse_geometry(geom):
 
 
 def rect_center(rect):
-    """Return the center of a rectangle"""
+    """Return the centre of a rectangle"""
 
     left = min(rect[0], rect[2])
     top = min(rect[1], rect[3])
@@ -37,7 +37,7 @@ def rect_center(rect):
 
 
 def rect_at(x, y, size, size_y=-1):
-    """Returns a rectangle centered at `x,y`. If only `size` is provided then
+    """Returns a rectangle centred at `x,y`. If only `size` is provided then
     the rectangle will be a square. The dimensions will be size * 2"""
 
     if size_y == -1:
