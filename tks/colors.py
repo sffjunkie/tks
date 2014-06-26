@@ -26,15 +26,18 @@ DEFAULT_FONT = ('TkTextFont',)
 
 
 class ColorEntry(ttk.Frame, object):
-    """Display an entry to enter color information.
+    """Display an entry to enter color information and a button to display an
+    entry dialog.
+
+    Colors can be specified using any of the following forms ::
+
+        #abc or #abcdef
+        rgb(1.0, 1.0, 1.0)
+        hsv(1.0, 1.0, 1.0)
+        hls(1.0, 1.0, 1.0)
 
     :param master: Tk master widget
-    :param start_color:  The starting color can be one of the following forms
-
-                         * #abc or #abcdef
-                         * rgb(1.0, 1.0, 1.0)
-                         * hsv(1.0, 1.0, 1.0)
-                         * hls(1.0, 1.0, 1.0)
+    :param start_color:  The starting color
     :type start_color:   str
     """
 
@@ -58,7 +61,7 @@ class ColorEntry(ttk.Frame, object):
 
         self.color_var.set(start_color)
 
-        btn = ttk.Button(self, text=_('Select...'), command=self.select_color)
+        btn = ttk.Button(self, text=_('Select...'), command=self._select_color)
         btn.grid(row=0, column=5, sticky=tk.E, padx=(6, 0))
 
         self.columnconfigure(0, weight=1)
@@ -126,7 +129,7 @@ class ColorEntry(ttk.Frame, object):
         else:
             self.valid = False
 
-    def select_color(self):
+    def _select_color(self):
         """Display the color selection dialog"""
 
         color_info = color_funcs.color_string_to_color(self.color_var.get())
