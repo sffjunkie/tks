@@ -8,7 +8,7 @@ __author__ = 'Simon Kennedy <code@sffjunkie.co.uk>'
 import re
 
 
-class TksColors(object):
+class ColorDefs(object):
     """A container for color names"""
 
     Fill = 'white'
