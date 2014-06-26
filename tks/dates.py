@@ -191,7 +191,7 @@ class DateEntry(ttk.Frame, object):
 
     @property
     def date(self):
-        """The currently selected date."""
+        """The :class:`~datetime.date` represented by the entry."""
 
         d = datetime.datetime(year=self._year_var.get(),
                               month=self._month_var.get(),
