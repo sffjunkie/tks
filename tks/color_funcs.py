@@ -21,7 +21,7 @@ def rgb_to_hex_string(value):
 
 
 def rgb_to_rgb_string(value):
-    """Convert from an (R, G, B) tuple to a text representation.
+    """Convert from an (R, G, B) tuple to an RGB string.
 
     :param value: The RGB value to convert
     :type value:  tuple
@@ -33,7 +33,7 @@ def rgb_to_rgb_string(value):
 
 
 def rgb_to_hsv_string(value):
-    """Convert from an (R, G, B) tuple to a HSV representation.
+    """Convert from an (R, G, B) tuple to an HSV string.
 
     :param value: The RGB value to convert
     :type value:  tuple
@@ -46,7 +46,7 @@ def rgb_to_hsv_string(value):
 
 
 def rgb_to_hls_string(value):
-    """Convert from an (R, G, B) tuple to a HLS representation.
+    """Convert from an (R, G, B) tuple to an HLS string.
 
     :param value: The RGB value to convert
     :type value:  tuple
@@ -160,10 +160,11 @@ def rgb_tints(rgb, base_factor, count):
 
 def rgb_tint(rgb, distance=0.8):
     """Create a tinted version of the RGB color
+
     :param rgb: The RGB value for which to calculate the tint
     :type rgb:  tuple
     :param distance: Determines the distance between the specified color and
-                   the tint
+                     the tint
     :type distance:  float
     """
     r = rgb[0]

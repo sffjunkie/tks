@@ -4,16 +4,16 @@
 
 Provides 3 classes to obtain a time from a user.
 
-TimeEntry
+:class:`TimeEntry`
     Displays entry boxes for hours, minutes and optionally seconds and
     an AM/PM selector. Also contains a button to display a time
     selection dialog.
 
-TimeDialog
+:class:`TimeDialog`
     Displays a dialog window allowing the user to select a time.
 
-TimeSelector
-    A Frame which contains the time selection machinery.
+:class:`TimeSelector`
+    A widget which contains the time selection machinery.
 """
 
 from __future__ import print_function, division, absolute_import
@@ -70,15 +70,15 @@ class TimeEntry(ttk.Frame, object):
     :type locale:  str or :class:`babel.Locale`
     :param show_seconds: If True a seconds value can be entered.
     :type show_seconds:  bool
-    :param text_font: Tk font to use. Default TkTextFont
-    :type text_font: tuple
+    :param font: Tk font to use. Default TkDefaultFont
+    :type font: tuple
     """
 
     def __init__(self, master,
                  start_time=None,
                  locale='en',
                  show_seconds=False,
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         super(TimeEntry, self).__init__(master)
 
         if start_time is None:
@@ -107,7 +107,7 @@ class TimeEntry(ttk.Frame, object):
         else:
             separator = ':'
 
-        self._font = text_font
+        self._font = font
 
         self._hour_var = tk.IntVar()
         self._hour_entry = ttk.Combobox(self,
@@ -263,8 +263,8 @@ class TimeDialog(tk.Toplevel, object):
     :param show_seconds: If True a seconds value can be entered.
     :type show_seconds:  bool
     :param ampm: If not None display a 12 hour clock face with am/pm selection
-    :param text_font: Tk font to use. Default TkTextFont
-    :type text_font: tuple
+    :param font: Tk font to use. Default TkTextFont
+    :type font: tuple
     """
 
     def __init__(self, master, title,
@@ -273,7 +273,7 @@ class TimeDialog(tk.Toplevel, object):
                  time_position=tk.TOP,
                  show_seconds=False,
                  ampm=None,
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         super(TimeDialog, self).__init__(master)
 
         self.withdraw()
@@ -294,7 +294,7 @@ class TimeDialog(tk.Toplevel, object):
                                       time_position=time_position,
                                       show_seconds=show_seconds,
                                       ampm=ampm,
-                                      text_font=text_font)
+                                      font=font)
         self._selector.grid(row=0, column=0, sticky=tk.NSEW)
 
         okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='tks.TFrame')
@@ -355,7 +355,7 @@ class TimeSelector(ttk.Frame, object):
                  ampm=None,
                  time_position=tk.TOP,
                  show_seconds=False,
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         self._master = master
         super(TimeSelector, self).__init__(master)
         self._time = None
@@ -369,7 +369,7 @@ class TimeSelector(ttk.Frame, object):
         if babel and not isinstance(locale, babel.Locale):
             locale = babel.Locale(locale)
 
-        f = tkf.Font(font=text_font)
+        f = tkf.Font(font=font)
         f['weight'] = tkf.BOLD
         f['size'] = int(f.actual('size') * 2)
         ttk.Style().configure('TimeFrame.TLabel', font=f,
@@ -702,12 +702,12 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
     def __init__(self, master,
                  start_time=None,
                  ampm=None,
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         self._master = master
         super(TimeSelector12HourAndMinute, self).__init__(master)
 
         self._ampm = ampm
-        self._text_font = text_font
+        self._text_font = font
 
         self._last_hour_tag = ''
         self._last_minute_tag = ''
@@ -980,7 +980,7 @@ class TimeSelector24Hour(ttk.Frame, object):
 
     def __init__(self, master,
                  start_time=None,
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         super(TimeSelector24Hour, self).__init__(master)
         self._master = master
 
@@ -989,7 +989,7 @@ class TimeSelector24Hour(ttk.Frame, object):
 
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
-        self._create_canvas(text_font)
+        self._create_canvas(font)
 
         self.columnconfigure(0, weight=1)
 
@@ -1058,8 +1058,8 @@ class TimeSelector24Hour(ttk.Frame, object):
         angle = math.degrees(math.atan2(y, x))
         self.hour = int(math.floor(((angle + 90) % 360) / 30))
 
-    def _create_canvas(self, text_font):
-        f = tkf.Font(font=text_font)
+    def _create_canvas(self, font):
+        f = tkf.Font(font=font)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 
@@ -1142,7 +1142,7 @@ class TimeSelectorMinute(ttk.Frame, object):
 
     def __init__(self, master,
                  start_time=None,
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         super(TimeSelectorMinute, self).__init__(master)
         self._master = master
 
@@ -1151,7 +1151,7 @@ class TimeSelectorMinute(ttk.Frame, object):
 
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
-        self._create_canvas(text_font)
+        self._create_canvas(font)
 
         self.columnconfigure(0, weight=1)
 
@@ -1227,8 +1227,8 @@ class TimeSelectorMinute(ttk.Frame, object):
         angle = math.degrees(math.atan2(y, x))
         self.minute = int(math.floor(((angle + 90) % 360) / 6))
 
-    def _create_canvas(self, text_font):
-        f = tkf.Font(font=text_font)
+    def _create_canvas(self, font):
+        f = tkf.Font(font=font)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 

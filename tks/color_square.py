@@ -28,7 +28,7 @@ class ColorSquare(ttk.Frame, object):
     representations of the color.
 
     :param variable: The RGB color to display
-    :type variable:  :class:`tks.color_var.ColorVar`
+    :type variable:  :class:`~tks.color_var.ColorVar`
     :param mode:     One of `r`, `w`, `rw`. If `r` is specified then the widget
                      responds to changes in the variable. If `w` is specified
                      then the color is written to the variable on a left mouse

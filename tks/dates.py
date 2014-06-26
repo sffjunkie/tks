@@ -4,15 +4,15 @@
 
 Provides 3 classes to obtain a date from a user.
 
-DateEntry
+:class:`DateEntry`
     Displays entry boxes for year, month and day as well as a button to
     display a date selection dialog.
 
-DateDialog
+:class:`DateDialog`
     Displays a dialog window allowing the user to select a date.
 
-DateSelector
-    A Frame which contains the date selection machinery.
+:class:`DateSelector`
+    A widget which contains the date selection machinery.
 """
 
 from __future__ import print_function, division, absolute_import
@@ -77,14 +77,14 @@ class DateEntry(ttk.Frame, object):
                    instance. If :mod:`babel` is not installed ISO 8601
                    format will be used.
     :type locale:  str
-    :param text_font: Tk font to use. Default TkTextFont
-    :type text_font: tuple
+    :param font: Tk font to use. Default TkTextFont
+    :type font: tuple
     """
 
     def __init__(self, master,
                  start_date=None,
                  locale='en',
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         super(DateEntry, self).__init__(master, style='tks.TFrame')
 
         if babel and locale:
@@ -113,7 +113,7 @@ class DateEntry(ttk.Frame, object):
             separator = '-'
 
         self._locale = locale
-        self._font = tkf.Font(font=text_font)
+        self._font = tkf.Font(font=font)
 
         self._year_var = tk.IntVar()
         self._month_var = tk.IntVar()
@@ -226,7 +226,7 @@ class DateEntry(ttk.Frame, object):
                          _('Select a Date...'),
                          start_date=d,
                          locale=self._locale,
-                         text_font=self._font)
+                         font=self._font)
         self.wait_window(dlg)
         new_date = dlg.date
         if new_date != None:
@@ -251,15 +251,15 @@ class DateDialog(tk.Toplevel, object):
     :param target_type: `TargetShape.Square`, `TargetShape.Rectangle` or
                         `TargetShape.Circle`
     :type target_type:  :class:`TargetShape`
-    :param text_font: Tk font to use. Default ``(TkTextFont,)``
-    :type text_font: tuple
+    :param font: Tk font to use. Default ``(TkTextFont,)``
+    :type font: tuple
     """
 
     def __init__(self, master, title,
                  start_date=None,
                  locale='en',
                  target_type=TargetShape.Circle,
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         super(DateDialog, self).__init__(master)
 
         self.withdraw()
@@ -276,7 +276,7 @@ class DateDialog(tk.Toplevel, object):
         self._selector = DateSelector(self, start_date,
                                       locale=locale,
                                       target_type=target_type,
-                                      text_font=text_font)
+                                      font=font)
         self._selector.grid(row=0, column=0, sticky=tk.NSEW)
 
         okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='tks.TFrame')
@@ -338,7 +338,7 @@ class DateSelector(ttk.Frame, object):
                  start_date,
                  locale='en',
                  target_type=TargetShape.Circle,
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         self._master = master
         super(DateSelector, self).__init__(master, style='tks.TFrame')
         self._date = None
@@ -353,10 +353,10 @@ class DateSelector(ttk.Frame, object):
             today_txt = today.strftime('%Y-%m-%d')
 
         ttk.Style().configure('Selector.tks.TButton',
-                              font=text_font,
+                              font=font,
                               anchor=tk.CENTER)
         ttk.Style().configure('Selector.tks.TLabel',
-                              font=text_font,
+                              font=font,
                               anchor=tk.CENTER)
         ttk.Style().configure('Month.Selector.tks.TButton',
                               padding=(0, 10))
@@ -372,7 +372,7 @@ class DateSelector(ttk.Frame, object):
         self._ds = DaySelector(self, start_date,
                                locale,
                                target_type=target_type,
-                               text_font=text_font)
+                               font=font)
         self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
         self._prev_selector = self._ds
 
@@ -484,8 +484,8 @@ class DaySelector(ttk.Frame, object):
     :type locale:      :class:`babel.Locale`
     :param target_type: Target type to select dates
     :type target_type: bool
-    :param text_font: Tk font to use
-    :type text_font: tuple
+    :param font: Tk font to use
+    :type font: tuple
     """
 
     COLOR_FILL_TODAY = '#eee'
@@ -495,7 +495,7 @@ class DaySelector(ttk.Frame, object):
                  start_date,
                  locale,
                  target_type=TargetShape.Circle,
-                 text_font=DEFAULT_FONT,
+                 font=DEFAULT_FONT,
                  **kwargs):
         self._master = master
         super(DaySelector, self).__init__(master, style='tks.TFrame')
@@ -531,7 +531,7 @@ class DaySelector(ttk.Frame, object):
 
         self._selected_tgt = ''
 
-        self._font = tkf.Font(font=text_font)
+        self._font = tkf.Font(font=font)
         family = self._font.actual('family')
         size = self._font.actual('size')
         self._font_bold = tkf.Font(font=(family, size, tkf.BOLD))

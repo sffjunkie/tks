@@ -43,14 +43,14 @@ class ColorEntry(ttk.Frame, object):
 
     def __init__(self, master,
                  start_color='rgb(1.0, 0.0, 0.0)',
-                 text_font=DEFAULT_FONT):
+                 font=DEFAULT_FONT):
         super(ColorEntry, self).__init__(master, style='tks.TFrame')
         self._master = master
         self._start_color = start_color
 
         self.color_var = tk.StringVar()
         self._entry = ttk.Entry(self, textvariable=self.color_var,
-                                font=text_font)
+                                font=font)
         self._entry.grid(row=0, column=0, sticky=tk.EW)
 
         color_info = color_funcs.color_string_to_color(start_color)
