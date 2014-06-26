@@ -18,7 +18,7 @@ except ImportError:
 from tks.color_var import ColorVar
 
 class ColorSlider(ttk.Frame, object):
-    """"Color slider base class."""
+    """Color slider base class."""
 
     default = (1.0, 0.0, 0.0)
     labels = ('R', 'G', 'B')
