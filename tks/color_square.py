@@ -124,6 +124,7 @@ class ColorSquare(ttk.Frame, object):
 
         if self._dnd_source and self.rgb and not self._dnd_started:
             # Mouse events on Windows sometimes have `??` instead of a number
+            # so force event.num to 1
             event.num = 1
             self._dnd_started = True
             dnd.dnd_start(self, event)
