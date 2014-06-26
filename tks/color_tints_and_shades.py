@@ -129,7 +129,7 @@ class ColorTint(_TintAndShadeBase):
                  variable,
                  count=5,
                  distance=(0.95, 0.7)):
-        super(ColorTint, self).__init__(master, variable, 'Tints',
+        super(ColorTint, self).__init__(master, variable, _('Tints'),
                                         count=count, distance=distance,
                                         func=rgb_tints)
 
@@ -150,6 +150,6 @@ class ColorShade(_TintAndShadeBase):
                  variable,
                  count=5,
                  distance=(0.95, 0.7)):
-        super(ColorShade, self).__init__(master, variable, 'Shades',
+        super(ColorShade, self).__init__(master, variable, _('Shades'),
                                          count=count, distance=distance,
                                          func=rgb_shades)
