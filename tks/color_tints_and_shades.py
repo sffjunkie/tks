@@ -23,6 +23,9 @@ try:
 except ImportError:
     import ttk
 
+from .i18n import language
+_ = language.gettext
+
 from tks.color_var import ColorVar
 from tks.color_square import ColorSquare
 from tks.color_funcs import rgb_tints, rgb_shades
