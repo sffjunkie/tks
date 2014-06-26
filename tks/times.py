@@ -393,6 +393,7 @@ class TimeSelector(ttk.Frame, object):
         else:
             self.second_var = None
 
+        self._time_position = time_position
         if time_position:
             time_frame = ttk.Frame(self, style='TimeFrame.TFrame', padding=4)
             time_frame.columnconfigure(0, weight=1)
@@ -457,6 +458,7 @@ class TimeSelector(ttk.Frame, object):
 
         self.columnconfigure(0, weight=1)
 
+        self._dial_mode = None
         self._number_key_mode = None
         self.number_key_mode = MODE_HOUR
 
@@ -511,11 +513,33 @@ class TimeSelector(ttk.Frame, object):
                                   value)
 
     @property
+    def dial_mode(self):
+        return self._dial_mode
+
+    @dial_mode.setter
+    def dial_mode(self, mode):
+        if mode == MODE_HOUR and self._selector is self._ms:
+            self._selector.grid_forget()
+            self._selector = self._hs
+            self._selector.grid(row=1, column=0, sticky=tk.NSEW,
+                                padx=3, pady=3)
+        elif mode == MODE_MINUTE and self._selector is self._hs:
+            self._selector.grid_forget()
+            self._selector = self._ms
+            self._selector.grid(row=1, column=0, sticky=tk.NSEW,
+                                padx=3, pady=3)
+
+        self._dial_mode = mode
+
+    @property
     def number_key_mode(self):
         return self._number_key_mode
 
     @number_key_mode.setter
     def number_key_mode(self, value):
+        if not self._time_position:
+            return
+
         mode = int(value)
         if mode != self._number_key_mode:
             if mode == MODE_NONE:
@@ -533,11 +557,8 @@ class TimeSelector(ttk.Frame, object):
                     self._second_text.configure(style='TimeFrame.TLabel')
                     self._second_label.configure(style='SecondFrame.TLabel')
 
-                if not self._ampm and self._selector is self._ms:
-                    self._selector.grid_forget()
-                    self._selector = self._hs
-                    self._selector.grid(row=1, column=0, sticky=tk.NSEW,
-                                        padx=3, pady=3)
+                if not self._ampm:
+                    self.dial_mode = MODE_HOUR
             elif mode == MODE_MINUTE:
                 self._hour_text.configure(style='TimeFrame.TLabel')
                 self._minute_text.configure(style='Selected.TimeFrame.TLabel')
@@ -546,11 +567,8 @@ class TimeSelector(ttk.Frame, object):
                     self._second_text.configure(style='TimeFrame.TLabel')
                     self._second_label.configure(style='SecondFrame.TLabel')
 
-                if not self._ampm and self._selector is self._hs:
-                    self._selector.grid_forget()
-                    self._selector = self._ms
-                    self._selector.grid(row=1, column=0, sticky=tk.NSEW,
-                                        padx=3, pady=3)
+                if not self._ampm:
+                    self.dial_mode = MODE_MINUTE
             elif mode == MODE_SECOND:
                 self._hour_text.configure(style='TimeFrame.TLabel')
                 self._minute_text.configure(style='TimeFrame.TLabel')
@@ -626,6 +644,9 @@ class TimeSelector(ttk.Frame, object):
 
     def _key_pressed(self, event):
         """Respond to a key being pressed"""
+
+        if not self._time_position:
+            return
 
         if event.char >= '0' and event.char <= '9':
             self._number_pressed(event.char)
@@ -1000,6 +1021,9 @@ class TimeSelector24Hour(ttk.Frame, object):
             self.hour = value
 
         self._canvas.itemconfig(tag, fill=TksColors.Select)
+
+        self._master.dial_mode = MODE_MINUTE
+        self._master.number_key_mode = MODE_MINUTE
 
     def _dial_clicked(self, event):
         x = self._canvas.canvasx(event.x) - self._center[0]
