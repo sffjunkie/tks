@@ -51,7 +51,7 @@ from tks import parse_geometry, TksColors
 DEFAULT_FONT = ('TkTextFont',)
 
 
-class TargetType():
+class TargetShape():
     """How to draw the target round a date"""
 
     Square = 'square'
@@ -241,16 +241,16 @@ class DateDialog(tk.Toplevel, object):
     :param title:  Dialog title
     :type title:   str
     :param start_date: The date to display in the entry boxes or None for
-                       taday's date
+                       today's date
     :type start_date:  datetime.date or datetime.datetime
     :param locale: Determines how today's name is displayed
                    Either a locale name e.g. 'en' or a babel Locale
                    instance. If :mod:`babel` is not installed ISO 8601
                    format will be used.
     :type locale:  str or :class:`babel.Locale`
-    :param target_type: `TargetType.Square`, `TargetType.Rectangle` or
-                        `TargetType.Circle`
-    :type target_type:  :class:`TargetType`
+    :param target_type: `TargetShape.Square`, `TargetShape.Rectangle` or
+                        `TargetShape.Circle`
+    :type target_type:  :class:`TargetShape`
     :param text_font: Tk font to use. Default ``(TkTextFont,)``
     :type text_font: tuple
     """
@@ -258,7 +258,7 @@ class DateDialog(tk.Toplevel, object):
     def __init__(self, master, title,
                  start_date=None,
                  locale='en',
-                 target_type=TargetType.Circle,
+                 target_type=TargetShape.Circle,
                  text_font=DEFAULT_FONT):
         super(DateDialog, self).__init__(master)
 
@@ -337,7 +337,7 @@ class DateSelector(ttk.Frame, object):
     def __init__(self, master,
                  start_date,
                  locale='en',
-                 target_type=TargetType.Circle,
+                 target_type=TargetShape.Circle,
                  text_font=DEFAULT_FONT):
         self._master = master
         super(DateSelector, self).__init__(master, style='tks.TFrame')
@@ -494,7 +494,7 @@ class DaySelector(ttk.Frame, object):
     def __init__(self, master,
                  start_date,
                  locale,
-                 target_type=TargetType.Circle,
+                 target_type=TargetShape.Circle,
                  text_font=DEFAULT_FONT,
                  **kwargs):
         self._master = master
@@ -596,7 +596,7 @@ class DaySelector(ttk.Frame, object):
         linespace = font_info.metrics('linespace')
         item_height = linespace + 4
 
-        if target_type == TargetType.Circle:
+        if target_type == TargetShape.Circle:
             if babel:
                 num = babel.numbers.format_number(99, self._locale)
             else:
@@ -606,7 +606,7 @@ class DaySelector(ttk.Frame, object):
             circle_radius = circle_diameter / 2.0
             item_width = item_height = max(item_width, item_height,
                                            circle_diameter)
-        elif target_type == TargetType.Square:
+        elif target_type == TargetShape.Square:
             item_width = item_height = max(item_width, item_height)
 
         x_stride = item_width + 6
@@ -641,7 +641,7 @@ class DaySelector(ttk.Frame, object):
                 day_tag = 'day%d:%d' % (week_number, day_number)
                 tgt_tag = 'tgt%d:%d' % (week_number, day_number)
 
-                if target_type == TargetType.Circle:
+                if target_type == TargetShape.Circle:
                     func = self._canvas.create_oval
                     rect = (x_pos - circle_radius,
                             y_pos - circle_radius,
