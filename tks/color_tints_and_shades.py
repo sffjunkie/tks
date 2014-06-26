@@ -68,7 +68,7 @@ class _TintAndShadeBase(ttk.Frame, object):
         self._distance = distance[0]
         self._distance_var = tk.DoubleVar()
         self._distance_var.set(self._distance)
-        txt = ttk.Label(frame, text='Strength')
+        txt = ttk.Label(frame, text=_('Distance'))
         txt.grid(row=1, column=0)
 
         self._factor_scale = ttk.Scale(frame,
