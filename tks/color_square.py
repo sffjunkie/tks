@@ -29,21 +29,21 @@ class ColorSquare(ttk.Frame, object):
 
     :param variable: The RGB color to display
     :type variable:  :class:`tks.color_var.ColorVar`
-    :param mode:     One of 'r', 'w', 'rw'. If 'r' is specified then the widget
-                     responds to changes in the variable. If 'w' is specified
-                     then the color is written to the variable on a mouse
+    :param mode:     One of `r`, `w`, `rw`. If `r` is specified then the widget
+                     responds to changes in the variable. If `w` is specified
+                     then the color is written to the variable on a left mouse
                      click.
     :type mode:      str
     :param color_info: The color information to display under the square as a
                        text representation of the color. The elements are
                        specified as a tuple where the following strings can be
-                       provided
+                       provided.
 
-                       'rgbhex', 'rgb', 'hsv', 'hls'
-    :param dnd_target: If True then the square ersponds to colors being dropped
-                       on
+                       `rgbhex`, `rgb`, `hsv`, `hls`
+    :param dnd_target: If True then the square responds to colors being dropped
+                       on it.
     :type dnd_target:  bool
-    :param dnd_source: If True the square works as a drag and drop source
+    :param dnd_source: If True the square works as a drag and drop source.
     :type dnd_source:  bool
     """
 
