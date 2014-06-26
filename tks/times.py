@@ -244,6 +244,7 @@ class TimeDialog(tk.Toplevel, object):
     def __init__(self, master, title,
                  start_time=None,
                  locale='en',
+                 time_position=tk.TOP,
                  show_seconds=False,
                  ampm=None,
                  text_font=DEFAULT_FONT):
@@ -264,6 +265,7 @@ class TimeDialog(tk.Toplevel, object):
 
         self._selector = TimeSelector(self, start_time,
                                       locale=locale,
+                                      time_position=time_position,
                                       show_seconds=show_seconds,
                                       ampm=ampm,
                                       text_font=text_font)
@@ -320,17 +322,23 @@ class TimeDialog(tk.Toplevel, object):
 
 
 class TimeSelector(ttk.Frame, object):
-    """A time selection widget"""
+    """A time selection widget."""
 
     def __init__(self, master, start_time,
                  locale='en',
                  ampm=None,
+                 time_position=tk.TOP,
                  show_seconds=False,
                  text_font=DEFAULT_FONT):
         self._master = master
         super(TimeSelector, self).__init__(master)
         self._time = None
         self._ampm = ampm
+
+        if start_time is None:
+            self._time = datetime.datetime.time.now()
+        else:
+            self._time = start_time
 
         if babel and not isinstance(locale, babel.Locale):
             locale = babel.Locale(locale)
@@ -357,54 +365,14 @@ class TimeSelector(ttk.Frame, object):
 
         self._master.bind('<Key>', self._key_pressed)
 
-        time_frame = ttk.Frame(self, style='TimeFrame.TFrame', padding=4)
-        time_frame.columnconfigure(0, weight=1)
-
         self.hour_var = tk.IntVar()
-        self.minute_var = tk.IntVar()
-
         self.hour_var.set('%02d' % start_time.hour)
-        self._hour_text = ttk.Label(time_frame, width=2,
-                                    textvariable=self.hour_var,
-                                    style='TimeFrame.TLabel')
-        self._hour_text.grid(row=0, column=1)
-        time_frame.columnconfigure(1, weight=0)
-        self._hour_text.bind('<Button-1>', self._hour_text_clicked)
-
-        sep = ttk.Label(time_frame, text=':',
-                        style='TimeFrame.TLabel',
-                        anchor="center",
-                        padding=(6, 0))
-        sep.grid(row=0, column=2)
-        time_frame.columnconfigure(2, weight=0)
-
+        self.minute_var = tk.IntVar()
         self.minute_var.set('%02d' % start_time.minute)
-        self._minute_text = ttk.Label(time_frame, width=2,
-                                      textvariable=self.minute_var,
-                                      style='TimeFrame.TLabel')
-        self._minute_text.grid(row=0, column=3)
-        time_frame.columnconfigure(3, weight=0)
-        self._minute_text.bind('<Button-1>', self._minute_text_clicked)
 
         if show_seconds:
             self.second_var = tk.IntVar()
             self.second_var.set('%02d' % start_time.second)
-
-            sep = ttk.Label(time_frame, text=':',
-                            style='TimeFrame.TLabel',
-                            anchor='center',
-                            padding=(6, 0))
-            sep.grid(row=0, column=4)
-            time_frame.columnconfigure(4, weight=0)
-
-            self._second_text = ttk.Label(time_frame, width=2,
-                                          textvariable=self.second_var,
-                                          style='TimeFrame.TLabel')
-            self._second_text.grid(row=0, column=5)
-            self._second_text.bind('<Button-1>', self._second_text_clicked)
-            time_frame.columnconfigure(5, weight=0)
-
-            time_frame.columnconfigure(6, weight=1)
 
             second_scale_frame = ttk.Frame(self)
             self._second_label = ttk.Label(second_scale_frame,
@@ -422,18 +390,58 @@ class TimeSelector(ttk.Frame, object):
             second_scale_frame.grid(row=2, column=0, padx=4, sticky=tk.EW)
 
             self.second_var.trace_variable('w', self._second_var_changed)
-
         else:
             self.second_var = None
+
+        if time_position:
+            time_frame = ttk.Frame(self, style='TimeFrame.TFrame', padding=4)
+            time_frame.columnconfigure(0, weight=1)
+
+            self._hour_text = ttk.Label(time_frame, width=2,
+                                        textvariable=self.hour_var,
+                                        style='TimeFrame.TLabel')
+            self._hour_text.grid(row=0, column=1)
+            time_frame.columnconfigure(1, weight=0)
+            self._hour_text.bind('<Button-1>', self._hour_text_clicked)
+
+            sep = ttk.Label(time_frame, text=':',
+                            style='TimeFrame.TLabel',
+                            anchor="center",
+                            padding=(6, 0))
+            sep.grid(row=0, column=2)
+            time_frame.columnconfigure(2, weight=0)
+
+            self._minute_text = ttk.Label(time_frame, width=2,
+                                          textvariable=self.minute_var,
+                                          style='TimeFrame.TLabel')
+            self._minute_text.grid(row=0, column=3)
+            time_frame.columnconfigure(3, weight=0)
+            self._minute_text.bind('<Button-1>', self._minute_text_clicked)
+
+            if show_seconds:
+                sep = ttk.Label(time_frame, text=':',
+                                style='TimeFrame.TLabel',
+                                anchor='center',
+                                padding=(6, 0))
+                sep.grid(row=0, column=4)
+                time_frame.columnconfigure(4, weight=0)
+
+                self._second_text = ttk.Label(time_frame, width=2,
+                                              textvariable=self.second_var,
+                                              style='TimeFrame.TLabel')
+                self._second_text.grid(row=0, column=5)
+                self._second_text.bind('<Button-1>', self._second_text_clicked)
+                time_frame.columnconfigure(5, weight=0)
+
             time_frame.columnconfigure(6, weight=1)
 
-        time_frame.grid(row=0, column=0, sticky=(tk.EW, tk.N),
-                        padx=4, pady=(4, 0))
+            if time_position == tk.TOP:
+                row = 0
+            elif time_position == tk.BOTTOM:
+                row = 2
 
-        if start_time is None:
-            self._time = datetime.datetime.time.now()
-        else:
-            self._time = start_time
+            time_frame.grid(row=row, column=0, sticky=(tk.EW, tk.N),
+                            padx=4, pady=(4, 0))
 
         if ampm:
             self._hs = TimeSelector12HourAndMinute(self, start_time, ampm=ampm)
