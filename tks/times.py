@@ -27,9 +27,9 @@ except ImportError:
     import Tkinter as tk
 
 try:
-    from tkinter import font
+    from tkinter import font as tkf
 except ImportError:
-    import tkFont as font
+    import tkFont as tkf
 
 try:
     from tkinter import ttk
@@ -60,7 +60,8 @@ class TimeEntry(ttk.Frame, object):
 
     :param master: The master frame
     :type master: :class:`ttk.Frame`
-    :param start_time: The time to display in the entry boxes
+    :param start_time: The time to display in the entry boxes. If not provided
+                       or None then today's date will be used.
     :type start_time:  :class:`datetime.time`
     :param locale: Determines the widgets in the entry.
                    Either a locale name e.g. 'en' or a babel Locale instance.
@@ -239,7 +240,32 @@ class TimeEntry(ttk.Frame, object):
 
 
 class TimeDialog(tk.Toplevel, object):
-    """Display a dialog to obtain a time from the user"""
+    """Display a dialog to obtain a time from the user
+
+    :param master: The master frame
+    :type master: :class:`ttk.Frame`
+    :param title: Window title.
+    :type title:  str
+    :param start_time: The time to display in the entry boxes. If not provided
+                       or None then today's date will be used.
+    :type start_time:  :class:`datetime.time`
+    :param locale: Determines the widgets in the entry.
+                   Either a locale name e.g. 'en' or a babel Locale instance.
+                   If :mod:`babel` is not installed ISO 8601 format will be
+                   used i.e. 24 hours (no am/pm) and ':' as a separator.
+    :type locale:  str or :class:`babel.Locale`
+    :param time_position: Controls if and where a text representation of the
+                          time is displayed. Can be one of the following
+
+                          None - Don't display
+                          tk.TOP - Display above the clock face
+                          tk.BOTTOM - Display below the clock face
+    :param show_seconds: If True a seconds value can be entered.
+    :type show_seconds:  bool
+    :param ampm: If not None display a 12 hour clock face with am/pm selection
+    :param text_font: Tk font to use. Default TkTextFont
+    :type text_font: tuple
+    """
 
     def __init__(self, master, title,
                  start_time=None,
@@ -343,8 +369,8 @@ class TimeSelector(ttk.Frame, object):
         if babel and not isinstance(locale, babel.Locale):
             locale = babel.Locale(locale)
 
-        f = font.Font(font=text_font)
-        f['weight'] = font.BOLD
+        f = tkf.Font(font=text_font)
+        f['weight'] = tkf.BOLD
         f['size'] = int(f.actual('size') * 2)
         ttk.Style().configure('TimeFrame.TLabel', font=f,
                               anchor=tk.CENTER,
@@ -832,7 +858,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
             self.am = False
 
     def _create_canvas(self):
-        f = font.Font(font=self._text_font)
+        f = tkf.Font(font=self._text_font)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 
@@ -1033,7 +1059,7 @@ class TimeSelector24Hour(ttk.Frame, object):
         self.hour = int(math.floor(((angle + 90) % 360) / 30))
 
     def _create_canvas(self, text_font):
-        f = font.Font(font=text_font)
+        f = tkf.Font(font=text_font)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 
@@ -1202,7 +1228,7 @@ class TimeSelectorMinute(ttk.Frame, object):
         self.minute = int(math.floor(((angle + 90) % 360) / 6))
 
     def _create_canvas(self, text_font):
-        f = font.Font(font=text_font)
+        f = tkf.Font(font=text_font)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 

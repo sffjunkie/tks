@@ -27,9 +27,9 @@ except ImportError:
     import Tkinter as tk
 
 try:
-    from tkinter import font
+    from tkinter import font as tkf
 except ImportError:
-    import tkFont as font
+    import tkFont as tkf
 
 try:
     from tkinter import ttk
@@ -113,7 +113,7 @@ class DateEntry(ttk.Frame, object):
             separator = '-'
 
         self._locale = locale
-        self._font = font.Font(font=text_font)
+        self._font = tkf.Font(font=text_font)
 
         self._year_var = tk.IntVar()
         self._month_var = tk.IntVar()
@@ -531,10 +531,10 @@ class DaySelector(ttk.Frame, object):
 
         self._selected_tgt = ''
 
-        self._font = font.Font(font=text_font)
+        self._font = tkf.Font(font=text_font)
         family = self._font.actual('family')
         size = self._font.actual('size')
-        self._font_bold = font.Font(font=(family, size, font.BOLD))
+        self._font_bold = tkf.Font(font=(family, size, tkf.BOLD))
 
         self._header = ttk.Frame(self, padding=(3, 0), style='tks.TFrame')
 
@@ -591,7 +591,7 @@ class DaySelector(ttk.Frame, object):
             day_idx = (self._first_week_day + idx) % 7
             days.append(self._days[day_idx])
 
-        font_info = font.Font(font=self._font)
+        font_info = tkf.Font(font=self._font)
         item_width = max(font_info.measure(day) for day in days) + 4
         linespace = font_info.metrics('linespace')
         item_height = linespace + 4

@@ -168,7 +168,11 @@ class ColorDialog(tk.Toplevel, object):
     :param master:      The master widget
     :param title:       The window title
     :type title:        str
-    :param start_color: The initial (R, G, B) tuple to display
+    :param start_color: The initial (R, G, B) tuple to display.
+
+                        If any element of the tuple is greater than 1.0 then
+                        it is assumed that all values need to be scaled by
+                        255.0 both when setting and obtaining the color value.
     :type start_color:  tuple
     """
 
@@ -184,6 +188,7 @@ class ColorDialog(tk.Toplevel, object):
         bg_color = ttk.Style().lookup('TFrame', 'background')
         ttk.Style().configure('tks.TFrame', background=bg_color)
 
+        start_color, self._scaled = self._scale_color_var(start_color)
         self.color_var = ColorVar(value=start_color)
 
         self._color_selector = ColorWheel(self, variable=self.color_var)
@@ -234,9 +239,11 @@ class ColorDialog(tk.Toplevel, object):
         self.deiconify()
 
     def _ok(self, event=None):
-        """Respond to OK button being selected"""
+        """Respond to OK button being selected."""
 
         self.color = self.color_var.get()
+        if self._scaled:
+            self.color = tuple([elem * 255.0 for elem in self.color])
         self.grab_release()
         self.destroy()
 
@@ -246,3 +253,18 @@ class ColorDialog(tk.Toplevel, object):
         self.color = None
         self.grab_release()
         self.destroy()
+
+    def _scale_color_var(self, value):
+        """If any element of the color variable is > 1.0 then divide all
+        elements by 255.0
+        """
+
+        scale = False
+        for elem in value:
+            if elem > 1.0:
+                scale = True
+
+        if scale:
+            return tuple([float(e) / 255.0 for e in value]), True
+        else:
+            return value, False

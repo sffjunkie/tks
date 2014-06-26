@@ -3,7 +3,7 @@
 """Display tints and shades of a base color.
 
 Provides 2 concrete classes both of which display a number of
-:class:`ColorSquare`\s enclosed in a :class:`LabelFrame` along with
+:class:`ColorSquare`\\s enclosed in a :class:`LabelFrame` along with
 a scale to adjust the distance between the colors.
 
 ColorTint - Displays a set of tints
@@ -31,22 +31,18 @@ __all__ = ['ColorTint', 'ColorShade']
 
 
 class _TintAndShadeBase(ttk.Frame, object):
-    """Base class for display of tints and shades.
-
-    Derived classes must implement the following
-
-    title  - A string to display
-    func   - The function to call to generate the values
-    """
+    """Base class for display of tints and shades."""
 
     def __init__(self, master,
                  variable,
+                 title,
                  count,
-                 distance):
+                 distance,
+                 func):
         super(_TintAndShadeBase, self).__init__(master)
 
-        self.title = 'Tints And Shades'
-        self.func = None
+        self.title = title
+        self.func = func
 
         if variable is not None:
             self.color_var = variable
@@ -122,7 +118,7 @@ class ColorTint(_TintAndShadeBase):
     :param count:    The number of tints to display
     :type count:     int
     :param distance:   Determines the distance between the tints specified as a
-                     min and a max range. Min and max between 1.0 and 0.0
+                       min and a max range. Min and max between 1.0 and 0.0
     :type distance:    tuple
     """
 
@@ -130,10 +126,9 @@ class ColorTint(_TintAndShadeBase):
                  variable,
                  count=5,
                  distance=(0.95, 0.7)):
-        self.title = 'Tints'
-        self.func = rgb_tints
-        super(ColorTint, self).__init__(master, variable,
-                                        count=count, distance=distance)
+        super(ColorTint, self).__init__(master, variable, 'Tints',
+                                        count=count, distance=distance,
+                                        func=rgb_tints)
 
 
 class ColorShade(_TintAndShadeBase):
@@ -152,7 +147,6 @@ class ColorShade(_TintAndShadeBase):
                  variable,
                  count=5,
                  distance=(0.95, 0.7)):
-        self.title = 'Shades'
-        self.func = rgb_shades
-        super(ColorShade, self).__init__(master, variable,
-                                         count=count, distance=distance)
+        super(ColorShade, self).__init__(master, variable, 'Shades',
+                                         count=count, distance=distance,
+                                         func=rgb_shades)

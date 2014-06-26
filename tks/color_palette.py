@@ -21,9 +21,9 @@ except ImportError:
     import ttk
 
 try:
-    from tkinter import font
+    from tkinter import font as tkf
 except ImportError:
-    import tkFont as font
+    import tkFont as tkf
 
 from tks.color_var import ColorVar
 from tks.color_funcs import rgb_to_hex_string, hex_string_to_rgb
@@ -98,8 +98,8 @@ class PaletteSelector(ttk.Frame, object):
         else:
             self.color_var = ColorVar()
 
-        x11_colors = ColorPalette('x11.txt', read_only=True)
-        css3_colors = ColorPalette('css3.txt', read_only=True)
+        x11_colors = Palette('x11.txt', read_only=True)
+        css3_colors = Palette('css3.txt', read_only=True)
 
         self._color_databases = {
             'X11': x11_colors,
@@ -136,7 +136,7 @@ class PaletteSelector(ttk.Frame, object):
 
         header_frame.grid(row=0, column=0, sticky=(tk.N, tk.EW), columnspan=2)
 
-        f = font.Font(font=('TkTextFont',))
+        f = tkf.Font(font=('TkTextFont',))
         max_name_len = 0
         for color_db in self._color_databases.values():
             max_name_len = max(max_name_len,
@@ -381,7 +381,7 @@ class PaletteSelector(ttk.Frame, object):
             self.color_var.set(color)
 
 
-class ColorPalette(dict):
+class Palette(dict):
     """A palette of colors."""
 
     def __init__(self, name, read_only=False):
