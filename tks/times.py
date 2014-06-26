@@ -847,7 +847,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
                         dial_radius + (PADDING / 2))
 
 
-        dial_rect = rect_at(self._center[0], self._center[1], dial_radius)
+        dial_rect = rect_at(self._center, dial_radius)
         self._canvas.create_oval(dial_rect,
                                  fill=TksColors.Fill,
                                  tags='face',
@@ -870,8 +870,8 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
                     tag = 'h%d' % i
                     text = str(i)
 
-                oval_rect = rect_at(self._center[0] + x_offset,
-                                    self._center[1] + y_offset,
+                oval_rect = rect_at((self._center[0] + x_offset,
+                                     self._center[1] + y_offset),
                                     selection_radius)
                 iid = self._canvas.create_oval(oval_rect,
                                                fill=TksColors.Fill,
@@ -930,7 +930,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
                                     outer_radius - selection_radius,
                                     mode='hour')
 
-        center_circle_rect = rect_at(self._center[0], self._center[1],
+        center_circle_rect = rect_at(self._center,
                                      PADDING)
         self._canvas.create_oval(center_circle_rect,
                                  fill=TksColors.Select,
@@ -1045,7 +1045,7 @@ class TimeSelector24Hour(ttk.Frame, object):
         self._center = (dial_radius + (PADDING / 2),
                         dial_radius + (PADDING / 2))
 
-        dial_rect = rect_at(self._center[0], self._center[1], dial_radius)
+        dial_rect = rect_at(self._center, dial_radius)
         dial = self._canvas.create_oval(dial_rect,
                                         fill=TksColors.Fill,
                                         tags='face',
@@ -1072,8 +1072,8 @@ class TimeSelector24Hour(ttk.Frame, object):
                 tag = 'h%d' % i
                 text = '%02d' % i
 
-                oval_rect = rect_at(self._center[0] + x_offset,
-                                    self._center[1] + y_offset,
+                oval_rect = rect_at((self._center[0] + x_offset,
+                                     self._center[1] + y_offset),
                                     selection_radius)
                 iid = self._canvas.create_oval(oval_rect,
                                                fill='',
@@ -1102,7 +1102,7 @@ class TimeSelector24Hour(ttk.Frame, object):
                                           outer_radius - selection_radius,
                                           mode='hour')
 
-        center_circle_rect = rect_at(self._center[0], self._center[1], PADDING)
+        center_circle_rect = rect_at(self._center, PADDING)
         self._canvas.create_oval(center_circle_rect,
                                  fill=TksColors.Select,
                                  outline=TksColors.Outline)
@@ -1215,7 +1215,7 @@ class TimeSelectorMinute(ttk.Frame, object):
         self._center = (dial_radius + (PADDING / 2),
                         dial_radius + (PADDING / 2))
 
-        dial_rect = rect_at(self._center[0], self._center[1], dial_radius)
+        dial_rect = rect_at(self._center, dial_radius)
         dial = self._canvas.create_oval(dial_rect,
                                         fill=TksColors.Fill,
                                         tags='face',
@@ -1238,8 +1238,8 @@ class TimeSelectorMinute(ttk.Frame, object):
                 tag = 'h%d' % i
                 text = '%02d' % i
 
-                oval_rect = rect_at(self._center[0] + x_offset,
-                                    self._center[1] + y_offset,
+                oval_rect = rect_at((self._center[0] + x_offset,
+                                     self._center[1] + y_offset),
                                     selection_radius)
                 iid = self._canvas.create_oval(oval_rect,
                                                fill=TksColors.Fill,
@@ -1264,8 +1264,7 @@ class TimeSelectorMinute(ttk.Frame, object):
         self._minute_indicator = MinuteIndicator(self._canvas, self._center,
                                                  hand_radius)
 
-        center_circle_rect = rect_at(self._center[0], self._center[1],
-                                     PADDING)
+        center_circle_rect = rect_at(self._center, PADDING)
 
         self._canvas.create_oval(center_circle_rect,
                                  fill=TksColors.Select,
@@ -1357,7 +1356,7 @@ class MinuteIndicator(object):
             x = self._center[0] + math.sin(math.radians(angle)) * self._radius
             y = self._center[1] - math.cos(math.radians(angle)) * self._radius
 
-            rect = rect_at(x, y, self._indicator_radius)
+            rect = rect_at((x, y), self._indicator_radius)
         else:
             rect = self._offscreen
 

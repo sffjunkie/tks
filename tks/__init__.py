@@ -36,11 +36,12 @@ def rect_center(rect):
             top + abs(((rect[3] - rect[1]) / 2)))
 
 
-def rect_at(x, y, size, size_y=-1):
-    """Returns a rectangle centred at `x,y`. If only `size` is provided then
+def rect_at(point, size, size_y=-1):
+    """Returns a rectangle centred at `point`. If only `size` is provided then
     the rectangle will be a square. The dimensions will be size * 2"""
 
     if size_y == -1:
         size_y = size
 
-    return x - size, y - size_y, x + size, y + size_y
+    return (point[0] - size, point[1] - size_y,
+            point[0] + size, point[1] + size_y)
