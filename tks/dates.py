@@ -71,7 +71,7 @@ class DateEntry(ttk.Frame, object):
     :param master: The master frame
     :type master: :class:`ttk.Frame`
     :param start_date: The date to display in the entry boxes
-    :type start_date:  datetime.date or datetime.datetime
+    :type start_date:  :class:`datetime.date` or :class:`datetime.datetime`
     :param locale: Determines the order of the widgets in the entry.
                    Either a locale name e.g. 'en' or a babel Locale
                    instance. If :mod:`babel` is not installed ISO 8601
@@ -242,7 +242,7 @@ class DateDialog(tk.Toplevel, object):
     :type title:   str
     :param start_date: The date to display in the entry boxes or None for
                        today's date
-    :type start_date:  datetime.date or datetime.datetime
+    :type start_date:  :class:`datetime.date` or :class:`datetime.datetime`
     :param locale: Determines how today's name is displayed
                    Either a locale name e.g. 'en' or a babel Locale
                    instance. If :mod:`babel` is not installed ISO 8601
