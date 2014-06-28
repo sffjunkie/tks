@@ -123,42 +123,52 @@ def color_string_to_color(value):
     return None
 
 
-def rgb_tints(rgb, base_factor, count):
+def rgb_tints(rgb, base_factor, count, linear=True):
     """Produce a list of tints from the base color
 
     :param rgb: The RGB value for which to calculate the tints
     :type rgb:  tuple
-    :param base_factor: Determines the distance between the returned colors
+    :param base_factor: Determines the factor between the returned colors
     :type base_factor:  float
     :param count: The number of tints to return
     :type count: int
     """
-    distance = base_factor
+    factor = base_factor
     tints = []
     number_to_calc = (2 * count) - 1
     for dummy in range(number_to_calc):
-        tints.append(rgb_tint(rgb, distance))
-        distance = distance * distance
+        if factor < 1.0:
+            tints.append(rgb_tint(rgb, factor))
+        else:
+            tints.append(None)
+
+        if linear:
+            factor += base_factor
+        else:
+            factor *= (1.0 + base_factor)
 
     # Remove any duplicates from the end
     for dummy in range(number_to_calc - 1):
         t1 = tints[-1]
         t2 = tints[-2]
 
-        if int(t1[0] * 255) == int(t2[0] * 255) and \
-           int(t1[1] * 255) == int(t2[1] * 255) and \
-           int(t1[2] * 255) == int(t2[2] * 255):
-
+        if not t1:
             tints.pop()
-        else:
-            break
+        elif t1 and t2:
+            if int(t1[0] * 255) == int(t2[0] * 255) and \
+               int(t1[1] * 255) == int(t2[1] * 255) and \
+               int(t1[2] * 255) == int(t2[2] * 255):
+
+                tints.pop()
+            else:
+                break
 
     tints = tints[:count]
-    tints.reverse()
+    #tints.reverse()
     return tints
 
 
-def rgb_tint(rgb, distance=0.8):
+def rgb_tint(rgb, distance=0.05):
     """Create a tinted version of the RGB color
 
     :param rgb: The RGB value for which to calculate the tint
@@ -167,58 +177,53 @@ def rgb_tint(rgb, distance=0.8):
                      the tint
     :type distance:  float
     """
-    r = rgb[0]
-    r += ((1.0 - r) * distance)
-    if r > 1.0:
-        r = 1.0
-
-    g = rgb[1]
-    g += ((1.0 - g) * distance)
-    if g > 1.0:
-        g = 1.0
-
-    b = rgb[2]
-    b += ((1.0 - b) * distance)
-    if b > 1.0:
-        b = 1.0
-
-    return r, g, b
+    return _color_transform(rgb, distance)
 
 
-def rgb_shades(rgb, base_factor, count):
+def rgb_shades(rgb, base_factor, count, linear=True):
     """Produce a list of shades from the base color
 
     :param rgb: The RGB value for which to calculate the shades
     :type rgb:  tuple
-    :param base_factor: Determines the distance between the returned colors
+    :param base_factor: Determines the factor between the returned colors
     :type base_factor:  float
     :param count: The number of shades to return
     :type count: int
     """
-    distance = base_factor
+    factor = base_factor
     shades = []
     number_to_calc = (2 * count) - 1
     for dummy in range(number_to_calc):
-        shades.append(rgb_shade(rgb, distance))
-        distance = distance * distance
+        if factor < 1.0:
+            shades.append(rgb_shade(rgb, factor))
+        else:
+            shades.append(None)
+
+        if linear:
+            factor += base_factor
+        else:
+            factor *= (1.0 - base_factor)
 
     # Remove any duplicates from the end
     for dummy in range(number_to_calc - 1):
         s1 = shades[-1]
         s2 = shades[-2]
 
-        if int(s1[0] * 255) == int(s2[0] * 255) and \
-           int(s1[1] * 255) == int(s2[1] * 255) and \
-           int(s1[2] * 255) == int(s2[2] * 255):
-
+        if not s1:
             shades.pop()
-        else:
-            break
+        elif s1 and s2:
+            if int(s1[0] * 255) == int(s2[0] * 255) and \
+               int(s1[1] * 255) == int(s2[1] * 255) and \
+               int(s1[2] * 255) == int(s2[2] * 255):
+
+                shades.pop()
+            else:
+                break
 
     return shades[:count]
 
 
-def rgb_shade(rgb, distance=.8):
+def rgb_shade(rgb, distance=0.05):
     """Create a shade of the RGB color
 
     :param rgb: The RGB value for which to calculate the tint
@@ -227,4 +232,8 @@ def rgb_shade(rgb, distance=.8):
                      the shade
     :type distance:  float
     """
-    return rgb[0] * distance, rgb[1] * distance, rgb[2] * distance
+    return _color_transform(rgb, -distance)
+
+
+def _color_transform(color, luminosity=1.0):
+    return tuple([min(max(0.0, elem + luminosity), 1.0) for elem in color])

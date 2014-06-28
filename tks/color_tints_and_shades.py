@@ -81,8 +81,10 @@ class _TintAndShadeBase(ttk.Frame, object):
                                        command=self._factor_update)
         self._factor_scale.grid(row=1, column=1, columnspan=self._count - 2,
                                 sticky=tk.EW)
-        txt = ttk.Label(frame, width=4, textvariable=self._distance_var)
-        txt.grid(row=1, column=self._count - 1, sticky=tk.E)
+        txt = ttk.Label(frame, width=4, textvariable=self._distance_var,
+                        anchor=tk.W, padding=(6, 0))
+        txt.grid(row=1, column=self._count - 1, sticky=tk.EW)
+
 
         self._update()
 
@@ -120,15 +122,15 @@ class ColorTint(_TintAndShadeBase):
     :type variable:  :class:`tks.color_var.ColorVar`
     :param count:    The number of tints to display
     :type count:     int
-    :param distance:   Determines the distance between the tints specified as a
-                       min and a max range. Min and max between 1.0 and 0.0
-    :type distance:    tuple
+    :param distance: Determines the distance between the tints specified as a
+                     min and a max range.
+    :type distance:  tuple
     """
 
     def __init__(self, master,
                  variable,
                  count=5,
-                 distance=(0.95, 0.7)):
+                 distance=(0.05, 0.2)):
         super(ColorTint, self).__init__(master, variable, _('Tints'),
                                         count=count, distance=distance,
                                         func=rgb_tints)
@@ -141,15 +143,15 @@ class ColorShade(_TintAndShadeBase):
     :type variable:  :class:`tks.color_var.ColorVar`
     :param count:    The number of shades to display
     :type count:     int
-    :param distance:   Determines the distance between the shades specified as a
-                     min and a max range. Min and max between 1.0 and 0.0
-    :type distance:    tuple
+    :param distance: Determines the distance between the shades specified as a
+                     min and a max range.
+    :type distance:  tuple
     """
 
     def __init__(self, master,
                  variable,
                  count=5,
-                 distance=(0.95, 0.7)):
+                 distance=(0.05, 0.2)):
         super(ColorShade, self).__init__(master, variable, _('Shades'),
                                          count=count, distance=distance,
                                          func=rgb_shades)
