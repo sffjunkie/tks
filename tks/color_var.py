@@ -1,6 +1,6 @@
 # Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
 
-"""A 3 element color variable"""
+"""A 3 element color variable."""
 
 try:
     import tkinter as tk
@@ -14,7 +14,7 @@ except NameError:
 
 
 class ColorVar(tk.Variable, object):
-    """A 3 element color variable"""
+    """A Tkinter Variable subclass to store an RGB color value."""
 
     def __init__(self, master=None, value=None, name=None):
         if value is not None:
@@ -25,15 +25,19 @@ class ColorVar(tk.Variable, object):
         super(ColorVar, self).__init__(master, value, name)
 
     def get(self):
+        """Get the stored color value."""
+
         value = self._tk.globalgetvar(self._name)
         if isinstance(value, tuple):
             return value
         else:
             return eval(str(value))
 
-    def set(self, value):
-        if isinstance(value, StringType):
-            value = eval(value)
+    def set(self, color_tuple):
+        """Set the color color_tuple to be stored."""
 
-        value = tuple([float(x) for x in value[:3]])
-        return tk.Variable.set(self, str(value))
+        if isinstance(color_tuple, StringType):
+            color_tuple = eval(color_tuple)
+
+        color_tuple = tuple([float(x) for x in color_tuple[:3]])
+        return tk.Variable.set(self, color_tuple)
