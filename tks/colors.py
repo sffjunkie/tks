@@ -26,13 +26,14 @@ DEFAULT_FONT = ('TkTextFont',)
 
 
 class ColorEntry(ttk.Frame, object):
-    """Display an entry to enter color information and a button to display an
+    """Displays an entry to enter color information and a button to display an
     entry dialog.
 
     :param master: Tk master widget
     :param start_color:  The starting color.
 
-                         Colors can be specified using any of the following forms ::
+                         Colors can be specified using any of the following
+                         forms ::
 
                              #abc or #abcdef
                              rgb(1.0, 1.0, 1.0)

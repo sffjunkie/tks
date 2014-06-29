@@ -332,7 +332,24 @@ class DateDialog(tk.Toplevel, object):
 
 
 class DateSelector(ttk.Frame, object):
-    """A date selection widget"""
+    """A date selection widget
+
+    :param master: The master frame
+    :type master:  :class:`ttk.Frame`
+    :param start_date: The date to display in the entry boxes or None for
+                       today's date
+    :type start_date:  :class:`datetime.date` or :class:`datetime.datetime`
+    :param locale: Determines how today's name is displayed
+                   Either a locale name e.g. 'en' or a babel Locale
+                   instance. If :mod:`babel` is not installed ISO 8601
+                   format will be used.
+    :type locale:  str or :class:`babel.Locale`
+    :param target_type: `TargetShape.Square`, `TargetShape.Rectangle` or
+                        `TargetShape.Circle`
+    :type target_type:  :class:`TargetShape`
+    :param font: Tk font to use. Default ``(TkTextFont,)``
+    :type font: tuple
+    """
 
     def __init__(self, master,
                  start_date,
