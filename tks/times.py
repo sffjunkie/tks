@@ -1,8 +1,6 @@
 # Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
 
-"""Tkinter time handling.
-
-Provides 3 classes to obtain a time from a user.
+"""tkStuff provides 3 classes to obtain a time from a user.
 
 :class:`TimeEntry`
     Displays entry boxes for hours, minutes and optionally seconds and
@@ -70,7 +68,7 @@ class TimeEntry(ttk.Frame, object):
     :type locale:  str or :class:`babel.Locale`
     :param show_seconds: If True a seconds value can be entered.
     :type show_seconds:  bool
-    :param font: Tk font to use. Default TkDefaultFont
+    :param font: Tk font to use. Default TkTextFont
     :type font: tuple
     """
 

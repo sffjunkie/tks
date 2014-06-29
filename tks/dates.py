@@ -1,8 +1,6 @@
 # Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
 
-"""Tkinter date handling.
-
-Provides 3 classes to obtain a date from a user.
+"""tkStuff provides 3 classes to obtain a date from a user.
 
 :class:`DateEntry`
     Displays entry boxes for year, month and day as well as a button to
