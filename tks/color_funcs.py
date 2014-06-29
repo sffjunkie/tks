@@ -123,29 +123,29 @@ def color_string_to_color(value):
     return None
 
 
-def rgb_tints(rgb, base_factor, count, linear=True):
+def rgb_tints(rgb, base_percent, count, linear=True):
     """Produce a list of tints from the base color
 
     :param rgb: The RGB value for which to calculate the tints
     :type rgb:  tuple
-    :param base_factor: Determines the factor between the returned colors
-    :type base_factor:  float
+    :param base_percent: Determines the factor between the returned colors
+    :type base_percent:  float
     :param count: The number of tints to return
     :type count: int
     """
-    factor = base_factor
+    factor = base_percent
     tints = []
     number_to_calc = (2 * count) - 1
     for dummy in range(number_to_calc):
-        if factor < 1.0:
+        if factor < 100:
             tints.append(rgb_tint(rgb, factor))
         else:
             tints.append(None)
 
         if linear:
-            factor += base_factor
+            factor += base_percent
         else:
-            factor *= (1.0 + base_factor)
+            factor *= (1.0 + (base_percent / 100.0))
 
     # Remove any duplicates from the end
     for dummy in range(number_to_calc - 1):
@@ -168,41 +168,41 @@ def rgb_tints(rgb, base_factor, count, linear=True):
     return tints
 
 
-def rgb_tint(rgb, distance=0.05):
+def rgb_tint(rgb, percent=5):
     """Create a tinted version of the RGB color
 
     :param rgb: The RGB value for which to calculate the tint
     :type rgb:  tuple
-    :param distance: Determines the distance between the specified color and
+    :param percent: Determines the percent between the specified color and
                      the tint
-    :type distance:  float
+    :type percent:  float
     """
-    return _color_transform(rgb, distance)
+    return _color_transform(rgb, percent / 100)
 
 
-def rgb_shades(rgb, base_factor, count, linear=True):
+def rgb_shades(rgb, base_percent, count, linear=True):
     """Produce a list of shades from the base color
 
     :param rgb: The RGB value for which to calculate the shades
     :type rgb:  tuple
-    :param base_factor: Determines the factor between the returned colors
-    :type base_factor:  float
+    :param base_percent: Determines the factor between the returned colors
+    :type base_percent:  float
     :param count: The number of shades to return
     :type count: int
     """
-    factor = base_factor
+    factor = base_percent
     shades = []
     number_to_calc = (2 * count) - 1
     for dummy in range(number_to_calc):
-        if factor < 1.0:
+        if factor < 100:
             shades.append(rgb_shade(rgb, factor))
         else:
             shades.append(None)
 
         if linear:
-            factor += base_factor
+            factor += base_percent
         else:
-            factor *= (1.0 - base_factor)
+            factor *= (1.0 - (base_percent / 100.0))
 
     # Remove any duplicates from the end
     for dummy in range(number_to_calc - 1):
@@ -223,16 +223,16 @@ def rgb_shades(rgb, base_factor, count, linear=True):
     return shades[:count]
 
 
-def rgb_shade(rgb, distance=0.05):
+def rgb_shade(rgb, percent=5):
     """Create a shade of the RGB color
 
     :param rgb: The RGB value for which to calculate the tint
     :type rgb:  tuple
-    :param distance: Determines the distance between the specified color and
+    :param percent: Determines the percent between the specified color and
                      the shade
-    :type distance:  float
+    :type percent:  float
     """
-    return _color_transform(rgb, -distance)
+    return _color_transform(rgb, -percent / 100)
 
 
 def _color_transform(color, luminosity=1.0):
