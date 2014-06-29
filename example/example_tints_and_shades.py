@@ -15,9 +15,9 @@ from tks.color_tints_and_shades import ColorTint, ColorShade
 
 if __name__ == '__main__':
     root = tk.Tk()
-    root.title('Color Palette')
+    root.title('Tints and Shades')
 
-    color = ColorVar(value=(0.75, 0.85, 0.75))
+    color = ColorVar(value=(0.35, 0.85, 0.75))
 
     tints = ColorTint(root, color)
     tints.grid(row=0, column=0)
