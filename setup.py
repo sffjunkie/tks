@@ -27,5 +27,6 @@ setup(name='tks',
       'tks': ['tks/*.txt'],
     },
     include_package_data=True,
-    requires=['babel', 'PIL'],
+    requires=['PIL'],
+    extras_require={'idth': ['babel']},
 )
