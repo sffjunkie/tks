@@ -4,7 +4,7 @@
 
 Provides 2 concrete classes both of which display a number of
 :class:`ColorSquare`\\s enclosed in a :class:`LabelFrame` along with
-a scale to adjust the distance between the colors.
+a scale to adjust the percent between the colors.
 
 ColorTint - Displays a set of tints
 ColorShade - Displays a set of shades
@@ -40,7 +40,7 @@ class _TintAndShadeBase(ttk.Frame, object):
                  variable,
                  title,
                  count,
-                 distance,
+                 percent,
                  func):
         super(_TintAndShadeBase, self).__init__(master)
 
@@ -68,20 +68,20 @@ class _TintAndShadeBase(ttk.Frame, object):
 
         frame.grid(row=0, column=0, sticky=tk.EW)
 
-        self._distance = distance[0]
-        self._distance_var = tk.DoubleVar()
-        self._distance_var.set(self._distance)
+        self._percent = percent[0]
+        self._percent_var = tk.DoubleVar()
+        self._percent_var.set(self._percent)
         txt = ttk.Label(frame, text=_('Distance'))
         txt.grid(row=1, column=0)
 
         self._factor_scale = ttk.Scale(frame,
-                                       from_=distance[0],
-                                       to=distance[1],
-                                       variable=self._distance_var,
-                                       command=self._factor_update)
+                                       from_=percent[0],
+                                       to=percent[1],
+                                       variable=self._percent_var,
+                                       command=self._percent_update)
         self._factor_scale.grid(row=1, column=1, columnspan=self._count - 2,
                                 sticky=tk.EW)
-        txt = ttk.Label(frame, width=4, textvariable=self._distance_var,
+        txt = ttk.Label(frame, width=4, textvariable=self._percent_var,
                         anchor=tk.W, padding=(6, 0))
         txt.grid(row=1, column=self._count - 1, sticky=tk.EW)
 
@@ -93,19 +93,21 @@ class _TintAndShadeBase(ttk.Frame, object):
 
         self._update()
 
-    def _factor_update(self, value):
+    def _percent_update(self, value):
         """Update for new factor."""
 
-        self._distance = math.floor(float(value) * 20) / 20
-        self._distance_var.set('%0.2f' % self._distance)
-        self._update()
+        new_percent = math.floor(float(value))
+        self._percent_var.set('%d' % new_percent)
+        if new_percent != self._percent:
+            self._percent = new_percent
+            self._update()
 
     def _update(self):
         """Update the color squares"""
 
         if callable(self.func):
             tints = self.func(self.color_var.get(),
-                              self._distance,
+                              self._percent,
                               self._count)
 
             for idx, square in enumerate(self._tint_squares):
@@ -122,17 +124,18 @@ class ColorTint(_TintAndShadeBase):
     :type variable:  :class:`tks.color_var.ColorVar`
     :param count:    The number of tints to display
     :type count:     int
-    :param distance: Determines the distance between the tints specified as a
+    :param percent: Determines the percent between the tints specified as a
                      min and a max range.
-    :type distance:  tuple
+    :type percent:  tuple
     """
 
     def __init__(self, master,
                  variable,
                  count=5,
-                 distance=(0.05, 0.2)):
+                 percent=(1, 5)):
         super(ColorTint, self).__init__(master, variable, _('Tints'),
-                                        count=count, distance=distance,
+                                        count=count,
+                                        percent=percent,
                                         func=rgb_tints)
 
 
@@ -143,15 +146,16 @@ class ColorShade(_TintAndShadeBase):
     :type variable:  :class:`tks.color_var.ColorVar`
     :param count:    The number of shades to display
     :type count:     int
-    :param distance: Determines the distance between the shades specified as a
-                     min and a max range.
-    :type distance:  tuple
+    :param percent: Determines the percentage percent between the shades
+                     specified as a min and a max range.
+    :type percent:  tuple
     """
 
     def __init__(self, master,
                  variable,
                  count=5,
-                 distance=(0.05, 0.2)):
+                 percent=(1, 5)):
         super(ColorShade, self).__init__(master, variable, _('Shades'),
-                                         count=count, distance=distance,
+                                         count=count,
+                                         percent=percent,
                                          func=rgb_shades)
