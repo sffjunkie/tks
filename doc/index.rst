@@ -43,9 +43,11 @@ Dependencies
 tkStuff has one required dependency and an optional one. Either
 `Pillow`_ or `PIL`_ are required and `Babel`_ is optional.
 
-Babel is used to provide improved date and time handling and if Babel not
-present dates are limited to the ISO 8601 YYYY-MM-DD format and times
-are limited to a 24 hour clock.
+* PIL is used to generate the color wheel.
+
+* Babel is used to provide improved date and time handling and if Babel not
+  present dates are limited to the ISO 8601 YYYY-MM-DD format and times
+  are limited to a 24 hour clock.
 
 Installation
 ============
