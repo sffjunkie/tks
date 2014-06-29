@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-06-23 10:56+0100\n"
+"POT-Creation-Date: 2014-06-29 11:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,35 +17,72 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: colors.py:57
+#: tks/color_palette.py:117
+msgid "Palette:"
+msgstr ""
+
+#: tks/color_palette.py:126
+msgid "Sort By:"
+msgstr ""
+
+#: tks/color_palette.py:397
+msgid "Unable to set item. This database is read only"
+msgstr ""
+
+#: tks/color_palette.py:404
+msgid "Unable to delete item. This database is read only"
+msgstr ""
+
+#: tks/color_palette.py:431
+#, python-format
+msgid "Color name %s not in database."
+msgstr ""
+
+#: tks/color_tints_and_shades.py:74
+msgid "Distance"
+msgstr ""
+
+#: tks/color_tints_and_shades.py:136
+msgid "Tints"
+msgstr ""
+
+#: tks/color_tints_and_shades.py:158
+msgid "Shades"
+msgstr ""
+
+#: tks/colors.py:61
 msgid "Unrecognised start color"
 msgstr ""
 
-#: colors.py:61 dates.py:160
+#: tks/colors.py:65 tks/dates.py:158
 msgid "Select..."
 msgstr ""
 
-#: colors.py:137
-msgid "Select a color"
+#: tks/colors.py:149
+msgid "Select a Color"
 msgstr ""
 
-#: colors.py:195 dates.py:290 times.py:279
+#: tks/colors.py:214 tks/dates.py:288 tks/times.py:306
 msgid "OK"
 msgstr ""
 
-#: colors.py:198 dates.py:294 times.py:282
+#: tks/colors.py:217 tks/dates.py:292 tks/times.py:309
 msgid "Cancel"
 msgstr ""
 
-#: dates.py:226
+#: tks/dates.py:224
 msgid "Select a Date..."
 msgstr ""
 
-#: times.py:231
+#: tks/times.py:230
 msgid "Select a Time..."
 msgstr ""
 
-#: times.py:410
+#: tks/times.py:403
 msgid "Seconds"
+msgstr ""
+
+#: tks/tooltip.py:41
+msgid "No message provided"
 msgstr ""
 
