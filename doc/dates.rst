@@ -1,10 +1,5 @@
-Date Classes
-------------
-
-.. toctree::
-   :maxdepth: 1
-   :hidden:
-
+Date Handling
+=============
 
 .. automodule:: tks.dates
 
@@ -25,3 +20,7 @@ Date Classes
 .. autoclass:: tks.dates.DateSelector
    :members:
    :member-order: bysource
+   
+.. autoclass:: tks.dates.TargetShape
+   :members:
+   

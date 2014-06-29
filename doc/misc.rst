@@ -1,6 +1,16 @@
 Miscellaneous Stuff
 ===================
 
+.. toctree::
+   :hidden:
+
+
+The :mod:`tks` Module
+---------------------
+
+.. automodule:: tks
+   :members:
+
 Color Functions (tks.color_funcs)
 ---------------------------------
 

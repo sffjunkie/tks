@@ -1,5 +1,5 @@
-Color Classes
--------------
+Color Handling
+==============
 
 .. automodule:: tks.colors
 
@@ -47,10 +47,26 @@ Color Classes
 .. autoclass:: tks.color_square.ColorSquare
    :members:
    :member-order: bysource
+
+.. _color-tints-and-shades-classes:
+.. _color-tint-class:
+   
+.. autoclass:: tks.color_tints_and_shades.ColorTint
+   :members:
+   :member-order: bysource
+   
+.. _color-shade-class:
+   
+.. autoclass:: tks.color_tints_and_shades.ColorShade
+   :members:
+   :member-order: bysource
    
 .. _color-palette-selector-class:
    
 .. autoclass:: tks.color_palette.PaletteSelector
    :members:
    :member-order: bysource
+   
+.. autoclass:: tks.color_var.ColorVar
+   :members:
    

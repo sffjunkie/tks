@@ -1,17 +1,17 @@
 .. _gallery:
 
 Gallery
--------
+=======
 
 .. toctree::
-   :maxdepth: 1
    :hidden:
-
 
 Shown below are examples of the widgets currently provided with tkStuff.
 
+.. _gallery-date:
+
 Date
-~~~~
+----
 
 .. figure:: .static/date_entry.png
    :class: example
@@ -23,23 +23,35 @@ Date
    
    Date Selection Dialog (See the :ref:`DateDialog <date-dialog-class>` class)
 
+.. _gallery-time:
+
 Time
-~~~~
+----
 
 .. figure:: .static/time_entry.png
    :class: example
    
-   Time Entry Widget (See the :ref:`TimeEntry <time-entry-class>` class)
+   Time Entry Dialog (See the :ref:`TimeEntry <time-entry-class>` class)
 
-.. figure:: .static/time_dialog.png
+The next 2 time selection dialog styles are chosen based on the Locale
+e.g. for the `en_US` locale a 12 hour dialog is displayed.
+
+.. figure:: .static/time_12_hour.png
    :class: example
    
-   Time Selection Dialog (See the :ref:`TimeDialog <time-dialog-class>` class)
+   12 Hour Time Dialog Widget with AM/PM.
+   (See the :ref:`TimeDialog <time-dialog-class>` class)
 
-.. _Color:
+.. figure:: .static/time_24_hour.png
+   :class: example
+   
+   24 Hour Time Dialog Widget with Separate Minute Selection (See the
+   :ref:`TimeDialog <time-dialog-class>` class)
+
+.. _gallery-color:
 
 Color
-~~~~~
+-----
 
 .. figure:: .static/color_entry.png
    :class: example
@@ -67,8 +79,17 @@ Color
    
    Color Square Widget (See the :ref:`ColorSquare <color-square-class>` class)
 
+.. _gallery-color-palette:
+
 .. figure:: .static/color_palette.png
    :class: example
    
-   Color Palette Selector Widget (See the :ref:`PaletteSelector <color-palette-selector-class>` class)
+   Color Palette Selector Widget (See the :ref:`PaletteSelector
+   <color-palette-selector-class>` class)
+
+.. figure:: .static/color_tints_and_shades.png
+   :class: example
+   
+   Tints and Shades Widgets (See the :ref:`ColorTint <color-tint-class>`
+   and :ref:`ColorShade <color-shade-class>` classes)
    

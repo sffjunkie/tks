@@ -1,6 +1,6 @@
-Time Classes
-------------
-   
+Time Handling
+=============
+
 .. automodule:: tks.times
 
 .. _time-entry-class:
