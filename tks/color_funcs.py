@@ -20,41 +20,50 @@ def rgb_to_hex_string(value):
     return '#%s' % color
 
 
-def rgb_to_rgb_string(value):
+def rgb_to_rgb_string(value, dp=3):
     """Convert from an (R, G, B) tuple to an RGB string.
 
     :param value: The RGB value to convert
     :type value:  tuple
+    :param dp: Number of decimal places in the string
+    :type dp: int
 
     R, G and B should be in the range 0.0 - 1.0
     """
-    value = 'rgb(%s)' % (','.join(['%.02f' % x for x in value]))
+    format_str = '%%.0%df' % dp
+    value = 'rgb(%s)' % (','.join([format_str % x for x in value]))
     return value
 
 
-def rgb_to_hsv_string(value):
+def rgb_to_hsv_string(value, dp=3):
     """Convert from an (R, G, B) tuple to an HSV string.
 
     :param value: The RGB value to convert
     :type value:  tuple
+    :param dp: Number of decimal places in the string
+    :type dp: int
 
     R, G and B should be in the range 0.0 - 1.0
     """
     hsv = colorsys.rgb_to_hsv(*value)
-    hsv = 'hsv(%s)' % (','.join(['%.02f' % x for x in hsv]))
+    format_str = '%%.0%df' % dp
+    hsv = 'hsv(%s)' % (','.join([format_str % x for x in hsv]))
     return hsv
 
 
-def rgb_to_hls_string(value):
+def rgb_to_hls_string(value, dp=3):
     """Convert from an (R, G, B) tuple to an HLS string.
 
     :param value: The RGB value to convert
     :type value:  tuple
+    :param dp: Number of decimal places in the string
+    :type dp: int
 
     R, G and B should be in the range 0.0 - 1.0
     """
     hls = colorsys.rgb_to_hls(*value)
-    hls = 'hls(%s)' % (','.join(['%.02f' % x for x in hls]))
+    format_str = '%%.0%df' % dp
+    hls = 'hls(%s)' % (','.join([format_str % x for x in hls]))
     return hls
 
 
