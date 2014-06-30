@@ -217,11 +217,11 @@ class ColorSquare(ttk.Frame, object):
             if info == 'rgbhex':
                 t1 = color_funcs.rgb_to_hex_string(self.rgb)
             elif info == 'rgb':
-                t1 = color_funcs.rgb_to_rgb_string(self.rgb)
+                t1 = color_funcs.rgb_to_rgb_string(self.rgb, dp=2)
             elif info == 'hsv':
-                t1 = color_funcs.rgb_to_hsv_string(self.rgb)
+                t1 = color_funcs.rgb_to_hsv_string(self.rgb, dp=2)
             elif info == 'hls':
-                t1 = color_funcs.rgb_to_hls_string(self.rgb)
+                t1 = color_funcs.rgb_to_hls_string(self.rgb, dp=2)
 
             t = t + '%s\n' % t1
 
