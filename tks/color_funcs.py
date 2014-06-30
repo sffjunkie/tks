@@ -184,7 +184,7 @@ def rgb_tint(rgb, percent=5):
     :type rgb:  tuple
     :param percent: Determines the percent between the specified color and
                      the tint
-    :type percent:  float
+    :type percent:  int
     """
     return _color_transform(rgb, percent / 100)
 
@@ -197,7 +197,7 @@ def rgb_shades(rgb, base_percent, count, linear=True):
     :param base_percent: Determines the factor between the returned colors
     :type base_percent:  float
     :param count: The number of shades to return
-    :type count: int
+    :type count:  int
     """
     factor = base_percent
     shades = []
@@ -238,8 +238,8 @@ def rgb_shade(rgb, percent=5):
     :param rgb: The RGB value for which to calculate the tint
     :type rgb:  tuple
     :param percent: Determines the percent between the specified color and
-                     the shade
-    :type percent:  float
+                    the shade
+    :type percent:  int
     """
     return _color_transform(rgb, -percent / 100)
 
