@@ -18,3 +18,7 @@ Color Functions (tks.color_funcs)
    :members:
    :member-order: bysource
 
+Icon Functions (tks.icon)
+-------------------------
+
+.. autofunction:: tks.icon.set_icon
