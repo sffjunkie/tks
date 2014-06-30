@@ -68,6 +68,16 @@ class ColorEntry(ttk.Frame, object):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=0)
 
+    def __getattribute__(self, attr):
+        """Override __getattribute__ to provide an attribute 'value' as an
+        alias for 'rgb'.
+        """
+
+        if attr == 'value':
+            return object.__getattribute__(self, 'rgb')
+        else:
+            return object.__getattribute__(self, attr)
+
     @property
     def rgb(self):
         """RGB representation of the selected color"""

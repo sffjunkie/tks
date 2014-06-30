@@ -174,6 +174,16 @@ class TimeEntry(ttk.Frame, object):
 
         self.time = start_time
 
+    def __getattribute__(self, attr):
+        """Override __getattribute__ to provide an attribute 'value' as an
+        alias for 'time'.
+        """
+
+        if attr == 'value':
+            return object.__getattribute__(self, 'time')
+        else:
+            return object.__getattribute__(self, attr)
+
     @property
     def time(self):
         """The :class:`~datetime.time` represented by the entry."""

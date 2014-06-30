@@ -162,6 +162,16 @@ class DateEntry(ttk.Frame, object):
             self.columnconfigure(idx, weight=0)
         self.columnconfigure(5, weight=1)
 
+    def __getattribute__(self, attr):
+        """Override __getattribute__ to provide an attribute 'value' as an
+        alias for 'date'.
+        """
+
+        if attr == 'value':
+            return object.__getattribute__(self, 'date')
+        else:
+            return object.__getattribute__(self, attr)
+
     def _update_day_values(self, year, month, day):
         """Update the day combo box with the correct values
         """
