@@ -15,7 +15,7 @@
 from setuptools import setup, find_packages
 
 setup(name='tks',
-    version='0.1.1',
+    version='0.2',
     description="""A collection of Tk widgets""",
     long_description="""A collection of Tk widgets for dates, times and colors.""",
     author='Simon Kennedy',

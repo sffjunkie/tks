@@ -56,7 +56,7 @@ Installation is performed from `PyPi`_ via :command:`pip` ::
 
    pip install tks
    
-This doesn't automatically install Babel to do this either install it
+This doesn't automatically install Babel. To do this either install it
 separately or use the following command for the improved date/time handling ::
 
    pip install tks[idth]
@@ -72,9 +72,14 @@ Version History
 ======== =======================================================================
 Version  Description
 ======== =======================================================================
-0.1.1    Added `value` as an alias to the :class:`~tks.dates.DateEntry`,
-         :class:`~tks.times.TimeEntry` and :class:`~tks.colors.ColorEntry`
-         classes.
+0.2      * Added `value` property as an alias, to the
+           :class:`~tks.dates.DateEntry`,
+           :class:`~tks.times.TimeEntry` and
+           :class:`~tks.colors.ColorEntry`
+           classes.
+         * Added a decimal places parameter to the color to string conversion
+           functions.
+         * Added a function to set a Tk window icon.
 -------- -----------------------------------------------------------------------
 0.1      Initial release
 ======== =======================================================================
