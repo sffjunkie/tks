@@ -79,7 +79,7 @@ Version  Description
            classes.
          * Added a decimal places parameter to the color to string conversion
            functions.
-         * Added a function to set a Tk window icon.
+         * Added functions to set a Tk window icon.
 -------- -----------------------------------------------------------------------
 0.1      Initial release
 ======== =======================================================================
