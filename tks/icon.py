@@ -17,16 +17,40 @@ except ImportError:
     import Tkinter as tk
 
 
-def set_icon(root, package, resource):
+def set_icon_from_data(root, image_data):
+    """Set the icon for a root window from image data.
+
+    :param root: Toplevel window for which to set the icon.
+    :param image_data: The image data to use
+    :type image_data:  bytes
+    """
+
+    image = tk.PhotoImage(data=encodebytes(image_data))
+    root.tk.call('wm', 'iconphoto', root._w, image)
+
+
+def set_icon_from_file(root, filename):
+    """Set the icon for a root window from a file.
+
+    :param root: Toplevel window for which to set the icon.
+    :param filename: The filename to read the image data from
+    :type filename:  str
+    """
+
+    with open(filename, 'rb') as ds:
+        data = ds.read(-1)
+        set_icon_from_data(root, data)
+
+
+def set_icon_from_resource(root, package, resource):
     """Set the icon for a root window to a resource
 
-    :param root: Tkinter root window for which to set the icon.
+    :param root: Toplevel window for which to set the icon.
     :param package: The package in which to find the resource
     :type package:  str
     :param resource: The name of the resource
     :type resource:  str
     """
 
-    data = encodebytes(get_data(package, resource))
-    image = tk.PhotoImage(data=data)
-    root.tk.call('wm', 'iconphoto', root._w, image)
+    data = get_data(package, resource)
+    set_icon_from_data(root, data)
