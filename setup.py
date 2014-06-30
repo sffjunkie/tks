@@ -15,12 +15,12 @@
 from setuptools import setup, find_packages
 
 setup(name='tks',
-    version='0.1',
+    version='0.1.1',
     description="""A collection of Tk widgets""",
     long_description="""A collection of Tk widgets for dates, times and colors.""",
     author='Simon Kennedy',
     author_email='code@sffjunkie.co.uk',
-    url="http://www.sffjunkie.co.uk/python-tkstuff.html",
+    url="https://launchpad.net/tkstuff",
     license='Apache-2.0',
     packages=find_packages(),
     package_data={

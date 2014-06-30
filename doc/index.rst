@@ -55,6 +55,11 @@ Installation
 Installation is performed from `PyPi`_ via :command:`pip` ::
 
    pip install tks
+   
+This doesn't automatically install Babel to do this either install it
+separately or use the following command for the improved date/time handling ::
+
+   pip install tks[idth]
 
 Contact
 =======
@@ -67,6 +72,10 @@ Version History
 ======== =======================================================================
 Version  Description
 ======== =======================================================================
+0.1.1    Added `value` as an alias to the :class:`~tks.dates.DateEntry`,
+         :class:`~tks.times.TimeEntry` and :class:`~tks.colors.ColorEntry`
+         classes.
+-------- -----------------------------------------------------------------------
 0.1      Initial release
 ======== =======================================================================
 
