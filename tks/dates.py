@@ -45,6 +45,7 @@ from tks.i18n import language
 _ = language.gettext
 
 from tks import parse_geometry, DefaultColors
+from tks.rc import rcfile
 
 DEFAULT_FONT = ('TkTextFont',)
 
@@ -513,26 +514,28 @@ class DaySelector(ttk.Frame, object):
     :type font: tuple
     """
 
-    COLOR_FILL_TODAY = '#eee'
-    COLOR_TEXT_OTHER_MONTH = '#888'
-
     def __init__(self, master,
                  start_date,
                  locale,
                  target_type=TargetShape.Circle,
-                 font=DEFAULT_FONT,
-                 **kwargs):
+                 font=DEFAULT_FONT):
         self._master = master
         super(DaySelector, self).__init__(master, style='tks.TFrame')
 
         self._canvas_color = ttk.Style(master).lookup('tks.TFrame',
                                                       'background')
 
-        self._header_color = kwargs.get('header_color', DefaultColors.Header)
-        self._select_color = kwargs.get('select_color', DefaultColors.Select)
-        self._today_color = kwargs.get('today_color', self.COLOR_FILL_TODAY)
-        self._other_month_color = kwargs.get('other_month_color',
-                                             self.COLOR_TEXT_OTHER_MONTH)
+        try:
+            rc = rcfile()
+            rc.read()
+
+            self._header_color = rc['color.header']
+            self._select_color = rc['color.select']
+        except:
+            self._header_color = DefaultColors.Header
+            self._select_color = DefaultColors.Select
+
+        self._other_month_color = DefaultColors.OtherMonth
 
         if start_date is None:
             self._date = datetime.date.today()
