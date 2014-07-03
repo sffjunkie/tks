@@ -16,6 +16,8 @@ class DefaultColors(object):
     SelectDark = '#58B1B7'
     Header = 'white'
     Outline = '#ccc'
+    Today = '#eee'
+    OtherMonth = '#888'
 
 
 def parse_geometry(geom):
