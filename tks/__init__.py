@@ -8,7 +8,7 @@ __author__ = 'Simon Kennedy <code@sffjunkie.co.uk>'
 import re
 
 
-class ColorDefs(object):
+class DefaultColors(object):
     """A container for color names"""
 
     Fill = 'white'

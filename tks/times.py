@@ -42,7 +42,7 @@ except ImportError:
 from .i18n import language
 _ = language.gettext
 
-from tks import ColorDefs, parse_geometry, rect_center, rect_at
+from tks import DefaultColors, parse_geometry, rect_center, rect_at
 
 PADDING = 4
 FACE_RADIUS = 150
@@ -382,20 +382,20 @@ class TimeSelector(ttk.Frame, object):
         f['size'] = int(f.actual('size') * 2)
         ttk.Style().configure('TimeFrame.TLabel', font=f,
                               anchor=tk.CENTER,
-                              background=ColorDefs.Header)
+                              background=DefaultColors.Header)
 
         ttk.Style().configure('Selected.TimeFrame.TLabel',
-                              foreground=ColorDefs.SelectDark)
+                              foreground=DefaultColors.SelectDark)
 
         ttk.Style().configure('TimeFrame.TFrame',
                               relief=tk.SOLID,
-                              background=ColorDefs.Header)
+                              background=DefaultColors.Header)
 
         ttk.Style().configure('SecondFrame.TLabel',
                               foreground='black')
 
         ttk.Style().configure('Selected.SecondFrame.TLabel',
-                              foreground=ColorDefs.SelectDark)
+                              foreground=DefaultColors.SelectDark)
 
         self._master.bind('<Key>', self._key_pressed)
 
@@ -750,12 +750,12 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         self._am = bool(value)
         if self._am:
             self._canvas.itemconfigure('pmr', fill='#fff')
-            self._canvas.itemconfigure('amr', fill=ColorDefs.Select)
+            self._canvas.itemconfigure('amr', fill=DefaultColors.Select)
             self._hour = (self._hour - 12) % 24
             self._master.hour = self.hour
         else:
             self._canvas.itemconfigure('amr', fill='#fff')
-            self._canvas.itemconfigure('pmr', fill=ColorDefs.Select)
+            self._canvas.itemconfigure('pmr', fill=DefaultColors.Select)
             self._hour = (self._hour + 12) % 24
             self._master.hour = self.hour
 
@@ -782,7 +782,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
             tag = 'h%dc' % h
 
         if tag != self._last_hour_tag:
-            self._canvas.itemconfig(tag, fill=ColorDefs.Select)
+            self._canvas.itemconfig(tag, fill=DefaultColors.Select)
             if self._last_hour_tag:
                 self._canvas.itemconfig(self._last_hour_tag, fill='')
 
@@ -800,7 +800,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         m = int(value) % 60
 
         tag = 'm%dc' % m
-        self._canvas.itemconfig(tag, fill=ColorDefs.Select)
+        self._canvas.itemconfig(tag, fill=DefaultColors.Select)
         if self._last_minute_tag:
             self._canvas.itemconfig(self._last_minute_tag, fill='')
 
@@ -851,7 +851,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
             self.minute = value
             self._master.number_key_mode = MODE_MINUTE
 
-        self._canvas.itemconfig(tag, fill=ColorDefs.Select)
+        self._canvas.itemconfig(tag, fill=DefaultColors.Select)
 
     def _ampm_clicked(self, event):
         x = self._canvas.canvasx(event.x)
@@ -883,10 +883,10 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
 
         dial_rect = rect_at(self._center, dial_radius)
         self._canvas.create_oval(dial_rect,
-                                 fill=ColorDefs.Fill,
+                                 fill=DefaultColors.Fill,
                                  tags='face',
                                  width='0.5',
-                                 outline=ColorDefs.Outline)
+                                 outline=DefaultColors.Outline)
 
         radii = [inner_radius, outer_radius]
 
@@ -908,7 +908,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
                                      self._center[1] + y_offset),
                                     selection_radius)
                 iid = self._canvas.create_oval(oval_rect,
-                                               fill=ColorDefs.Fill,
+                                               fill=DefaultColors.Fill,
                                                outline='',
                                                tags='%sc' % tag)
 
@@ -933,8 +933,8 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
                    self._center[1] - PADDING - (0.25 * ampm_height))
 
         self._canvas.create_rectangle(am_rect,
-                                      outline=ColorDefs.Outline,
-                                      fill=ColorDefs.Select,
+                                      outline=DefaultColors.Outline,
+                                      fill=DefaultColors.Select,
                                       tags=('am', 'ampm', 'amr'))
 
         am_text = self._ampm[0]
@@ -949,7 +949,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
 
         self._canvas.create_rectangle(pm_rect,
                                       fill='#fff',
-                                      outline=ColorDefs.Outline,
+                                      outline=DefaultColors.Outline,
                                       tags=('pm', 'ampm', 'pmr'))
 
         pm_pos = rect_center(pm_rect)
@@ -967,8 +967,8 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         center_circle_rect = rect_at(self._center,
                                      PADDING)
         self._canvas.create_oval(center_circle_rect,
-                                 fill=ColorDefs.Select,
-                                 outline=ColorDefs.Outline)
+                                 fill=DefaultColors.Select,
+                                 outline=DefaultColors.Outline)
 
         self._canvas.tag_lower('face')
         self._canvas.tag_raise('text')
@@ -1015,7 +1015,7 @@ class TimeSelector24Hour(ttk.Frame, object):
         tag = 'h%dc' % h
 
         if tag != self._last_hour_tag:
-            self._canvas.itemconfig(tag, fill=ColorDefs.Select)
+            self._canvas.itemconfig(tag, fill=DefaultColors.Select)
             if self._last_hour_tag:
                 self._canvas.itemconfig(self._last_hour_tag, fill='')
 
@@ -1054,7 +1054,7 @@ class TimeSelector24Hour(ttk.Frame, object):
             value = int(tag[1:-1])
             self.hour = value
 
-        self._canvas.itemconfig(tag, fill=ColorDefs.Select)
+        self._canvas.itemconfig(tag, fill=DefaultColors.Select)
 
         self._master.dial_mode = MODE_MINUTE
         self._master.number_key_mode = MODE_MINUTE
@@ -1081,10 +1081,10 @@ class TimeSelector24Hour(ttk.Frame, object):
 
         dial_rect = rect_at(self._center, dial_radius)
         dial = self._canvas.create_oval(dial_rect,
-                                        fill=ColorDefs.Fill,
+                                        fill=DefaultColors.Fill,
                                         tags='face',
                                         width='0.5',
-                                        outline=ColorDefs.Outline)
+                                        outline=DefaultColors.Outline)
         self._canvas.tag_bind(dial, '<Button-1>', self._dial_clicked)
 
         radii = [inner_radius, outer_radius]
@@ -1138,8 +1138,8 @@ class TimeSelector24Hour(ttk.Frame, object):
 
         center_circle_rect = rect_at(self._center, PADDING)
         self._canvas.create_oval(center_circle_rect,
-                                 fill=ColorDefs.Select,
-                                 outline=ColorDefs.Outline)
+                                 fill=DefaultColors.Select,
+                                 outline=DefaultColors.Outline)
 
         self._canvas.tag_raise('circle')
         self._canvas.tag_raise('text')
@@ -1178,7 +1178,7 @@ class TimeSelectorMinute(ttk.Frame, object):
             tag = 'h%dc' % value
 
             if (value % 5) == 0:
-                self._canvas.itemconfig(tag, fill=ColorDefs.Select)
+                self._canvas.itemconfig(tag, fill=DefaultColors.Select)
                 self._minute_indicator.minute = -1
 
                 self._minute_indicator.tag_raise()
@@ -1196,7 +1196,7 @@ class TimeSelectorMinute(ttk.Frame, object):
                 self._canvas.tag_lower('face')
 
             if tag != self._last_minute_tag:
-                self._canvas.itemconfig(tag, fill=ColorDefs.Select)
+                self._canvas.itemconfig(tag, fill=DefaultColors.Select)
                 if self._last_minute_tag:
                     self._canvas.itemconfig(self._last_minute_tag, fill='')
 
@@ -1251,10 +1251,10 @@ class TimeSelectorMinute(ttk.Frame, object):
 
         dial_rect = rect_at(self._center, dial_radius)
         dial = self._canvas.create_oval(dial_rect,
-                                        fill=ColorDefs.Fill,
+                                        fill=DefaultColors.Fill,
                                         tags='face',
                                         width='0.5',
-                                        outline=ColorDefs.Outline)
+                                        outline=DefaultColors.Outline)
         self._canvas.tag_bind(dial, '<Button-1>', self._dial_clicked)
 
         radii = [outer_radius]
@@ -1276,7 +1276,7 @@ class TimeSelectorMinute(ttk.Frame, object):
                                      self._center[1] + y_offset),
                                     selection_radius)
                 iid = self._canvas.create_oval(oval_rect,
-                                               fill=ColorDefs.Fill,
+                                               fill=DefaultColors.Fill,
                                                outline='',
                                                tags=('%sc' % tag, 'circle'))
 
@@ -1301,8 +1301,8 @@ class TimeSelectorMinute(ttk.Frame, object):
         center_circle_rect = rect_at(self._center, PADDING)
 
         self._canvas.create_oval(center_circle_rect,
-                                 fill=ColorDefs.Select,
-                                 outline=ColorDefs.Outline)
+                                 fill=DefaultColors.Select,
+                                 outline=DefaultColors.Outline)
 
 
 class ClockHand(object):
@@ -1371,7 +1371,7 @@ class MinuteIndicator(object):
         self._minute = -1
         self._indicator = canvas.create_oval(self._offscreen,
                                              outline='',
-                                             fill=ColorDefs.SelectDark,
+                                             fill=DefaultColors.SelectDark,
                                              tags=self.tag)
 
     @property

@@ -44,7 +44,7 @@ except ImportError:
 from tks.i18n import language
 _ = language.gettext
 
-from tks import parse_geometry, ColorDefs
+from tks import parse_geometry, DefaultColors
 
 DEFAULT_FONT = ('TkTextFont',)
 
@@ -528,8 +528,8 @@ class DaySelector(ttk.Frame, object):
         self._canvas_color = ttk.Style(master).lookup('tks.TFrame',
                                                       'background')
 
-        self._header_color = kwargs.get('header_color', ColorDefs.Header)
-        self._select_color = kwargs.get('select_color', ColorDefs.Select)
+        self._header_color = kwargs.get('header_color', DefaultColors.Header)
+        self._select_color = kwargs.get('select_color', DefaultColors.Select)
         self._today_color = kwargs.get('today_color', self.COLOR_FILL_TODAY)
         self._other_month_color = kwargs.get('other_month_color',
                                              self.COLOR_TEXT_OTHER_MONTH)
