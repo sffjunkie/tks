@@ -1022,6 +1022,9 @@ class TimeSelector24Hour(ttk.Frame, object):
         if start_time is None:
             start_time = datetime.datetime.now().time()
 
+        self._hour_hand_inner = None
+        self._hour_hand_outer = None
+
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
         self._create_canvas(fonts, colors)
@@ -1033,8 +1036,6 @@ class TimeSelector24Hour(ttk.Frame, object):
         self.hour = start_time.hour
 
         self._center = None
-        self._hour_hand_inner = None
-        self._hour_hand_outer = None
 
     @property
     def hour(self):
@@ -1185,6 +1186,9 @@ class TimeSelectorMinute(ttk.Frame, object):
                  colors):
         super(TimeSelectorMinute, self).__init__(master)
         self._master = master
+        self._minute = -1
+        self._last_minute_tag = ''
+        self._center = None
 
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
@@ -1192,11 +1196,7 @@ class TimeSelectorMinute(ttk.Frame, object):
 
         self.columnconfigure(0, weight=1)
 
-        self._minute = -1
-        self._last_minute_tag = ''
         self.minute = start_time.minute
-
-        self._center = None
 
     @property
     def minute(self):
