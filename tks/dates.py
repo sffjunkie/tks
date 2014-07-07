@@ -44,10 +44,7 @@ except ImportError:
 from tks.i18n import language
 _ = language.gettext
 
-from tks import parse_geometry, DefaultColors
-from tks.rc import rcfile
-
-DEFAULT_FONT = ('TkTextFont',)
+from tks import parse_geometry, load_colors, load_fonts, DefaultColors, DefaultFonts
 
 
 class TargetShape():
@@ -76,15 +73,24 @@ class DateEntry(ttk.Frame, object):
                    instance. If :mod:`babel` is not installed ISO 8601
                    format will be used.
     :type locale:  str
-    :param font: Tk font to use. Default TkTextFont
-    :type font: tuple
+    :param fonts: Fonts to user
+    :type font:   :class:`~tks.DefaultFonts`
     """
 
     def __init__(self, master,
                  start_date=None,
                  locale='en',
-                 font=DEFAULT_FONT):
-        super(DateEntry, self).__init__(master, style='tks.TFrame')
+                 fonts=None):
+        super(DateEntry, self).__init__(master)
+
+        if not fonts:
+            fonts = load_fonts()
+
+        self.fonts = fonts
+
+        self._time = None
+        if start_date is None:
+            start_date = datetime.date.today()
 
         if babel and locale:
             if not isinstance(locale, babel.Locale):
@@ -112,42 +118,29 @@ class DateEntry(ttk.Frame, object):
             separator = '-'
 
         self._locale = locale
-        self._font = tkf.Font(font=font)
 
         self._year_var = tk.IntVar()
         self._month_var = tk.IntVar()
         self._day_var = tk.IntVar()
 
-        self._time = None
-        if start_date is None:
-            self.date = datetime.date.today()
-        else:
-            self.date = start_date
-
-        self._year_var.set(self.date.year)
         self._year_entry = ttk.Entry(self,
                                      textvariable=self._year_var,
                                      width=4,
-                                     font=self._font)
+                                     font=self.fonts.text)
         self._year_entry.grid(row=0, column=year_column * 2)
 
         self._month_entry = ttk.Combobox(self,
                                          textvariable=self._month_var,
                                          width=3,
-                                         font=self._font)
+                                         font=self.fonts.text)
         self._month_entry['values'] = ['%02d' % (x + 1) for x in range(12)]
-        self._month_var.set('%02d' % self.date.month)
         self._month_entry.grid(row=0, column=month_column * 2)
         self._month_entry.bind('<<ComboboxSelected>>', self._month_updated)
 
-        self._day_var.set('%02d' % self.date.day)
         self._day_entry = ttk.Combobox(self,
                                        textvariable=self._day_var,
                                        width=3,
-                                       font=self._font)
-        self._update_day_values(self.date.year,
-                                self.date.month,
-                                self.date.day)
+                                       font=self.fonts.text)
         self._day_entry.grid(row=0, column=day_column * 2)
 
         lbl = ttk.Label(self, text=separator, width=1)
@@ -162,6 +155,8 @@ class DateEntry(ttk.Frame, object):
         for idx in range(5):
             self.columnconfigure(idx, weight=0)
         self.columnconfigure(5, weight=1)
+
+        self.date = start_date
 
     def __getattribute__(self, attr):
         """Override __getattribute__ to provide an attribute 'value' as an
@@ -219,6 +214,8 @@ class DateEntry(ttk.Frame, object):
         self._month_var.set('%02d' % d.month)
         self._day_var.set('%02d' % d.day)
 
+        self._update_day_values(d.year, d.month, d.day)
+
         if isinstance(d, datetime.datetime):
             self._time = d.time()
         else:
@@ -235,7 +232,7 @@ class DateEntry(ttk.Frame, object):
                          _('Select a Date...'),
                          start_date=d,
                          locale=self._locale,
-                         font=self._font)
+                         fonts=self.fonts)
         self.wait_window(dlg)
         new_date = dlg.date
         if new_date != None:
@@ -257,18 +254,18 @@ class DateDialog(tk.Toplevel, object):
                    instance. If :mod:`babel` is not installed ISO 8601
                    format will be used.
     :type locale:  str or :class:`babel.Locale`
+    :param fonts: Font definitions to use
+    :type fonts: :class:`tks.DefaultFonts`
     :param target_type: `TargetShape.Square`, `TargetShape.Rectangle` or
                         `TargetShape.Circle`
     :type target_type:  :class:`TargetShape`
-    :param font: Tk font to use. Default ``(TkTextFont,)``
-    :type font: tuple
     """
 
     def __init__(self, master, title,
                  start_date=None,
                  locale='en',
-                 target_type=TargetShape.Circle,
-                 font=DEFAULT_FONT):
+                 fonts=None,
+                 target_type=TargetShape.Circle):
         super(DateDialog, self).__init__(master)
 
         self.withdraw()
@@ -276,8 +273,8 @@ class DateDialog(tk.Toplevel, object):
 
         self.date = None
 
-        bg_color = ttk.Style().lookup('TFrame', 'background')
-        ttk.Style().configure('tks.TFrame', background=bg_color)
+        if not fonts:
+            fonts = load_fonts()
 
         if babel and not isinstance(locale, babel.Locale):
             locale = babel.Locale(locale)
@@ -285,10 +282,10 @@ class DateDialog(tk.Toplevel, object):
         self._selector = DateSelector(self, start_date,
                                       locale=locale,
                                       target_type=target_type,
-                                      font=font)
+                                      fonts=fonts)
         self._selector.grid(row=0, column=0, sticky=tk.NSEW)
 
-        okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='tks.TFrame')
+        okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='TFrame')
 
         # Swap the order of buttons for Windows
         if 'win32' in sys.platform:
@@ -364,10 +361,17 @@ class DateSelector(ttk.Frame, object):
                  start_date,
                  locale='en',
                  target_type=TargetShape.Circle,
-                 font=DEFAULT_FONT):
+                 fonts=None,
+                 colors=None):
         self._master = master
         super(DateSelector, self).__init__(master, style='tks.TFrame')
         self._date = None
+
+        if not fonts:
+            fonts = load_fonts()
+
+        if not colors:
+            colors = load_colors()
 
         today = datetime.date.today()
         if babel:
@@ -379,10 +383,10 @@ class DateSelector(ttk.Frame, object):
             today_txt = today.strftime('%Y-%m-%d')
 
         ttk.Style().configure('Selector.tks.TButton',
-                              font=font,
+                              font=fonts.text,
                               anchor=tk.CENTER)
         ttk.Style().configure('Selector.tks.TLabel',
-                              font=font,
+                              font=fonts.text,
                               anchor=tk.CENTER)
         ttk.Style().configure('Month.Selector.tks.TButton',
                               padding=(0, 10))
@@ -398,7 +402,8 @@ class DateSelector(ttk.Frame, object):
         self._ds = DaySelector(self, start_date,
                                locale,
                                target_type=target_type,
-                               font=font)
+                               fonts=fonts,
+                               colors=colors)
         self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
         self._prev_selector = self._ds
 
@@ -510,32 +515,31 @@ class DaySelector(ttk.Frame, object):
     :type locale:      :class:`babel.Locale`
     :param target_type: Target type to select dates
     :type target_type: bool
-    :param font: Tk font to use
-    :type font: tuple
+    :param fonts: Fonts to use
+    :type fonts: :class:`DefaultFonts`
     """
 
     def __init__(self, master,
                  start_date,
                  locale,
                  target_type=TargetShape.Circle,
-                 font=DEFAULT_FONT):
+                 fonts=None,
+                 colors=None):
         self._master = master
         super(DaySelector, self).__init__(master, style='tks.TFrame')
 
         self._canvas_color = ttk.Style(master).lookup('tks.TFrame',
                                                       'background')
 
-        try:
-            rc = rcfile()
-            rc.read()
+        if fonts:
+            self.fonts = fonts
+        else:
+            self.fonts = DefaultFonts()
 
-            self._header_color = rc['color.header']
-            self._select_color = rc['color.select']
-        except:
-            self._header_color = DefaultColors.Header
-            self._select_color = DefaultColors.Select
-
-        self._other_month_color = DefaultColors.OtherMonth
+        if colors:
+            self.colors = colors
+        else:
+            self.colors = DefaultColors()
 
         if start_date is None:
             self._date = datetime.date.today()
@@ -559,7 +563,7 @@ class DaySelector(ttk.Frame, object):
 
         self._selected_tgt = ''
 
-        self._font = tkf.Font(font=font)
+        self._font = tkf.Font(font=fonts.text)
         family = self._font.actual('family')
         size = self._font.actual('size')
         self._font_bold = tkf.Font(font=(family, size, tkf.BOLD))
@@ -652,7 +656,7 @@ class DaySelector(ttk.Frame, object):
         self._canvas.create_rectangle(
             (x_start - half_width, y_start - half_height,
              x_start + rect_width, y_start + half_height),
-            fill=self._header_color,
+            fill=self.colors.header,
             outline='')
 
         for day in days:
@@ -721,7 +725,7 @@ class DaySelector(ttk.Frame, object):
                                     fill='')
 
         self._canvas.itemconfig(tgt_tag,
-                                fill=self._select_color)
+                                fill=self.colors.select)
 
         week_number, day_number = [int(x) for x in txt_tag[3:].split(':')]
         self._date = self._get_date(week_number, day_number)
@@ -774,7 +778,7 @@ class DaySelector(ttk.Frame, object):
                 else:
                     self._canvas.itemconfigure(txt_tag,
                                                text=text,
-                                               fill=self._other_month_color)
+                                               fill=DefaultColors.other_month)
 
                 tgt_tag = 'tgt%s:%s' % (week_number, day_number)
 
@@ -783,7 +787,7 @@ class DaySelector(ttk.Frame, object):
 
                 if date_ == self._date:
                     self._canvas.itemconfig(tgt_tag,
-                                            fill=self._select_color)
+                                            fill=self.colors.select)
                     self._selected_tgt = tgt_tag
 
 
@@ -814,7 +818,7 @@ class DaySelector(ttk.Frame, object):
         tgt_tag = 'tgt%d:%d' % self._find_date_position(self._date)
 
         self._canvas.itemconfig(tgt_tag,
-                                fill=self._select_color)
+                                fill=self.colors.select)
 
         self._selected_tgt = tgt_tag
 

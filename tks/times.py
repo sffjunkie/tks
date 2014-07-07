@@ -42,7 +42,8 @@ except ImportError:
 from .i18n import language
 _ = language.gettext
 
-from tks import DefaultColors, parse_geometry, rect_center, rect_at
+from tks import (parse_geometry, rect_at, rect_center,
+                 load_colors, load_fonts, DefaultColors, DefaultFonts)
 
 PADDING = 4
 FACE_RADIUS = 150
@@ -50,7 +51,6 @@ MODE_NONE = 0
 MODE_HOUR = 1
 MODE_MINUTE = 2
 MODE_SECOND = 3
-DEFAULT_FONT = ('TkTextFont',)
 
 
 class TimeEntry(ttk.Frame, object):
@@ -66,24 +66,29 @@ class TimeEntry(ttk.Frame, object):
                    If :mod:`babel` is not installed ISO 8601 format will be
                    used i.e. 24 hours (no am/pm) and ':' as a separator.
     :type locale:  str or :class:`babel.Locale`
+    :param fonts: Fonts to use
+    :type font: :class:`~tks.DefaultFonts`
     :param show_seconds: If True a seconds value can be entered.
     :type show_seconds:  bool
-    :param font: Tk font to use. Default TkTextFont
-    :type font: tuple
     """
 
     def __init__(self, master,
                  start_time=None,
                  locale='en',
-                 show_seconds=False,
-                 font=DEFAULT_FONT):
+                 fonts=None,
+                 show_seconds=False):
         super(TimeEntry, self).__init__(master)
 
+        if not fonts:
+            fonts = load_fonts()
+
+        self.fonts = fonts
+
         if start_time is None:
-            start_time = datetime.time(9, 0, 0)
+            start_time = datetime.datetime.now().time()
 
         self._ampm = None
-        if babel:
+        if babel and locale:
             if not isinstance(locale, babel.Locale):
                 locale = babel.Locale(locale)
 
@@ -105,13 +110,17 @@ class TimeEntry(ttk.Frame, object):
         else:
             separator = ':'
 
-        self._font = font
+        self._locale = locale
 
         self._hour_var = tk.IntVar()
+        self._minute_var = tk.IntVar()
+        if show_seconds:
+            self.second_var = tk.IntVar()
+
         self._hour_entry = ttk.Combobox(self,
                                         textvariable=self._hour_var,
                                         width=3,
-                                        font=self._font)
+                                        font=self.fonts.text)
 
         if self._ampm is None:
             hour_values = ['%02d' % x for x in range(1, 24)]
@@ -121,17 +130,18 @@ class TimeEntry(ttk.Frame, object):
 
         self._hour_entry['values'] = hour_values
 
+        self._hour_var.set(start_time.hour)
         self._hour_entry.grid(row=0, column=0)
 
         l = ttk.Label(self, text=separator, width=1, justify=tk.CENTER,
-                      font=self._font)
+                      font=self.fonts.text)
         l.grid(row=0, column=1)
 
-        self._minute_var = tk.IntVar()
         self._minute_entry = ttk.Combobox(self,
                                           textvariable=self._minute_var,
                                           width=3)
         self._minute_entry['values'] = ['%02d' % x for x in range(60)]
+        self._minute_var.set(start_time.minute)
         self._minute_entry.grid(row=0, column=2)
 
         self._show_seconds = show_seconds
@@ -139,11 +149,11 @@ class TimeEntry(ttk.Frame, object):
             l = ttk.Label(self, text=separator, width=1, justify=tk.CENTER)
             l.grid(row=0, column=3)
 
-            self.second_var = tk.IntVar()
             self._second_entry = ttk.Combobox(self,
                                               textvariable=self.second_var,
                                               width=3)
             self._second_entry['values'] = ['%02d' % x for x in range(60)]
+            self._second_var.set(start_time.second)
             self._second_entry.grid(row=0, column=4)
 
         if self._ampm:
@@ -239,6 +249,7 @@ class TimeEntry(ttk.Frame, object):
         dlg = TimeDialog(self,
                          _('Select a Time...'),
                          start_time=t,
+                         locale=self._locale,
                          show_seconds=self._show_seconds,
                          ampm=self._ampm)
         self.wait_window(dlg)
@@ -271,8 +282,8 @@ class TimeDialog(tk.Toplevel, object):
     :param show_seconds: If True a seconds value can be entered.
     :type show_seconds:  bool
     :param ampm: If not None display a 12 hour clock face with am/pm selection
-    :param font: Tk font to use. Default TkTextFont
-    :type font: tuple
+    :param fonts: Fonts definitions to use
+    :type fonts: :class:`DefaultFonts`
     """
 
     def __init__(self, master, title,
@@ -281,14 +292,16 @@ class TimeDialog(tk.Toplevel, object):
                  time_position=tk.TOP,
                  show_seconds=False,
                  ampm=None,
-                 font=DEFAULT_FONT):
+                 fonts=None):
         super(TimeDialog, self).__init__(master)
 
         self.withdraw()
         self.title(title)
 
-        bg_color = ttk.Style().lookup('TFrame', 'background')
-        ttk.Style().configure('tks.TFrame', background=bg_color)
+        self.time = None
+
+        if not fonts:
+            fonts = load_fonts()
 
         if babel and not isinstance(locale, babel.Locale):
             locale = babel.Locale(locale)
@@ -302,7 +315,7 @@ class TimeDialog(tk.Toplevel, object):
                                       time_position=time_position,
                                       show_seconds=show_seconds,
                                       ampm=ampm,
-                                      font=font)
+                                      fonts=fonts)
         self._selector.grid(row=0, column=0, sticky=tk.NSEW)
 
         okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='tks.TFrame')
@@ -363,7 +376,8 @@ class TimeSelector(ttk.Frame, object):
                  ampm=None,
                  time_position=tk.TOP,
                  show_seconds=False,
-                 font=DEFAULT_FONT):
+                 fonts=None,
+                 colors=None):
         self._master = master
         super(TimeSelector, self).__init__(master)
         self._time = None
@@ -377,25 +391,31 @@ class TimeSelector(ttk.Frame, object):
         if babel and not isinstance(locale, babel.Locale):
             locale = babel.Locale(locale)
 
-        f = tkf.Font(font=font)
+        if not fonts:
+            fonts = load_fonts()
+
+        if not colors:
+            colors = load_colors()
+
+        f = tkf.Font(font=fonts.text)
         f['weight'] = tkf.BOLD
         f['size'] = int(f.actual('size') * 2)
         ttk.Style().configure('TimeFrame.TLabel', font=f,
                               anchor=tk.CENTER,
-                              background=DefaultColors.Header)
+                              background=colors.header)
 
         ttk.Style().configure('Selected.TimeFrame.TLabel',
-                              foreground=DefaultColors.SelectDark)
+                              foreground=colors.select_dark)
 
         ttk.Style().configure('TimeFrame.TFrame',
                               relief=tk.SOLID,
-                              background=DefaultColors.Header)
+                              background=colors.header)
 
         ttk.Style().configure('SecondFrame.TLabel',
                               foreground='black')
 
         ttk.Style().configure('Selected.SecondFrame.TLabel',
-                              foreground=DefaultColors.SelectDark)
+                              foreground=colors.select_dark)
 
         self._master.bind('<Key>', self._key_pressed)
 
@@ -479,12 +499,19 @@ class TimeSelector(ttk.Frame, object):
                             padx=4, pady=(4, 0))
 
         if ampm:
-            self._hs = TimeSelector12HourAndMinute(self, start_time, ampm=ampm)
+            self._hs = TimeSelector12HourAndMinute(self, start_time,
+                                                   ampm=ampm,
+                                                   fonts=fonts,
+                                                   colors=colors)
             self._ms = None
             self._mode = '12hour'
         else:
-            self._hs = TimeSelector24Hour(self, start_time)
-            self._ms = TimeSelectorMinute(self, start_time)
+            self._hs = TimeSelector24Hour(self, start_time,
+                                          fonts=fonts,
+                                          colors=colors)
+            self._ms = TimeSelectorMinute(self, start_time,
+                                          fonts=fonts,
+                                          colors=colors)
             self._mode = '24hour'
 
         self._selector = self._hs
@@ -708,14 +735,16 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
     """A Time selector widget"""
 
     def __init__(self, master,
-                 start_time=None,
-                 ampm=None,
-                 font=DEFAULT_FONT):
+                 start_time,
+                 ampm,
+                 fonts,
+                 colors):
         self._master = master
         super(TimeSelector12HourAndMinute, self).__init__(master)
 
         self._ampm = ampm
-        self._text_font = font
+        self._fonts = fonts
+        self._colors = colors
 
         self._last_hour_tag = ''
         self._last_minute_tag = ''
@@ -723,9 +752,6 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         self._am = True
         self._hour = 0
         self._minute = 0
-
-        if start_time is None:
-            start_time = datetime.datetime.now().time()
 
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
@@ -750,12 +776,12 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         self._am = bool(value)
         if self._am:
             self._canvas.itemconfigure('pmr', fill='#fff')
-            self._canvas.itemconfigure('amr', fill=DefaultColors.Select)
+            self._canvas.itemconfigure('amr', fill=DefaultColors.select)
             self._hour = (self._hour - 12) % 24
             self._master.hour = self.hour
         else:
             self._canvas.itemconfigure('amr', fill='#fff')
-            self._canvas.itemconfigure('pmr', fill=DefaultColors.Select)
+            self._canvas.itemconfigure('pmr', fill=DefaultColors.select)
             self._hour = (self._hour + 12) % 24
             self._master.hour = self.hour
 
@@ -782,7 +808,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
             tag = 'h%dc' % h
 
         if tag != self._last_hour_tag:
-            self._canvas.itemconfig(tag, fill=DefaultColors.Select)
+            self._canvas.itemconfig(tag, fill=DefaultColors.select)
             if self._last_hour_tag:
                 self._canvas.itemconfig(self._last_hour_tag, fill='')
 
@@ -800,7 +826,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         m = int(value) % 60
 
         tag = 'm%dc' % m
-        self._canvas.itemconfig(tag, fill=DefaultColors.Select)
+        self._canvas.itemconfig(tag, fill=DefaultColors.select)
         if self._last_minute_tag:
             self._canvas.itemconfig(self._last_minute_tag, fill='')
 
@@ -851,7 +877,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
             self.minute = value
             self._master.number_key_mode = MODE_MINUTE
 
-        self._canvas.itemconfig(tag, fill=DefaultColors.Select)
+        self._canvas.itemconfig(tag, fill=DefaultColors.select)
 
     def _ampm_clicked(self, event):
         x = self._canvas.canvasx(event.x)
@@ -866,7 +892,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
             self.am = False
 
     def _create_canvas(self):
-        f = tkf.Font(font=self._text_font)
+        f = tkf.Font(font=self._fonts.text)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 
@@ -883,10 +909,10 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
 
         dial_rect = rect_at(self._center, dial_radius)
         self._canvas.create_oval(dial_rect,
-                                 fill=DefaultColors.Fill,
+                                 fill=self._colors.fill,
                                  tags='face',
                                  width='0.5',
-                                 outline=DefaultColors.Outline)
+                                 outline=DefaultColors.outline)
 
         radii = [inner_radius, outer_radius]
 
@@ -908,7 +934,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
                                      self._center[1] + y_offset),
                                     selection_radius)
                 iid = self._canvas.create_oval(oval_rect,
-                                               fill=DefaultColors.Fill,
+                                               fill=DefaultColors.fill,
                                                outline='',
                                                tags='%sc' % tag)
 
@@ -933,8 +959,8 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
                    self._center[1] - PADDING - (0.25 * ampm_height))
 
         self._canvas.create_rectangle(am_rect,
-                                      outline=DefaultColors.Outline,
-                                      fill=DefaultColors.Select,
+                                      outline=DefaultColors.outline,
+                                      fill=DefaultColors.select,
                                       tags=('am', 'ampm', 'amr'))
 
         am_text = self._ampm[0]
@@ -949,7 +975,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
 
         self._canvas.create_rectangle(pm_rect,
                                       fill='#fff',
-                                      outline=DefaultColors.Outline,
+                                      outline=DefaultColors.outline,
                                       tags=('pm', 'ampm', 'pmr'))
 
         pm_pos = rect_center(pm_rect)
@@ -967,8 +993,8 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         center_circle_rect = rect_at(self._center,
                                      PADDING)
         self._canvas.create_oval(center_circle_rect,
-                                 fill=DefaultColors.Select,
-                                 outline=DefaultColors.Outline)
+                                 fill=DefaultColors.select,
+                                 outline=DefaultColors.outline)
 
         self._canvas.tag_lower('face')
         self._canvas.tag_raise('text')
@@ -987,8 +1013,9 @@ class TimeSelector24Hour(ttk.Frame, object):
     """A Time selector widget"""
 
     def __init__(self, master,
-                 start_time=None,
-                 font=DEFAULT_FONT):
+                 start_time,
+                 fonts,
+                 colors):
         super(TimeSelector24Hour, self).__init__(master)
         self._master = master
 
@@ -997,13 +1024,17 @@ class TimeSelector24Hour(ttk.Frame, object):
 
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
-        self._create_canvas(font)
+        self._create_canvas(fonts, colors)
 
         self.columnconfigure(0, weight=1)
 
         self._hour = -1
         self._last_hour_tag = ''
         self.hour = start_time.hour
+
+        self._center = None
+        self._hour_hand_inner = None
+        self._hour_hand_outer = None
 
     @property
     def hour(self):
@@ -1015,7 +1046,7 @@ class TimeSelector24Hour(ttk.Frame, object):
         tag = 'h%dc' % h
 
         if tag != self._last_hour_tag:
-            self._canvas.itemconfig(tag, fill=DefaultColors.Select)
+            self._canvas.itemconfig(tag, fill=DefaultColors.select)
             if self._last_hour_tag:
                 self._canvas.itemconfig(self._last_hour_tag, fill='')
 
@@ -1054,7 +1085,7 @@ class TimeSelector24Hour(ttk.Frame, object):
             value = int(tag[1:-1])
             self.hour = value
 
-        self._canvas.itemconfig(tag, fill=DefaultColors.Select)
+        self._canvas.itemconfig(tag, fill=DefaultColors.select)
 
         self._master.dial_mode = MODE_MINUTE
         self._master.number_key_mode = MODE_MINUTE
@@ -1066,8 +1097,8 @@ class TimeSelector24Hour(ttk.Frame, object):
         angle = math.degrees(math.atan2(y, x))
         self.hour = int(math.floor(((angle + 90) % 360) / 30))
 
-    def _create_canvas(self, font):
-        f = tkf.Font(font=font)
+    def _create_canvas(self, fonts, colors):
+        f = tkf.Font(font=fonts.text)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 
@@ -1081,10 +1112,10 @@ class TimeSelector24Hour(ttk.Frame, object):
 
         dial_rect = rect_at(self._center, dial_radius)
         dial = self._canvas.create_oval(dial_rect,
-                                        fill=DefaultColors.Fill,
+                                        fill=colors.fill,
                                         tags='face',
                                         width='0.5',
-                                        outline=DefaultColors.Outline)
+                                        outline=colors.outline)
         self._canvas.tag_bind(dial, '<Button-1>', self._dial_clicked)
 
         radii = [inner_radius, outer_radius]
@@ -1138,8 +1169,8 @@ class TimeSelector24Hour(ttk.Frame, object):
 
         center_circle_rect = rect_at(self._center, PADDING)
         self._canvas.create_oval(center_circle_rect,
-                                 fill=DefaultColors.Select,
-                                 outline=DefaultColors.Outline)
+                                 fill=colors.select,
+                                 outline=colors.outline)
 
         self._canvas.tag_raise('circle')
         self._canvas.tag_raise('text')
@@ -1149,23 +1180,23 @@ class TimeSelectorMinute(ttk.Frame, object):
     """A Time selector widget"""
 
     def __init__(self, master,
-                 start_time=None,
-                 font=DEFAULT_FONT):
+                 start_time,
+                 fonts,
+                 colors):
         super(TimeSelectorMinute, self).__init__(master)
         self._master = master
 
-        if start_time is None:
-            start_time = datetime.datetime.now().time()
-
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
-        self._create_canvas(font)
+        self._create_canvas(fonts, colors)
 
         self.columnconfigure(0, weight=1)
 
         self._minute = -1
         self._last_minute_tag = ''
         self.minute = start_time.minute
+
+        self._center = None
 
     @property
     def minute(self):
@@ -1178,7 +1209,7 @@ class TimeSelectorMinute(ttk.Frame, object):
             tag = 'h%dc' % value
 
             if (value % 5) == 0:
-                self._canvas.itemconfig(tag, fill=DefaultColors.Select)
+                self._canvas.itemconfig(tag, fill=DefaultColors.select)
                 self._minute_indicator.minute = -1
 
                 self._minute_indicator.tag_raise()
@@ -1196,7 +1227,7 @@ class TimeSelectorMinute(ttk.Frame, object):
                 self._canvas.tag_lower('face')
 
             if tag != self._last_minute_tag:
-                self._canvas.itemconfig(tag, fill=DefaultColors.Select)
+                self._canvas.itemconfig(tag, fill=DefaultColors.select)
                 if self._last_minute_tag:
                     self._canvas.itemconfig(self._last_minute_tag, fill='')
 
@@ -1235,8 +1266,8 @@ class TimeSelectorMinute(ttk.Frame, object):
         angle = math.degrees(math.atan2(y, x))
         self.minute = int(math.floor(((angle + 90) % 360) / 6))
 
-    def _create_canvas(self, font):
-        f = tkf.Font(font=font)
+    def _create_canvas(self, fonts, colors):
+        f = tkf.Font(font=fonts.text)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 
@@ -1251,10 +1282,10 @@ class TimeSelectorMinute(ttk.Frame, object):
 
         dial_rect = rect_at(self._center, dial_radius)
         dial = self._canvas.create_oval(dial_rect,
-                                        fill=DefaultColors.Fill,
+                                        fill=colors.fill,
                                         tags='face',
                                         width='0.5',
-                                        outline=DefaultColors.Outline)
+                                        outline=colors.outline)
         self._canvas.tag_bind(dial, '<Button-1>', self._dial_clicked)
 
         radii = [outer_radius]
@@ -1276,7 +1307,7 @@ class TimeSelectorMinute(ttk.Frame, object):
                                      self._center[1] + y_offset),
                                     selection_radius)
                 iid = self._canvas.create_oval(oval_rect,
-                                               fill=DefaultColors.Fill,
+                                               fill=colors.fill,
                                                outline='',
                                                tags=('%sc' % tag, 'circle'))
 
@@ -1301,8 +1332,8 @@ class TimeSelectorMinute(ttk.Frame, object):
         center_circle_rect = rect_at(self._center, PADDING)
 
         self._canvas.create_oval(center_circle_rect,
-                                 fill=DefaultColors.Select,
-                                 outline=DefaultColors.Outline)
+                                 fill=colors.select,
+                                 outline=colors.outline)
 
 
 class ClockHand(object):
@@ -1371,7 +1402,7 @@ class MinuteIndicator(object):
         self._minute = -1
         self._indicator = canvas.create_oval(self._offscreen,
                                              outline='',
-                                             fill=DefaultColors.SelectDark,
+                                             fill=DefaultColors.select_dark,
                                              tags=self.tag)
 
     @property
