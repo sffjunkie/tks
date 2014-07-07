@@ -7,17 +7,65 @@ __author__ = 'Simon Kennedy <code@sffjunkie.co.uk>'
 
 import re
 
+from tks.rc import rcfile
 
 class DefaultColors(object):
     """A container for color names"""
 
-    Fill = 'white'
-    Select = '#9de5eb'
-    SelectDark = '#58B1B7'
-    Header = 'white'
-    Outline = '#ccc'
-    Today = '#eee'
-    OtherMonth = '#888'
+    fill = 'white'
+    select = '#9de5eb'
+    select_dark = '#58B1B7'
+    header = 'white'
+    outline = '#ccc'
+    today = '#eee'
+    other_month = '#888'
+
+
+class DefaultFonts(object):
+    """A container for font information"""
+
+    text = ('TkTextFont',)
+    monospace = ('TkFixedFont',)
+
+
+def load_colors():
+    colors = DefaultColors()
+    try:
+        rc = rcfile()
+        rc.read()
+
+        header_color = rc['color.header']
+        if header_color != '':
+            colors.header = header_color
+
+        select_color = rc['color.select']
+        if select_color != '':
+            colors.select = select_color
+    except:
+        pass
+
+    return colors
+
+
+def load_fonts():
+    fonts = DefaultFonts()
+    try:
+        rc = rcfile()
+        rc.read()
+
+        font_info = rc['font.text']
+        if font_info:
+            elems = [i.strip() for i in font_info.split(',')]
+            fonts.text = tuple([elem for elem in elems if elem][:3])
+
+        font_info = rc['font.monospace']
+        if font_info:
+            elems = [i.strip() for i in font_info.split(',')]
+            fonts.monospace = tuple([elem for elem in elems if elem][:3])
+    except:
+        pass
+
+    return fonts
 
 
 def parse_geometry(geom):
@@ -48,3 +96,4 @@ def rect_at(point, size, size_y=-1):
 
     return (point[0] - size, point[1] - size_y,
             point[0] + size, point[1] + size_y)
+
