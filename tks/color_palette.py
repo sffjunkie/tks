@@ -1,4 +1,4 @@
-# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
 """A Tkinter widget to select colors from a palette of colors"""
 

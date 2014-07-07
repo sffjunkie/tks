@@ -1,4 +1,4 @@
-# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
 """Set the Tkinter icon."""
 

@@ -1,4 +1,4 @@
-# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
 from __future__ import print_function, division, absolute_import
 import os

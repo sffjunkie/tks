@@ -1,4 +1,4 @@
-# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
 try:
     from itertools import izip as zip
@@ -8,9 +8,9 @@ except:
 from operator import mul
 from itertools import starmap
 
-def mult(a,b):
+def mult(a, b):
     zip_b = zip(*b)
-    return [[sum(ele_a*ele_b for ele_a, ele_b in zip(row_a, col_b)) 
+    return [[sum(ele_a * ele_b for ele_a, ele_b in zip(row_a, col_b))
              for col_b in zip_b] for row_a in a]
 
 def dot(a, b):

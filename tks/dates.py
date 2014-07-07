@@ -1,4 +1,4 @@
-# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
 """tkStuff provides 3 classes to obtain a date from a user.
 

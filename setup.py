@@ -1,4 +1,4 @@
-# Copyright 2009-2013, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,18 +15,16 @@
 from setuptools import setup, find_packages
 
 setup(name='tks',
-    version='0.2',
-    description="""A collection of Tk widgets""",
-    long_description="""A collection of Tk widgets for dates, times and colors.""",
-    author='Simon Kennedy',
-    author_email='code@sffjunkie.co.uk',
-    url="https://launchpad.net/tkstuff",
-    license='Apache-2.0',
-    packages=find_packages(),
-    package_data={
-      'tks': ['tks/*.txt'],
-    },
-    include_package_data=True,
-    requires=['PIL'],
-    extras_require={'idth': ['babel']},
+      version='0.2',
+      description="""A collection of Tk widgets""",
+      long_description="""A collection of Tk widgets for dates, times and colors.""",
+      author='Simon Kennedy',
+      author_email='sffjunkie+code@gmail.com',
+      url="https://launchpad.net/tkstuff",
+      license='Apache-2.0',
+      packages=find_packages(),
+      package_data={'tks': ['tks/*.txt'], },
+      include_package_data=True,
+      requires=['PIL'],
+      extras_require={'idth': ['babel']},
 )

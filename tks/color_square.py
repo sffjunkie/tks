@@ -1,4 +1,4 @@
-# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
 """ColorSquare displays a solid square which changes color depending on the
 value of a variable. Also displays textual color information below."""

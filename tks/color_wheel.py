@@ -1,4 +1,4 @@
-# Copyright 2014, Simon Kennedy, code@sffjunkie.co.uk
+# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
 """Implements a color wheel with an outer ring to select a hue and a
 triangle within that where saturation and value can be selected

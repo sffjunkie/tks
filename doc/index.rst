@@ -64,7 +64,7 @@ separately or use the following command for the improved date/time handling ::
 Contact
 =======
 
-Simon Kennedy <code@sffjunkie.co.uk>
+Simon Kennedy <sffjunkie+code@gmail.com>
 
 Version History
 ===============
