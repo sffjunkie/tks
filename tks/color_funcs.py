@@ -8,6 +8,21 @@ import string
 import colorsys
 
 
+def rgb_to_intensity(key):
+    """Convert an RGB color to its intensity"""
+
+    return key[0] * 0.299 + key[1] * 0.587 + key[2] * 0.114
+
+
+def contrast_color(rgb):
+    """Return either white or black whichever provides the most contrast"""
+
+    if rgb == (0.0, 0.0, 0.0) or rgb_to_intensity(rgb) < (160.0 / 255.0):
+        return 'white'
+    else:
+        return 'black'
+
+
 def rgb_to_hex_string(value):
     """Convert from an (R, G, B) tuple to a hex color.
 
