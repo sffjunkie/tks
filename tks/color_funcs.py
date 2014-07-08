@@ -259,5 +259,5 @@ def rgb_shade(rgb, percent=5):
     return _color_transform(rgb, -percent / 100)
 
 
-def _color_transform(color, luminosity=1.0):
+def _color_transform(color, luminosity=0.05):
     return tuple([min(max(0.0, elem + luminosity), 1.0) for elem in color])
