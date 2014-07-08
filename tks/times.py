@@ -215,6 +215,8 @@ class TimeEntry(ttk.Frame, object):
 
     @time.setter
     def time(self, value):
+        """Set the time to be displayed."""
+
         if self._ampm:
             if value.hour > 0 and value.hour <= 12:
                 self._hour_var.set(value.hour)
@@ -660,7 +662,8 @@ class TimeSelector(ttk.Frame, object):
 
         if self.number_key_mode == MODE_HOUR:
             if not self._number_key_mode_text:
-                if (self._mode == '24hour' and number > '2') or (self._mode == '12hour' and number > '1'):
+                if (self._mode == '24hour' and number > '2') or \
+                   (self._mode == '12hour' and number > '1'):
                     self.number_key_mode = mode_after_hour
                 self._number_key_mode_text = number
                 self.hour = int(number)
@@ -753,6 +756,9 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         self._hour = 0
         self._minute = 0
 
+        self._hour_hand = None
+        self._minute_hand = None
+
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
         self._create_canvas()
@@ -776,12 +782,12 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         self._am = bool(value)
         if self._am:
             self._canvas.itemconfigure('pmr', fill='#fff')
-            self._canvas.itemconfigure('amr', fill=DefaultColors.select)
+            self._canvas.itemconfigure('amr', fill=self._colors.select)
             self._hour = (self._hour - 12) % 24
             self._master.hour = self.hour
         else:
             self._canvas.itemconfigure('amr', fill='#fff')
-            self._canvas.itemconfigure('pmr', fill=DefaultColors.select)
+            self._canvas.itemconfigure('pmr', fill=self._colors.select)
             self._hour = (self._hour + 12) % 24
             self._master.hour = self.hour
 
@@ -808,7 +814,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
             tag = 'h%dc' % h
 
         if tag != self._last_hour_tag:
-            self._canvas.itemconfig(tag, fill=DefaultColors.select)
+            self._canvas.itemconfig(tag, fill=self._colors.select)
             if self._last_hour_tag:
                 self._canvas.itemconfig(self._last_hour_tag, fill='')
 
@@ -826,7 +832,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         m = int(value) % 60
 
         tag = 'm%dc' % m
-        self._canvas.itemconfig(tag, fill=DefaultColors.select)
+        self._canvas.itemconfig(tag, fill=self._colors.select)
         if self._last_minute_tag:
             self._canvas.itemconfig(self._last_minute_tag, fill='')
 
@@ -877,7 +883,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
             self.minute = value
             self._master.number_key_mode = MODE_MINUTE
 
-        self._canvas.itemconfig(tag, fill=DefaultColors.select)
+        self._canvas.itemconfig(tag, fill=self._colors.select)
 
     def _ampm_clicked(self, event):
         x = self._canvas.canvasx(event.x)
@@ -960,7 +966,7 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
 
         self._canvas.create_rectangle(am_rect,
                                       outline=DefaultColors.outline,
-                                      fill=DefaultColors.select,
+                                      fill=self._colors.select,
                                       tags=('am', 'ampm', 'amr'))
 
         am_text = self._ampm[0]
@@ -993,8 +999,8 @@ class TimeSelector12HourAndMinute(ttk.Frame, object):
         center_circle_rect = rect_at(self._center,
                                      PADDING)
         self._canvas.create_oval(center_circle_rect,
-                                 fill=DefaultColors.select,
-                                 outline=DefaultColors.outline)
+                                 fill=self._colors.select,
+                                 outline=self._colors.outline)
 
         self._canvas.tag_lower('face')
         self._canvas.tag_raise('text')
@@ -1022,12 +1028,15 @@ class TimeSelector24Hour(ttk.Frame, object):
         if start_time is None:
             start_time = datetime.datetime.now().time()
 
+        self._colors = colors
+        self._fonts = fonts
+
         self._hour_hand_inner = None
         self._hour_hand_outer = None
 
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
-        self._create_canvas(fonts, colors)
+        self._create_canvas()
 
         self.columnconfigure(0, weight=1)
 
@@ -1047,7 +1056,7 @@ class TimeSelector24Hour(ttk.Frame, object):
         tag = 'h%dc' % h
 
         if tag != self._last_hour_tag:
-            self._canvas.itemconfig(tag, fill=DefaultColors.select)
+            self._canvas.itemconfig(tag, fill=self._colors.select)
             if self._last_hour_tag:
                 self._canvas.itemconfig(self._last_hour_tag, fill='')
 
@@ -1086,7 +1095,7 @@ class TimeSelector24Hour(ttk.Frame, object):
             value = int(tag[1:-1])
             self.hour = value
 
-        self._canvas.itemconfig(tag, fill=DefaultColors.select)
+        self._canvas.itemconfig(tag, fill=self._colors.select)
 
         self._master.dial_mode = MODE_MINUTE
         self._master.number_key_mode = MODE_MINUTE
@@ -1098,8 +1107,8 @@ class TimeSelector24Hour(ttk.Frame, object):
         angle = math.degrees(math.atan2(y, x))
         self.hour = int(math.floor(((angle + 90) % 360) / 30))
 
-    def _create_canvas(self, fonts, colors):
-        f = tkf.Font(font=fonts.text)
+    def _create_canvas(self):
+        f = tkf.Font(font=self._fonts.text)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 
@@ -1113,10 +1122,10 @@ class TimeSelector24Hour(ttk.Frame, object):
 
         dial_rect = rect_at(self._center, dial_radius)
         dial = self._canvas.create_oval(dial_rect,
-                                        fill=colors.fill,
+                                        fill=self._colors.fill,
                                         tags='face',
                                         width='0.5',
-                                        outline=colors.outline)
+                                        outline=self._colors.outline)
         self._canvas.tag_bind(dial, '<Button-1>', self._dial_clicked)
 
         radii = [inner_radius, outer_radius]
@@ -1170,8 +1179,8 @@ class TimeSelector24Hour(ttk.Frame, object):
 
         center_circle_rect = rect_at(self._center, PADDING)
         self._canvas.create_oval(center_circle_rect,
-                                 fill=colors.select,
-                                 outline=colors.outline)
+                                 fill=self._colors.select,
+                                 outline=self._colors.outline)
 
         self._canvas.tag_raise('circle')
         self._canvas.tag_raise('text')
@@ -1186,13 +1195,15 @@ class TimeSelectorMinute(ttk.Frame, object):
                  colors):
         super(TimeSelectorMinute, self).__init__(master)
         self._master = master
+        self._fonts = fonts
+        self._colors = colors
         self._minute = -1
         self._last_minute_tag = ''
         self._center = None
 
         self._canvas = tk.Canvas(self)
         self._canvas.grid(row=1, column=0, sticky=(tk.EW, tk.S))
-        self._create_canvas(fonts, colors)
+        self._create_canvas()
 
         self.columnconfigure(0, weight=1)
 
@@ -1209,7 +1220,7 @@ class TimeSelectorMinute(ttk.Frame, object):
             tag = 'h%dc' % value
 
             if (value % 5) == 0:
-                self._canvas.itemconfig(tag, fill=DefaultColors.select)
+                self._canvas.itemconfig(tag, fill=self._colors.select)
                 self._minute_indicator.minute = -1
 
                 self._minute_indicator.tag_raise()
@@ -1227,7 +1238,7 @@ class TimeSelectorMinute(ttk.Frame, object):
                 self._canvas.tag_lower('face')
 
             if tag != self._last_minute_tag:
-                self._canvas.itemconfig(tag, fill=DefaultColors.select)
+                self._canvas.itemconfig(tag, fill=self._colors.select)
                 if self._last_minute_tag:
                     self._canvas.itemconfig(self._last_minute_tag, fill='')
 
@@ -1266,8 +1277,8 @@ class TimeSelectorMinute(ttk.Frame, object):
         angle = math.degrees(math.atan2(y, x))
         self.minute = int(math.floor(((angle + 90) % 360) / 6))
 
-    def _create_canvas(self, fonts, colors):
-        f = tkf.Font(font=fonts.text)
+    def _create_canvas(self):
+        f = tkf.Font(font=self._fonts.text)
         hour_text_width = f.measure('00')
         selection_radius = hour_text_width * 1.125
 
@@ -1282,10 +1293,10 @@ class TimeSelectorMinute(ttk.Frame, object):
 
         dial_rect = rect_at(self._center, dial_radius)
         dial = self._canvas.create_oval(dial_rect,
-                                        fill=colors.fill,
+                                        fill=self._colors.fill,
                                         tags='face',
                                         width='0.5',
-                                        outline=colors.outline)
+                                        outline=self._colors.outline)
         self._canvas.tag_bind(dial, '<Button-1>', self._dial_clicked)
 
         radii = [outer_radius]
@@ -1307,7 +1318,7 @@ class TimeSelectorMinute(ttk.Frame, object):
                                      self._center[1] + y_offset),
                                     selection_radius)
                 iid = self._canvas.create_oval(oval_rect,
-                                               fill=colors.fill,
+                                               fill=self._colors.fill,
                                                outline='',
                                                tags=('%sc' % tag, 'circle'))
 
@@ -1332,8 +1343,8 @@ class TimeSelectorMinute(ttk.Frame, object):
         center_circle_rect = rect_at(self._center, PADDING)
 
         self._canvas.create_oval(center_circle_rect,
-                                 fill=colors.select,
-                                 outline=colors.outline)
+                                 fill=self._colors.select,
+                                 outline=self._colors.outline)
 
 
 class ClockHand(object):
