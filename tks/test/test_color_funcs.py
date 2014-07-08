@@ -1,4 +1,3 @@
-import unittest
 import py.test
 from tks import color_funcs
 
