@@ -8,10 +8,10 @@ import string
 import colorsys
 
 
-def rgb_to_intensity(key):
+def rgb_to_intensity(rgb):
     """Convert an RGB color to its intensity"""
 
-    return key[0] * 0.299 + key[1] * 0.587 + key[2] * 0.114
+    return rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114
 
 
 def contrast_color(rgb):
