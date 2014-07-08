@@ -127,9 +127,9 @@ def color_string_to_color(value):
             t = color_string_to_tuple(value)
             return mode[:3], t
         except ValueError:
-            return None
+            return None, None
 
-    return None
+    return None, None
 
 
 def rgb_tints(rgb, base_percent, count, linear=True):
