@@ -1,5 +1,16 @@
 # Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
+"""Allows selection of filesystem entries (directories and files).
+
+DirEntry
+    Displays a text box and a button to select a directory using the system
+    defined selection method.
+
+FileEntry
+    Displays a text box and a button to select a file using the system
+    defined selection method.
+"""
+
 from __future__ import print_function, division, absolute_import
 import os
 import sys
