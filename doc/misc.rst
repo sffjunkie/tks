@@ -5,8 +5,8 @@ Miscellaneous Stuff
    :hidden:
 
 
-The :mod:`tks` Module
----------------------
+The tks Module
+--------------
 
 .. automodule:: tks
    :members:
