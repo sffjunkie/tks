@@ -111,14 +111,31 @@ def hex_string_to_rgb(value):
         return None
 
 
+def clamp(value):
+    """Clamp a float between 0.0 and 1.0"""
+
+    return min(max(0.0, float(value)), 1.0)
+
+
 def clamped_tuple(value):
     """Clamps the values in a tuple between 0.0 and 1.0
     """
-    def _clamp(value):  # pylint: disable=missing-docstring
-        value = float(value)
-        return min(max(0.0, value), 1.0)
+    return tuple([clamp(elem) for elem in value])
 
-    return tuple([_clamp(elem) for elem in value])
+
+def luminosity_transform(color, luminosity=0.05):
+    """Transform an RGB color by a luminosity.
+
+    If luminosity is a tuple then the 3 elements are used to transform the red,
+    green and blue values individually. If a float then the same value is used
+    to transform all 3 elements."""
+
+    if isinstance(luminosity, tuple):
+        luminosity = luminosity[:3]
+    else:
+        luminosity = (luminosity, luminosity, luminosity)
+
+    return tuple([clamp(e + l) for e, l in zip(color, luminosity)])
 
 
 def color_string_to_tuple(value):
@@ -201,7 +218,7 @@ def rgb_tint(rgb, percent=5):
                      the tint
     :type percent:  int
     """
-    return _color_transform(rgb, percent / 100)
+    return luminosity_transform(rgb, percent / 100)
 
 
 def rgb_shades(rgb, base_percent, count, linear=True):
@@ -256,8 +273,4 @@ def rgb_shade(rgb, percent=5):
                     the shade
     :type percent:  int
     """
-    return _color_transform(rgb, -percent / 100)
-
-
-def _color_transform(color, luminosity=0.05):
-    return tuple([min(max(0.0, elem + luminosity), 1.0) for elem in color])
+    return luminosity_transform(rgb, -percent / 100)
