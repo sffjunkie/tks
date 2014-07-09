@@ -11,6 +11,7 @@ Welcome to tkStuff
    dates
    times
    colors
+   fs
    misc
 
 tkStuff is a collection of Tkinter widgets for dates, times and colors.
