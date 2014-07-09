@@ -8,7 +8,7 @@ import string
 import colorsys
 
 
-def rgb_to_intensity(rgb):
+def rgb_intensity(rgb):
     """Convert an RGB color to its intensity"""
 
     return rgb[0] * 0.299 + rgb[1] * 0.587 + rgb[2] * 0.114
@@ -17,7 +17,7 @@ def rgb_to_intensity(rgb):
 def contrast_color(rgb):
     """Return either white or black whichever provides the most contrast"""
 
-    if rgb == (0.0, 0.0, 0.0) or rgb_to_intensity(rgb) < (160.0 / 255.0):
+    if rgb == (0.0, 0.0, 0.0) or rgb_intensity(rgb) < (160.0 / 255.0):
         return 'white'
     else:
         return 'black'

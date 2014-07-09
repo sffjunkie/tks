@@ -27,7 +27,7 @@ except ImportError:
 
 from tks.color_var import ColorVar
 from tks.color_funcs import (rgb_to_hex_string, hex_string_to_rgb,
-                             rgb_to_intensity, contrast_color)
+                             rgb_intensity, contrast_color)
 
 from .i18n import language
 _ = language.gettext
@@ -54,7 +54,7 @@ def yiq_key_func(key):
 def intensity_key_func(key):
     """Key function to sort by intensity"""
 
-    return rgb_to_intensity(key[0])
+    return rgb_intensity(key[0])
 
 
 def name_key_func(key):

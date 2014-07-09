@@ -65,7 +65,7 @@ def test_hex_string_to_rgb(rgb):
 
 
 def test_intensity(rgb):
-    assert almost_equal(color_funcs.rgb_to_intensity(rgb), 0.50275)
+    assert almost_equal(color_funcs.rgb_intensity(rgb), 0.50275)
 
 
 def test_rgb_tint(rgb):
