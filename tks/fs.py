@@ -33,18 +33,16 @@ except ImportError:
 
 
 class FSEntry(ttk.Frame, object):
-    def __init__(self, master,
-                 variable=None):
+    """Base class for filesystem entries."""
+
+    def __init__(self, master):
         self.master = master
         super(FSEntry, self).__init__(master)
 
-        if variable is None:
-            self._var = tk.StringVar()
-        else:
-            self._var = variable
+        self._var = tk.StringVar()
 
-        self.entry = ttk.Entry(self, textvariable=self._var)
-        self.entry.grid(row=0, column=0, sticky=tk.EW)
+        self._entry = ttk.Entry(self, textvariable=self._var)
+        self._entry.grid(row=0, column=0, sticky=tk.EW)
 
         self._btn = ttk.Button(self, text='Browse...',
                                command=self.browse)
@@ -61,9 +59,20 @@ class FSEntry(ttk.Frame, object):
         self._var.set(str(value))
 
     def browse(self):
+        """Browse for an entry. To be overridden by the subclass."""
+
         raise NotImplementedError
 
     def shorten(self, path):
+        """Shorten a path.
+
+        If the path starts with the path to the home directory then replace
+        it with the ``~`` character.
+
+        If the path starts with the current directory then replace it with
+        the ``.`` character
+        """
+
         home_dir = os.path.expanduser('~')
 
         if 'win32' in sys.platform:
@@ -80,12 +89,16 @@ class FSEntry(ttk.Frame, object):
 
 
 class DirEntry(FSEntry):
+    """Entry box and a button to select a directory."""
+
     def __init__(self, master, variable=None, **options):
         self.master = master
         self.options = options
         super(DirEntry, self).__init__(master, variable)
 
     def browse(self):
+        """Display the dialog to browse for a directory."""
+
         initial_dir = self._var.get()
         initial_dir = os.path.abspath(os.path.expanduser(initial_dir))
 
@@ -99,6 +112,8 @@ class DirEntry(FSEntry):
 
 
 class FileEntry(FSEntry):
+    """Entry box and a button to select a file."""
+
     def __init__(self, master, variable=None, **options):
         self.master = master
         self.mode = options.pop('mode', 'open')
@@ -106,6 +121,8 @@ class FileEntry(FSEntry):
         super(FileEntry, self).__init__(master, variable)
 
     def browse(self):
+        """Display the dialog to browse for a file."""
+
         initial_file = self._var.get()
 
         if initial_file:
