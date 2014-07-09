@@ -10,7 +10,7 @@ import re
 from tks.rc import rcfile
 
 class DefaultColors(object):
-    """A container for color names"""
+    """A container for color names."""
 
     fill = 'white'
     select = '#9de5eb'
@@ -22,13 +22,15 @@ class DefaultColors(object):
 
 
 class DefaultFonts(object):
-    """A container for font information"""
+    """A container for font information."""
 
     text = ('TkTextFont',)
     monospace = ('TkFixedFont',)
 
 
 def load_colors():
+    """Load color definitions from the `.tksrc` file"""
+
     colors = DefaultColors()
     try:
         rc = rcfile()
@@ -48,6 +50,8 @@ def load_colors():
 
 
 def load_fonts():
+    """Load font definitions from the `.tksrc` file"""
+
     fonts = DefaultFonts()
     try:
         rc = rcfile()
@@ -69,7 +73,7 @@ def load_fonts():
 
 
 def parse_geometry(geom):
-    """Return a width, height, x, y tuple from a Tk geometry"""
+    """Return a width, height, x, y tuple from a Tk geometry."""
 
     re_match = re.match(r'(\d+)x(\d+)\+(\d+)\+(\d+)', geom)
     if re_match:
@@ -77,7 +81,7 @@ def parse_geometry(geom):
 
 
 def rect_center(rect):
-    """Return the centre of a rectangle"""
+    """Return the centre of a rectangle as an (x, y) tuple."""
 
     left = min(rect[0], rect[2])
     top = min(rect[1], rect[3])
@@ -88,7 +92,7 @@ def rect_center(rect):
 
 def rect_at(point, size, size_y=-1):
     """Returns a rectangle centred at `point`. If only `size` is provided then
-    the rectangle will be a square. The dimensions will be size * 2
+    the rectangle will be a square. The dimensions will be size * 2.
     """
 
     if size_y == -1:
