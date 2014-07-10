@@ -17,7 +17,7 @@ from .i18n import language
 _ = language.gettext
 
 from tks import color_funcs
-from tks.color_var import ColorVar
+from tks.vars import ColorVar
 from tks.color_wheel import ColorWheel
 from tks.color_square import ColorSquare
 from tks.color_slider import RGBSlider, HSVSlider, HLSSlider

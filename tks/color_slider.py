@@ -15,7 +15,7 @@ try:
 except ImportError:
     import ttk
 
-from tks.color_var import ColorVar
+from tks.vars import ColorVar
 
 class ColorSlider(ttk.Frame, object):
     """Color slider base class."""

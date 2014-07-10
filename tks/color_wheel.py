@@ -20,7 +20,7 @@ except ImportError:
 
 from PIL import Image, ImageTk
 
-from tks.color_var import ColorVar
+from tks.vars import ColorVar
 
 DEFAULT_RADIUS = 125
 

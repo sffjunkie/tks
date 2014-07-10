@@ -26,7 +26,7 @@ except ImportError:
 from .i18n import language
 _ = language.gettext
 
-from tks.color_var import ColorVar
+from tks.vars import ColorVar
 from tks.color_square import ColorSquare
 from tks.color_funcs import rgb_tints, rgb_shades
 
@@ -121,7 +121,7 @@ class ColorTint(_TintAndShadeBase):
     """Displays a sequence of tints.
 
     :param variable: The RGB color to produce a set of tints from
-    :type variable:  :class:`tks.color_var.ColorVar`
+    :type variable:  :class:`tks.vars.ColorVar`
     :param count:    The number of tints to display
     :type count:     int
     :param percent: Determines the percent between the tints specified as a
@@ -143,7 +143,7 @@ class ColorShade(_TintAndShadeBase):
     """Displays a sequence of shades.
 
     :param variable: The RGB color to produce a set of shades from
-    :type variable:  :class:`tks.color_var.ColorVar`
+    :type variable:  :class:`tks.vars.ColorVar`
     :param count:    The number of shades to display
     :type count:     int
     :param percent: Determines the percentage percent between the shades

@@ -25,7 +25,7 @@ try:
 except ImportError:
     import tkFont as tkf
 
-from tks.color_var import ColorVar
+from tks.vars import ColorVar
 from tks.color_funcs import (rgb_to_hex_string, hex_string_to_rgb,
                              rgb_intensity, contrast_color)
 
