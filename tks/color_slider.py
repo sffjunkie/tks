@@ -3,19 +3,17 @@
 """3 element sliders to change RGB, HSV and HLS variables"""
 
 from __future__ import print_function, division, absolute_import
+import sys
 import colorsys
 
-try:
+if sys.version_info >= (3, 0):
     import tkinter as tk
-except ImportError:
-    import Tkinter as tk
-
-try:
     from tkinter import ttk
-except ImportError:
+else:
+    import Tkinter as tk
     import ttk
 
-from tks.vars import ColorVar
+import tks.colors
 
 class ColorSlider(ttk.Frame, object):
     """Color slider base class."""
@@ -24,18 +22,22 @@ class ColorSlider(ttk.Frame, object):
     labels = ('R', 'G', 'B')
 
     def __init__(self, master,
-                 variable=None):
+                 variable=None,
+                 fonts=None):
         super(ColorSlider, self).__init__(master, style='tks.TFrame')
 
         if variable is not None:
             self.color_var = variable
         else:
-            self.color_var = ColorVar(value=self.default)
+            self.color_var = tks.colors.ColorVar(value=self.default)
 
         self.color_var.trace_variable('w', self._color_var_changed)
 
         self._validate_entry = (self.register(self._tk_validate_var),
                                 '%P', '%V')
+
+        if not fonts:
+            fonts = tks.load_fonts()
 
         elem1, elem2, elem3 = self.from_rgb(self.color_var.get())
 
@@ -47,7 +49,7 @@ class ColorSlider(ttk.Frame, object):
                                       textvariable=self._elem1_var,
                                       validate='all',
                                       validatecommand=self._validate_entry,
-                                      font=('TkFixedFont',))
+                                      font=fonts.monospace)
         self._elem1_entry.grid(row=0, column=1, padx=4)
 
         self._elem1_scale = ttk.Scale(self,
@@ -64,7 +66,7 @@ class ColorSlider(ttk.Frame, object):
                                        textvariable=self._elem2_var,
                                        validate='all',
                                        validatecommand=self._validate_entry,
-                                       font=('TkFixedFont',))
+                                       font=fonts.monospace)
         self._elem2_number.grid(row=1, column=1, padx=4)
 
         self._elem2_scale = ttk.Scale(self,
@@ -81,7 +83,7 @@ class ColorSlider(ttk.Frame, object):
                                       textvariable=self._elem3_var,
                                       validate='all',
                                       validatecommand=self._validate_entry,
-                                      font=('TkFixedFont',))
+                                      font=fonts.monospace)
         self._elem3_entry.grid(row=2, column=1, padx=4)
 
         self._elem3_scale = ttk.Scale(self,
@@ -166,10 +168,13 @@ class RGBSlider(ColorSlider):
     """An RGB Color Slider"""
 
     def __init__(self, master,
-                 variable=None):
+                 variable=None,
+                 fonts=None):
         self.labels = ('R', 'G', 'B')
         self.default = (1.0, 0.0, 0.0)
-        super(RGBSlider, self).__init__(master, variable)
+        super(RGBSlider, self).__init__(master,
+                                        variable,
+                                        fonts=fonts)
 
     def from_rgb(self, rgb):
         return rgb
@@ -182,10 +187,13 @@ class HSVSlider(ColorSlider):
     """An HSV Color Slider"""
 
     def __init__(self, master,
-                 variable=None):
+                 variable=None,
+                 fonts=None):
         self.labels = ('H', 'S', 'V')
         self.default = (0.0, 1.0, 1.0)
-        super(HSVSlider, self).__init__(master, variable)
+        super(HSVSlider, self).__init__(master,
+                                        variable,
+                                        fonts=fonts)
 
     def from_rgb(self, rgb):
         return colorsys.rgb_to_hsv(*rgb)
@@ -198,11 +206,14 @@ class HLSSlider(ColorSlider):
     """An HLS Color Slider"""
 
     def __init__(self, master,
-                 variable=None):
+                 variable=None,
+                 fonts=None):
         self.labels = ('H', 'L', 'S')
         self.default = (0.0, 0.5, 1.0)
 
-        super(HLSSlider, self).__init__(master, variable)
+        super(HLSSlider, self).__init__(master,
+                                        variable,
+                                        fonts=fonts)
 
     def from_rgb(self, rgb):
         return colorsys.rgb_to_hls(*rgb)
