@@ -6,8 +6,18 @@ __version__ = '0.2'
 __author__ = 'Simon Kennedy <code@sffjunkie.co.uk>'
 
 import re
+import sys
+import pickle
 
-from tks.rc import rcfile
+if sys.version_info >= (3, 0):
+    from base64 import encodebytes, decodebytes
+    import tkinter as tk
+else:
+    from base64 import (encodestring as encodebytes,
+                        decodestring as decodebytes)
+    import Tkinter as tk
+
+from tks.rc import rcfile, configparser
 
 class DefaultColors(object):
     """A container for color names."""
@@ -17,8 +27,7 @@ class DefaultColors(object):
     select_dark = '#58B1B7'
     header = 'white'
     outline = '#ccc'
-    today = '#eee'
-    other_month = '#888'
+    invalid = 'red'
 
 
 class DefaultFonts(object):
@@ -36,13 +45,19 @@ def load_colors():
         rc = rcfile()
         rc.read()
 
-        header_color = rc['color.header']
-        if header_color != '':
-            colors.header = header_color
+        try:
+            header_color = rc['color.header']
+            if header_color != '':
+                colors.header = header_color
+        except configparser.Error:
+            pass
 
-        select_color = rc['color.select']
-        if select_color != '':
-            colors.select = select_color
+        try:
+            select_color = rc['color.select']
+            if select_color != '':
+                colors.select = select_color
+        except configparser.Error:
+            pass
     except:
         pass
 
@@ -52,20 +67,26 @@ def load_colors():
 def load_fonts():
     """Load font definitions from the `.tksrc` file"""
 
+    def _parse_font(font_def):
+        elems = [i.strip() for i in font_def.split(',')][:3]
+        return tuple([elem for elem in elems if elem])
+
     fonts = DefaultFonts()
     try:
         rc = rcfile()
         rc.read()
 
-        font_info = rc['font.text']
-        if font_info:
-            elems = [i.strip() for i in font_info.split(',')]
-            fonts.text = tuple([elem for elem in elems if elem][:3])
+        try:
+            font_def = rc['font.text']
+            fonts.text = _parse_font(font_def)
+        except configparser.Error:
+            pass
 
-        font_info = rc['font.monospace']
-        if font_info:
-            elems = [i.strip() for i in font_info.split(',')]
-            fonts.monospace = tuple([elem for elem in elems if elem][:3])
+        try:
+            font_def = rc['font.monospace']
+            fonts.monospace = _parse_font(font_def)
+        except configparser.Error:
+            pass
     except:
         pass
 
@@ -101,3 +122,35 @@ def rect_at(point, size, size_y=-1):
     return (point[0] - size, point[1] - size_y,
             point[0] + size, point[1] + size_y)
 
+
+class PickleVar(tk.Variable, object):
+    """A Tkinter variable which stores values as pickled objects."""
+
+    def __init__(self, master=None, value=None, name=None):
+        # Python 3 Tkinter does not call our set method so we'll need to
+        # pickle the value now
+        if value and sys.version_info >= (3, 0):
+            value = self.__transform_value(value)
+
+        super(PickleVar, self).__init__(master, value, name)
+
+    def get(self):
+        value = super(PickleVar, self).get()
+        if value and sys.version_info >= (3, 0):
+            value = bytes(value, encoding='ASCII')
+
+        value = decodebytes(value)
+        return pickle.loads(value)
+
+    def set(self, value):
+        value = self.__transform_value(value)
+        return tk.Variable.set(self, value)
+
+    @staticmethod
+    def __transform_value(value):
+        """We need to base64 encode/decode the pickled objects as Tkinter tries
+        to convert the value to a string and fails with a UnicodeDecodeError
+        """
+        value = pickle.dumps(value)
+        value = encodebytes(value)
+        return value
