@@ -4,16 +4,14 @@
 
 from __future__ import print_function, division, absolute_import
 
+import sys
 from pkgutil import get_data
 
-try:
+if sys.version_info >= (3, 0):
     from base64 import encodebytes
-except ImportError:
-    from base64 import encodestring as encodebytes
-
-try:
     import tkinter as tk
-except ImportError:
+else:
+    from base64 import encodestring as encodebytes
     import Tkinter as tk
 
 
