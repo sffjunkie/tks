@@ -9,7 +9,9 @@ except ImportError:
 
 import py.test
 
-from tks.vars import ColorVar, DateVar, TimeVar
+from tks.colors import ColorVar
+from tks.dates import DateVar
+from tks.times import TimeVar
 
 @py.test.fixture(scope="module")
 def root():
@@ -34,15 +36,19 @@ def test_ColorVar_set(root):
     assert v.get() == (0.25, 0.25, 0.25)
 
 
+def test_ColorVar_gt1(root):
+    v = ColorVar(master=root, value=(255.0, 255.0, 255.0))
+
+    assert v.get() == (1.0, 1.0, 1.0)
+
+
 def test_DateVar_init(root):
     _v = DateVar(master=root)
 
 
 def test_DateVar_SetAndGet(root):
-    v = DateVar(master=root)
-
     d = datetime.date(2014, 1, 1)
-    v.set(d)
+    v = DateVar(master=root, value=d)
 
     assert v.get() == d
 
@@ -52,9 +58,7 @@ def test_TimeVar_init(root):
 
 
 def test_TimeVar_SetAndGet(root):
-    v = DateVar(master=root)
-
     t = datetime.datetime.now().time()
-    v.set(t)
+    v = DateVar(master=root, value=t)
 
     assert v.get() == t

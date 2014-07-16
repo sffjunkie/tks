@@ -18,14 +18,14 @@ def test_rcfile_default_config():
 
 def test_rcfile_getitem():
     f = rcfile()
-    f.set_to(u"[font]\nfamily=Consolas")
+    f.reads(u"[font]\nfamily=Consolas")
 
     assert f['font.family'] == 'Consolas'
 
 
 def test_rcfile_getsubitem():
     f = rcfile()
-    f.set_to(u"[font]\ntext.family=Consolas")
+    f.reads(u"[font]\ntext.family=Consolas")
 
     assert f['font.text.family'] == 'Consolas'
 
