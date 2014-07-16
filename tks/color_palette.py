@@ -5,29 +5,23 @@
 from __future__ import (print_function, division, absolute_import,
                         unicode_literals)
 import re
+import sys
 import math
 import colorsys
 from io import StringIO
 from pkgutil import get_data
 
-try:
+if sys.version_info >= (3, 0):
     import tkinter as tk
-except ImportError:
-    import Tkinter as tk
-
-try:
     from tkinter import ttk
-except ImportError:
-    import ttk
-
-try:
     from tkinter import font as tkf
-except ImportError:
+else:
+    import Tkinter as tk
+    import ttk
     import tkFont as tkf
 
-from tks.vars import ColorVar
-from tks.color_funcs import (rgb_to_hex_string, hex_string_to_rgb,
-                             rgb_intensity, contrast_color)
+import tks.colors
+import tks.color_funcs
 
 from .i18n import language
 _ = language.gettext
@@ -54,7 +48,7 @@ def yiq_key_func(key):
 def intensity_key_func(key):
     """Key function to sort by intensity"""
 
-    return rgb_intensity(key[0])
+    return tks.color_funcs.rgb_intensity(key[0])
 
 
 def name_key_func(key):
@@ -85,7 +79,7 @@ class PaletteSelector(ttk.Frame, object):
         if variable is not None:
             self.color_var = variable
         else:
-            self.color_var = ColorVar()
+            self.color_var = tks.colors.ColorVar()
 
         x11_colors = Palette('x11.txt', read_only=True)
         css3_colors = Palette('css3.txt', read_only=True)
@@ -199,14 +193,14 @@ class PaletteSelector(ttk.Frame, object):
 
             rct_tag = 'rct%03d' % (idx + 1)
             tags = (str(key), rct_tag, 'color')
-            rgb_hex = rgb_to_hex_string(key)
+            rgb_hex = tks.color_funcs.rgb_to_hex_string(key)
             self._canvas.create_rectangle(rect,
                                           fill=rgb_hex,
                                           width='1.0',
                                           outline=rgb_hex,
                                           tags=tags)
 
-            text_color = contrast_color(key)
+            text_color = tks.color_funcs.contrast_color(key)
             txt_tag = 'txt%03d' % (idx + 1)
             tags = (str(key), txt_tag, 'color')
             self._canvas.create_text(text_pos,
@@ -259,7 +253,7 @@ class PaletteSelector(ttk.Frame, object):
                                                        key=self._key_func)):
             rct_tag = 'rct%03d' % (idx + 1)
 
-            rgb_hex = rgb_to_hex_string(key)
+            rgb_hex = tks.color_funcs.rgb_to_hex_string(key)
             self._canvas.itemconfigure(rct_tag,
                                        fill=rgb_hex,
                                        outline=rgb_hex)
@@ -281,7 +275,7 @@ class PaletteSelector(ttk.Frame, object):
                     break
 
             self._canvas.itemconfigure(txt_tag,
-                                       fill=contrast_color(key),
+                                       fill=tks.color_funcs.contrast_color(key),
                                        text=color_info.display_name)
 
         self._selected_rct_tag = ''
@@ -359,11 +353,11 @@ class PaletteSelector(ttk.Frame, object):
                 self._canvas.itemconfigure(old_tag, outline=old_rct_color)
 
             rgb_hex = self._canvas.itemcget(tag, 'fill')
-            color = hex_string_to_rgb(rgb_hex)
+            color = tks.color_funcs.hex_string_to_rgb(rgb_hex)
             # color = self._current_palette.lookup_name(color_name)
             if color is None:
                 color = (1.0, 1.0, 1.0)
-            outline = contrast_color(color)
+            outline = tks.color_funcs.contrast_color(color)
             self._canvas.itemconfigure(tag, outline=outline)
 
             self._selected_rct_tag = tag
