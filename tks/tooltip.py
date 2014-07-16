@@ -4,9 +4,11 @@
 
 from __future__ import (print_function, division, absolute_import,
                         unicode_literals)
-try:
+import sys
+
+if sys.version_info >= (3, 0):
     import tkinter as tk
-except ImportError:
+else:
     import Tkinter as tk
 
 from time import time
@@ -21,12 +23,15 @@ class ToolTip(tk.Toplevel, object):
     ToolTip constructor
 
     :param wdgt: The widget this ToolTip is assigned to
+    :param display_func: A function that if it returns False stop display of the tooltip.
     :param msg:  A static string message assigned to the ToolTip
     :param msg_func: A function that retrieves a string to use as the ToolTip text
-    :param delay:   The delay in seconds before the ToolTip appears(may be float)
+    :param delay:   The delay in seconds before the ToolTip appears (may be float)
     :param follow:  If True, the ToolTip follows motion, otherwise hides
     """
-    def __init__(self, wdgt, msg=None, msg_func=None, delay=1, follow=True):
+    def __init__(self, wdgt, display_func=None,
+                 msg=None, msg_func=None,
+                 delay=1, follow=True):
         self.wdgt = wdgt
         # The parent of the ToolTip is the parent of the ToolTips widget
         self.parent = self.wdgt.master
@@ -35,6 +40,8 @@ class ToolTip(tk.Toplevel, object):
         super(ToolTip, self).__init__(self.parent, bg='black', padx=1, pady=1)
         self.withdraw()
         self.overrideredirect(True)
+
+        self.display_func = display_func
 
         self.msg_var = tk.StringVar()
         if msg == None:
@@ -64,6 +71,9 @@ class ToolTip(tk.Toplevel, object):
         Arguments:
           event: The event that called this funciton
         """
+        if self.display_func and self.display_func() == False:
+            return
+
         self.visible = 1
         # The after function takes a time argument in miliseconds
         self.after(int(self.delay * 1000), self.show)
