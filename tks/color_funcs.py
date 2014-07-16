@@ -82,10 +82,19 @@ def rgb_to_hls_string(value, dp=3):
     return hls
 
 
-def hex_string_to_rgb(value):
+def hex_string_to_rgb(value, allow_short=True):
     """Convert from a hex color string of the form `#abc` or `#abcdef` to an
-    RGB tuple
+    RGB tuple.
+
+    :param value: The value to convert
+    :type value: str
+    :param allow_short: If True then the short of form of an hex value is
+                        accepted e.g. #fff
+    :type allow_short:  bool
     """
+    if value[0] != '#':
+        return None
+
     for ch in value[1:]:
         if ch not in string.hexdigits:
             return None
@@ -98,7 +107,7 @@ def hex_string_to_rgb(value):
              # pylint: disable=missing-docstring
             args = [iter(value[1:])] * 2
             return tuple([int('%s%s' % t, 16) / 255 for t in zip(*args)])
-    elif len(value) == 4:
+    elif len(value) == 4 and allow_short:
         def to_iterable():
             # pylint: disable=missing-docstring
             return tuple([int('%s%s' % (t, t), 16) / 255 for t in value[1:]])
@@ -141,27 +150,50 @@ def luminosity_transform(color, luminosity=0.05):
 def color_string_to_tuple(value):
     """Convert a color string to a tuple of floats."""
 
-    return clamped_tuple(value[4:-1].split(','))
+    try:
+        return clamped_tuple(value[4:-1].split(','))
+    except:
+        return None
 
 
-def color_string_to_color(value):
-    """Convert a color string to a mode, value tuple where mode is one of
-    `rgbhex`, `rgb`, `hsv` or `hls`
+def color_string_to_color(value, allow_short_hex=True):
+    """Convert a color string to a (color format, value) tuple where the
+    color format is one of `rgbhex`, `rgb`, `hsv` or `hls`
     """
-    if value[0] == '#':
-        rgb = hex_string_to_rgb(value)
-        if rgb is not None:
-            return 'rgbhex', rgb
+    try:
+        if value[0] == '#':
+            color_format = 'rgbhex'
+            rgb = hex_string_to_rgb(value, allow_short=allow_short_hex)
+            if rgb:
+                return color_format, rgb
+        else:
+            if value[:4] in ['rgb(', 'hsv(', 'hls(']:
+                color_format = value[:3]
+                if value[-1] == ')':
+                    t = color_string_to_tuple(value)
+                    if t:
+                        return color_format, t
+            else:
+                color_format = None
 
-    mode = value[:4]
-    if mode in ['rgb(', 'hsv(', 'hls('] and value[-1] == ')':
-        try:
-            t = color_string_to_tuple(value)
-            return mode[:3], t
-        except ValueError:
-            return None, None
+        return color_format, None
+    except:
+        return None, None
 
-    return None, None
+
+def color_string_to_rgb(value):
+    """Return an RGB tuple from a color string."""
+
+    color_info = color_string_to_color(value)
+    if color_info == (None, None):
+        return color_info
+    else:
+        if color_info[0] == 'rgbhex' or color_info[0] == 'rgb':
+            return color_info[1]
+        elif color_info[0] == 'hsv':
+            return colorsys.hsv_to_rgb(*color_info[1])
+        elif color_info[0] == 'hls':
+            return colorsys.hls_to_rgb(*color_info[1])
 
 
 def rgb_tints(rgb, base_percent, count, linear=True):
