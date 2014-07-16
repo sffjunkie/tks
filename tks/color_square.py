@@ -4,20 +4,19 @@
 value of a variable. Also displays textual color information below."""
 
 from __future__ import print_function, division, absolute_import
+import sys
 
-try:
+if sys.version_info >= (3, 0):
     import tkinter as tk
-except ImportError:
-    import Tkinter as tk
-
-try:
     from tkinter import ttk
-except ImportError:
+else:
+    import Tkinter as tk
     import ttk
 
-from tks import color_funcs, dnd
-from tks.tooltip import ToolTip
-from tks.vars import ColorVar
+import tks.dnd
+import tks.colors
+import tks.tooltip
+import tks.color_funcs
 
 __all__ = ['ColorSquare']
 
@@ -54,10 +53,14 @@ class ColorSquare(ttk.Frame, object):
                  mode='rw',
                  color_info=('rgbhex',),
                  dnd_target=True,
-                 dnd_source=True):
+                 dnd_source=True,
+                 fonts=None):
         self.master = master
         self.color_info = color_info
         super(ColorSquare, self).__init__(master, style='tks.TFrame')
+
+        if not fonts:
+            fonts = tks.load_fonts()
 
         self._canvas = tk.Canvas(self,
                                  width=100, height=100,
@@ -68,7 +71,8 @@ class ColorSquare(ttk.Frame, object):
         self._canvas_cursor = None
         self._blank_label_color = self._canvas.cget('bg')
 
-        self._tooltip = ToolTip(self._canvas, msg_func=self._color_info_func)
+        self._tooltip = tks.tooltip.ToolTip(self._canvas,
+                                            msg_func=self._color_info_func)
         self._popup = ColorPopupMenu(self)
 
         self._internal_color_change = False
@@ -76,13 +80,13 @@ class ColorSquare(ttk.Frame, object):
         self._text = ttk.Label(self,
                                justify=tk.CENTER,
                                anchor=tk.CENTER,
-                               font=('TkFixedFont',))
+                               font=fonts.monospace)
         self._text.grid(row=1, column=0, sticky=tk.EW)
 
         self.columnconfigure(0, weight=1)
 
         self._mode = mode
-        self._value = None
+        self._variable = None
 
         if variable:
             self.color_var = variable
@@ -91,7 +95,7 @@ class ColorSquare(ttk.Frame, object):
             if 'r' in self._mode:
                 self.color_var.trace_variable('w', self._color_var_changed)
         else:
-            self.color_var = ColorVar(value=self.default)
+            self.color_var = tks.colors.ColorVar(value=self.default)
 
         self._dnd_source = dnd_source
         self._dnd_target = dnd_target
@@ -108,13 +112,13 @@ class ColorSquare(ttk.Frame, object):
         """The RGB tuple to display. If None the the rectangle is cleared and
         the text set to the empty string."""
 
-        return self._value
+        return self._variable
 
     @rgb.setter
     def rgb(self, value):
         """Set the RGB tuple to display."""
 
-        self._value = value
+        self._variable = value
         self._update()
 
     # Drag and Drop
@@ -127,7 +131,7 @@ class ColorSquare(ttk.Frame, object):
             # so force event.num to 1
             event.num = 1
             self._dnd_started = True
-            dnd.dnd_start(self, event)
+            tks.dnd.dnd_start(self, event)
 
     def dnd_accept(self, source, event):
         """Indicate that we can handle a drag and drop operation."""
@@ -141,10 +145,10 @@ class ColorSquare(ttk.Frame, object):
 
         self._canvas_cursor = self._canvas['cursor']
         if self._dnd_target and source is not self and hasattr(source, 'rgb'):
-            self._canvas['cursor'] = self._dnd_cursor or dnd.CURSOR_WIDGET
+            self._canvas['cursor'] = self._dnd_cursor or tks.dnd.CURSOR_WIDGET
             self._canvas['relief'] = tk.RAISED
         else:
-            self._canvas['cursor'] = dnd.CURSOR_FORBIDDEN
+            self._canvas['cursor'] = tks.dnd.CURSOR_FORBIDDEN
             # self._canvas.focus_set()
 
     def dnd_motion(self, source, event):
@@ -187,15 +191,15 @@ class ColorSquare(ttk.Frame, object):
     def _update_color(self, *args):
         """Update our color variable."""
 
-        if self._value and 'w' in self._mode and not self._dnd_started:
+        if self._variable and 'w' in self._mode and not self._dnd_started:
             self._internal_color_change = True
-            self.color_var.set(self._value)
+            self.color_var.set(self._variable)
 
     def _color_var_changed(self, *args):
         """Respond to changes to the color variable we're watching."""
 
         if not self._internal_color_change:
-            self._value = self.color_var.get()
+            self._variable = self.color_var.get()
             self._update()
         self._internal_color_change = False
 
@@ -203,7 +207,7 @@ class ColorSquare(ttk.Frame, object):
         """Update for a new RGB value."""
 
         if self.rgb:
-            self._canvas['bg'] = color_funcs.rgb_to_hex_string(self.rgb)
+            self._canvas['bg'] = tks.color_funcs.rgb_to_hex_string(self.rgb)
             self._text['text'] = self._color_info_text()
         else:
             self._canvas['bg'] = self._blank_label_color
@@ -215,13 +219,13 @@ class ColorSquare(ttk.Frame, object):
         t = ''
         for info in self.color_info:
             if info == 'rgbhex':
-                t1 = color_funcs.rgb_to_hex_string(self.rgb)
+                t1 = tks.color_funcs.rgb_to_hex_string(self.rgb)
             elif info == 'rgb':
-                t1 = color_funcs.rgb_to_rgb_string(self.rgb, dp=2)
+                t1 = tks.color_funcs.rgb_to_rgb_string(self.rgb, dp=2)
             elif info == 'hsv':
-                t1 = color_funcs.rgb_to_hsv_string(self.rgb, dp=2)
+                t1 = tks.color_funcs.rgb_to_hsv_string(self.rgb, dp=2)
             elif info == 'hls':
-                t1 = color_funcs.rgb_to_hls_string(self.rgb, dp=2)
+                t1 = tks.color_funcs.rgb_to_hls_string(self.rgb, dp=2)
 
             t = t + '%s\n' % t1
 
@@ -268,26 +272,26 @@ class ColorPopupMenu(tk.Menu, object):
         """Copy an RGB hex representation to the clipboard"""
 
         self._square.master.clipboard_clear()
-        text = color_funcs.rgb_to_hex_string(self._square.rgb)
+        text = tks.color_funcs.rgb_to_hex_string(self._square.rgb)
         self._square.master.clipboard_append(text)
 
     def _copy_rgb(self, *args):
         """Copy an RGB representation to the clipboard"""
 
         self._square.master.clipboard_clear()
-        text = color_funcs.rgb_to_rgb_string(self._square.rgb)
+        text = tks.color_funcs.rgb_to_rgb_string(self._square.rgb)
         self._square.master.clipboard_append(text)
 
     def _copy_hsv(self, *args):
         """Copy an HSV representation to the clipboard"""
 
         self._square.master.clipboard_clear()
-        text = color_funcs.rgb_to_hsv_string(self._square.rgb)
+        text = tks.color_funcs.rgb_to_hsv_string(self._square.rgb)
         self._square.master.clipboard_append(text)
 
     def _copy_hls(self, *args):
         """Copy an HLS representation to the clipboard"""
 
         self._square.master.clipboard_clear()
-        text = color_funcs.rgb_to_hls_string(self._square.rgb)
+        text = tks.color_funcs.rgb_to_hls_string(self._square.rgb)
         self._square.master.clipboard_append(text)
