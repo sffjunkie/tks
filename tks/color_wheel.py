@@ -5,22 +5,20 @@ triangle within that where saturation and value can be selected
 """
 
 from __future__ import print_function, division, absolute_import
-from math import pi, degrees, radians, atan2, floor, pow, fabs, cos, sin
+import sys
 import colorsys
+from math import pi, degrees, radians, atan2, floor, pow, fabs, cos, sin
 
-try:
+if sys.version_info >= (3, 0):
     import tkinter as tk
-except ImportError:
-    import Tkinter as tk
-
-try:
     from tkinter import ttk
-except ImportError:
+else:
+    import Tkinter as tk
     import ttk
 
 from PIL import Image, ImageTk
 
-from tks.vars import ColorVar
+import tks.colors
 
 DEFAULT_RADIUS = 125
 
@@ -37,14 +35,14 @@ class ColorWheel(ttk.Frame, object):
 
         if variable is not None:
             self.color_var = variable
-            self._value = variable.get()
-            self._hsv = colorsys.rgb_to_hsv(*self._value)
+            self._variable = variable.get()
+            self._hsv = colorsys.rgb_to_hsv(*self._variable)
         else:
             # Start with Red
-            self.color_var = ColorVar()
-            self._value = (1.0, 0.0, 0.0)
+            self.color_var = tks.colors.ColorVar()
+            self._variable = (1.0, 0.0, 0.0)
             self._hsv = (0.0, 1.0, 1.0)
-            self.color_var.set(self._value)
+            self.color_var.set(self._variable)
 
         self.color_var.trace_variable('w', self._color_var_changed)
 
@@ -114,8 +112,8 @@ class ColorWheel(ttk.Frame, object):
     def _color_var_changed(self, *args):
         """Respond to changes in the color variable."""
 
-        self._value = self.color_var.get()
-        self._hsv = colorsys.rgb_to_hsv(*self._value)
+        self._variable = self.color_var.get()
+        self._hsv = colorsys.rgb_to_hsv(*self._variable)
         angle = int(self._hsv[0] * 359.0)
         if not self._internal_color_change:
             if angle != self._hue_degrees:
