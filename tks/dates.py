@@ -1,6 +1,9 @@
 # Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
-"""tkStuff provides 3 classes to obtain a date from a user.
+"""tkStuff provides 4 classes to obtain a date from a user.
+
+:class:`DateVar`
+    A Tk variable which holds a date.
 
 :class:`DateEntry`
     Displays entry boxes for year, month and day as well as a button to
@@ -19,19 +22,13 @@ import datetime
 import calendar
 from functools import partial
 
-try:
+if sys.version_info >= (3, 0):
     import tkinter as tk
-except ImportError:
-    import Tkinter as tk
-
-try:
     from tkinter import font as tkf
-except ImportError:
-    import tkFont as tkf
-
-try:
     from tkinter import ttk
-except ImportError:
+else:
+    import Tkinter as tk
+    import tkFont as tkf
     import ttk
 
 try:
@@ -44,7 +41,7 @@ except ImportError:
 from tks.i18n import language
 _ = language.gettext
 
-from tks import parse_geometry, load_colors, load_fonts, DefaultColors, DefaultFonts
+import tks
 
 
 class TargetShape():
@@ -53,6 +50,16 @@ class TargetShape():
     Square = 'square'
     Rectangle = 'rectangle'
     Circle = 'circle'
+
+
+class DateVar(tks.PickleVar):
+    """A Tkinter variable which holds a :class:`datetime.date`"""
+
+    def __init__(self, master=None, value=None, name=None):
+        if value is None:
+            value = datetime.date.today()
+
+        super(DateVar, self).__init__(master, value, name)
 
 
 class DateEntry(ttk.Frame, object):
@@ -64,33 +71,33 @@ class DateEntry(ttk.Frame, object):
     Dates will always consist of a 4 digit year and 2 digit months and days
     only the order and separator are determined by the `locale` parameter
 
-    :param master: The master frame
-    :type master: :class:`ttk.Frame`
-    :param start_date: The date to display in the entry boxes
-    :type start_date:  :class:`datetime.date` or :class:`datetime.datetime`
-    :param locale: Determines the order of the widgets in the entry.
-                   Either a locale name e.g. 'en' or a babel Locale
-                   instance. If :mod:`babel` is not installed ISO 8601
-                   format will be used.
-    :type locale:  str
-    :param fonts: Fonts to user
-    :type font:   :class:`~tks.DefaultFonts`
+    :param master:   The master frame
+    :type master:    :class:`ttk.Frame`
+    :param variable: The variable which hold the date to display in
+                     the entry boxes.
+    :type variable:  :class:`tks.vars.DateVar`
+    :param locale:   Determines the order of the widgets in the entry.
+                     Either a locale name e.g. 'en' or a babel Locale
+                     instance. If :mod:`babel` is not installed ISO 8601
+                     format will be used.
+    :type locale:    str
+    :param fonts:    Fonts to use.
+    :type font:      :class:`~tks.DefaultFonts`
     """
 
     def __init__(self, master,
-                 start_date=None,
+                 variable=None,
                  locale='en',
                  fonts=None):
         super(DateEntry, self).__init__(master)
 
-        if not fonts:
-            fonts = load_fonts()
+        if variable:
+            if not isinstance(variable, DateVar):
+                raise ValueError('"variable" argument must be a DateVar')
 
-        self.fonts = fonts
-
-        self._time = None
-        if start_date is None:
-            start_date = datetime.date.today()
+            self._variable = variable
+        else:
+            self._variable = DateVar(value=datetime.date.today())
 
         if babel and locale:
             if not isinstance(locale, babel.Locale):
@@ -119,6 +126,11 @@ class DateEntry(ttk.Frame, object):
 
         self._locale = locale
 
+        if not fonts:
+            fonts = tks.load_fonts()
+
+        self.fonts = fonts
+
         self._year_var = tk.IntVar()
         self._month_var = tk.IntVar()
         self._day_var = tk.IntVar()
@@ -135,7 +147,6 @@ class DateEntry(ttk.Frame, object):
                                          font=self.fonts.text)
         self._month_entry['values'] = ['%02d' % (x + 1) for x in range(12)]
         self._month_entry.grid(row=0, column=month_column * 2)
-        self._month_entry.bind('<<ComboboxSelected>>', self._month_updated)
 
         self._day_entry = ttk.Combobox(self,
                                        textvariable=self._day_var,
@@ -156,22 +167,59 @@ class DateEntry(ttk.Frame, object):
             self.columnconfigure(idx, weight=0)
         self.columnconfigure(5, weight=1)
 
-        self.date = start_date
+        self._year_var.trace_variable('w', self._year_changed)
+        self._month_var.trace_variable('w', self._month_changed)
+        self._day_var.trace_variable('w', self._day_changed)
 
-    def __getattribute__(self, attr):
-        """Override __getattribute__ to provide an attribute 'value' as an
-        alias for 'date'.
-        """
+        self._variable.trace_variable('w', self._value_changed)
 
-        if attr == 'value':
-            return object.__getattribute__(self, 'date')
+        self._time = None
+        self._internal_value_change = True
+        self.value = self._variable.get()
+
+    @property
+    def value(self):
+        """The :class:`~datetime.date` represented by the entry."""
+
+        d = self._variable.get()
+
+        if self._time:
+            d = d.replace(hour=self._time.hour,
+                          minute=self._time.minute,
+                          second=self._time.second)
+
+        return d
+
+    @value.setter
+    def value(self, value):
+        changed = False
+        if value.year != self._year_var.get():
+            self._year_var.set(value.year)
+            changed = True
+
+        if value.month != self._month_var.get():
+            self._month_var.set('%02d' % value.month)
+            changed = True
+
+        if value.day != self._day_var.get():
+            self._day_var.set('%02d' % value.day)
+            changed = True
+
+        if changed:
+            self._update_day_values(value.year, value.month, value.day)
+
+        if isinstance(value, datetime.datetime):
+            self._time = value.time()
         else:
-            return object.__getattribute__(self, attr)
+            self._time = None
+
+        self._internal_value_change = True
+        self._variable.set(value)
 
     def _update_day_values(self, year, month, day):
         """Update the day combo box with the correct values
         """
-        _, days_in_month = calendar.monthrange(year, month)
+        dummy, days_in_month = calendar.monthrange(year, month)
 
         new_day = None
         if self._day_entry['values']:
@@ -185,41 +233,34 @@ class DateEntry(ttk.Frame, object):
         if new_day:
             self._day_var.set('%02d' % new_day)
 
-    def _month_updated(self, event=None):
-        """Update the day combo box so that we have the correct end date for
-        the month
-        """
-        self._update_day_values(self._year_var.get(),
-                                self._month_var.get(),
-                                self._day_var.get())
+    def _year_changed(self, *args):
+        value = self._variable.get()
+        new_date = datetime.datetime(year=self._year_var.get(),
+                                     month=value.month,
+                                     day=value.day)
+        self.value = new_date
 
-    @property
-    def date(self):
-        """The :class:`~datetime.date` represented by the entry."""
+    def _month_changed(self, *args):
+        value = self._variable.get()
+        new_date = datetime.datetime(year=value.year,
+                                     month=self._month_var.get(),
+                                     day=value.day)
+        self.value = new_date
+        #self._update_day_values(self._year_var.get(),
+        #                        self._month_var.get(),
+        #                        self._day_var.get())
 
-        d = datetime.datetime(year=self._year_var.get(),
-                              month=self._month_var.get(),
-                              day=self._day_var.get())
+    def _day_changed(self, *args):
+        value = self._variable.get()
+        new_date = datetime.datetime(year=value.year,
+                                     month=value.month,
+                                     day=self._day_var.get())
+        self.value = new_date
 
-        if self._time:
-            d = d.replace(hour=self._time.hour,
-                          minute=self._time.minute,
-                          second=self._time.second)
-
-        return d
-
-    @date.setter
-    def date(self, d):
-        self._year_var.set(d.year)
-        self._month_var.set('%02d' % d.month)
-        self._day_var.set('%02d' % d.day)
-
-        self._update_day_values(d.year, d.month, d.day)
-
-        if isinstance(d, datetime.datetime):
-            self._time = d.time()
-        else:
-            self._time = None
+    def _value_changed(self, *args):
+        if not self._internal_value_change:
+            self.value = self._variable.get()
+        self._internal_value_change = False
 
     def _select_date(self):
         """Display the date selection dialog"""
@@ -236,7 +277,7 @@ class DateEntry(ttk.Frame, object):
         self.wait_window(dlg)
         new_date = dlg.date
         if new_date != None:
-            self.date = new_date
+            self.value = new_date
 
 
 class DateDialog(tk.Toplevel, object):
@@ -265,6 +306,7 @@ class DateDialog(tk.Toplevel, object):
                  start_date=None,
                  locale='en',
                  fonts=None,
+                 colors=None,
                  target_type=TargetShape.Circle):
         super(DateDialog, self).__init__(master)
 
@@ -274,7 +316,10 @@ class DateDialog(tk.Toplevel, object):
         self.date = None
 
         if not fonts:
-            fonts = load_fonts()
+            fonts = tks.load_fonts()
+
+        if not colors:
+            colors = tks.load_colors()
 
         if babel and not isinstance(locale, babel.Locale):
             locale = babel.Locale(locale)
@@ -282,7 +327,8 @@ class DateDialog(tk.Toplevel, object):
         self._selector = DateSelector(self, start_date,
                                       locale=locale,
                                       target_type=target_type,
-                                      fonts=fonts)
+                                      fonts=fonts,
+                                      colors=colors)
         self._selector.grid(row=0, column=0, sticky=tk.NSEW)
 
         okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='TFrame')
@@ -312,7 +358,7 @@ class DateDialog(tk.Toplevel, object):
         self.update_idletasks()
         self.deiconify()
 
-        gi = parse_geometry(self.winfo_geometry())
+        gi = tks.parse_geometry(self.winfo_geometry())
         self.minsize(gi[0], gi[1])
         self.resizable(width=False, height=False)
 
@@ -368,10 +414,10 @@ class DateSelector(ttk.Frame, object):
         self._date = None
 
         if not fonts:
-            fonts = load_fonts()
+            fonts = tks.load_fonts()
 
         if not colors:
-            colors = load_colors()
+            colors = tks.load_colors()
 
         today = datetime.date.today()
         if babel:
@@ -534,12 +580,15 @@ class DaySelector(ttk.Frame, object):
         if fonts:
             self.fonts = fonts
         else:
-            self.fonts = DefaultFonts()
+            self.fonts = tks.DefaultFonts()
 
         if colors:
             self.colors = colors
         else:
-            self.colors = DefaultColors()
+            self.colors = tks.DefaultColors()
+
+        self.colors.today = '#eee'
+        self.colors.other_month = '#888'
 
         if start_date is None:
             self._date = datetime.date.today()
@@ -778,7 +827,7 @@ class DaySelector(ttk.Frame, object):
                 else:
                     self._canvas.itemconfigure(txt_tag,
                                                text=text,
-                                               fill=DefaultColors.other_month)
+                                               fill=self.colors.other_month)
 
                 tgt_tag = 'tgt%s:%s' % (week_number, day_number)
 
@@ -789,7 +838,6 @@ class DaySelector(ttk.Frame, object):
                     self._canvas.itemconfig(tgt_tag,
                                             fill=self.colors.select)
                     self._selected_tgt = tgt_tag
-
 
     def _next_month(self):
         self._date = next_month(self._date)
