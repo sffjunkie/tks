@@ -1,66 +1,117 @@
 # Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
 
+"""tkStuff provides 3 classes to obtain a color from a user.
+
+:class:`ColorVar`
+    A Tk variable which holds an RGB color.
+
+:class:`ColorEntry`
+    Displays an entry box to enter a color as well as a button to
+    display a color selection dialog.
+
+:class:`ColorDialog`
+    Displays a dialog window allowing the user to select a color using a
+    color wheel or sliders.
+"""
+
 from __future__ import print_function, division, absolute_import
+import sys
 import colorsys
 
-try:
+if sys.version_info >= (3, 0):
     import tkinter as tk
-except ImportError:
-    import Tkinter as tk
-
-try:
     from tkinter import ttk
-except ImportError:
+else:
+    import Tkinter as tk
     import ttk
 
 from .i18n import language
 _ = language.gettext
 
-from tks import color_funcs
-from tks.vars import ColorVar
-from tks.color_wheel import ColorWheel
-from tks.color_square import ColorSquare
-from tks.color_slider import RGBSlider, HSVSlider, HLSSlider
+import tks
+import tks.color_funcs
+import tks.color_wheel
+import tks.color_square
+import tks.color_slider
 
-DEFAULT_FONT = ('TkTextFont',)
+DEFAULT_RGB = (1.0, 0.0, 0.0)
+
+
+class ColorVar(tks.PickleVar):
+    """A Tkinter Variable subclass to store an RGB color tuple."""
+
+    def __init__(self, master=None, value=None, name=None):
+        if value is not None:
+            if sys.version_info >= (3, 0):
+                value = self.__transform_value(value)
+            else:
+                value = tuple([float(x) for x in value[:3]])
+        else:
+            value = DEFAULT_RGB
+
+        super(ColorVar, self).__init__(master, value, name)
+
+    def set(self, value):
+        """Set the color tuple to be stored."""
+
+        value = self.__transform_value(value)
+        return super(ColorVar, self).set(value)
+
+    def __transform_value(self, value):
+        """If any element of the tuple is greater than 1.0 then all values
+        will be divided by 255.0
+        """
+        value = [float(x) for x in value[:3]]
+
+        if any([x > 1.0 for x in value]):
+            value = [x / 255.0 for x in value]
+
+        return tuple(value)
 
 
 class ColorEntry(ttk.Frame, object):
-    """Displays an entry to enter color information and a button to display an
-    entry dialog.
+    """Displays an entry to enter color information and a button to display a
+    selection dialog.
 
     :param master: Tk master widget
-    :param start_color:  The starting color.
-
-                         Colors can be specified using any of the following
-                         forms ::
-
-                             #abc or #abcdef
-                             rgb(1.0, 1.0, 1.0)
-                             hsv(1.0, 1.0, 1.0)
-                             hls(1.0, 1.0, 1.0)
-    :type start_color:   str
+    :param variable: The variable which hold the color to display in
+                     the entry box.
+    :type variable:  :class:`tks.vars.ColorVar`
+    :param color_format: How to display the color in the entry box. One of the
+                         following ``rgbhex``, ``rgb``, ``hsv`` or ``hls``
+    :type color_format:  str
+    :param fonts:    Fonts to use
+    :type font:      :class:`~tks.DefaultFonts`
     """
 
     def __init__(self, master,
-                 start_color='rgb(1.0, 0.0, 0.0)',
-                 font=DEFAULT_FONT):
+                 variable=None,
+                 color_format='rgbhex',
+                 fonts=None,
+                 colors=None):
         super(ColorEntry, self).__init__(master, style='tks.TFrame')
-        self._master = master
-        self._start_color = start_color
 
-        self.color_var = tk.StringVar()
-        self._entry = ttk.Entry(self, textvariable=self.color_var,
-                                font=font)
-        self._entry.grid(row=0, column=0, sticky=tk.EW)
+        if variable:
+            if not isinstance(variable, ColorVar):
+                raise ValueError('"variable" argument must be a ColorVar')
 
-        color_info = color_funcs.color_string_to_color(start_color)
-        if color_info:
-            self.valid = True
+            self._variable = variable
         else:
-            raise ValueError(_('Unrecognised start color'))
+            self._variable = ColorVar()
 
-        self.color_var.set(start_color)
+        if not fonts:
+            fonts = tks.load_fonts()
+
+        if not colors:
+            self.colors = tks.load_colors()
+
+        self._color_format = color_format
+        self._valid = True
+
+        self._text_var = tk.StringVar()
+        self._entry = ttk.Entry(self, textvariable=self._text_var,
+                                font=fonts.text)
+        self._entry.grid(row=0, column=0, sticky=tk.EW)
 
         btn = ttk.Button(self, text=_('Select...'), command=self._select_color)
         btn.grid(row=0, column=5, sticky=tk.E, padx=(6, 0))
@@ -68,74 +119,75 @@ class ColorEntry(ttk.Frame, object):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=0)
 
-    def __getattribute__(self, attr):
-        """Override __getattribute__ to provide an attribute 'value' as an
-        alias for 'rgb'.
-        """
+        self._color_to_text()
+        self.valid = True
 
-        if attr == 'value':
-            return object.__getattribute__(self, 'rgb')
-        else:
-            return object.__getattribute__(self, attr)
+        self._variable.trace_variable('w', self._variable_changed)
+        self._text_var.trace_variable('w', self._text_changed)
 
     @property
     def rgb(self):
         """RGB representation of the selected color"""
 
-        color_info = color_funcs.color_string_to_color(self.color_var.get())
-        if color_info:
-            color_mode = color_info[0]
-            color = color_info[1][:3]
-
-            if color_mode in ['rgb', 'rgbhex']:
-                return color
-            elif color_mode == 'hsv':
-                return colorsys.hsv_to_rgb(*color)
-            elif color_mode == 'hls':
-                return colorsys.hls_to_rgb(*color)
-
-            self.valid = True
-        else:
-            self.valid = False
+        return self._variable.get()
 
     @property
     def hsv(self):
         """HSV representation of the selected color"""
 
-        color_info = color_funcs.color_string_to_color(self.color_var.get())
-        if color_info:
-            color_mode = color_info[0]
-            color = color_info[1][:3]
-
-            if color_mode == 'hsv':
-                return color
-            elif color_mode in ['rgb', 'rgbhex']:
-                return colorsys.rgb_to_hsv(*color)
-            elif color_mode == 'hls':
-                rgb = colorsys.hls_to_rgb(*color)
-                return colorsys.rgb_to_hsv(*rgb)
-
-            self.valid = True
-        else:
-            self.valid = False
+        color = self._variable.get()
+        return colorsys.rgb_to_hsv(*color)
 
     @property
     def hls(self):
         """HLS representation of the selected color"""
 
-        color_info = color_funcs.color_string_to_color(self.color_var.get())
-        if color_info:
-            color_mode = color_info[0]
-            color = color_info[1][:3]
+        color = self._variable.get()
+        return colorsys.rgb_to_hls(*color)
 
-            if color_mode == 'hls':
-                return color
-            elif color_mode in ['rgb', 'rgbhex']:
-                return colorsys.rgb_to_hls(*color)
-            elif color_mode == 'hsv':
-                rgb = colorsys.hsv_to_rgb(*color)
-                return colorsys.rgb_to_hls(*rgb)
+    @property
+    def value(self):
+        return self._variable.get()
 
+    @value.setter
+    def value(self, value):
+        return self._variable.set(value)
+
+    @property
+    def valid(self):
+        return self._valid
+
+    @valid.setter
+    def valid(self, value):
+        if value:
+            self._entry.configure(foreground='black')
+        else:
+            self._entry.configure(foreground=self.colors.invalid)
+
+    def _variable_changed(self, *args):
+        self._color_to_text()
+
+    def _color_to_text(self):
+        color = self._variable.get()
+
+        if self._color_format == 'rgbhex':
+            txt = tks.color_funcs.rgb_to_hex_string(color)
+        elif self._color_format == 'rgb':
+            txt = tks.color_funcs.rgb_to_rgb_string(color)
+        elif self._color_format == 'hsv':
+            txt = tks.color_funcs.rgb_to_hsv_string(color)
+        elif self._color_format == 'hls':
+            txt = tks.color_funcs.rgb_to_hls_string(color)
+
+        self._text_var.set(txt)
+
+    def _text_changed(self, *args):
+        value = self._text_var.get()
+        ci = tks.color_funcs.color_string_to_color(value,
+                                                   allow_short_hex=False)
+        self._color_format = ci[0]
+        if ci[1] != None:
+            self._variable.set(ci[1])
             self.valid = True
         else:
             self.valid = False
@@ -143,31 +195,28 @@ class ColorEntry(ttk.Frame, object):
     def _select_color(self):
         """Display the color selection dialog"""
 
-        color_info = color_funcs.color_string_to_color(self.color_var.get())
-        if not color_info:
-            color_info = color_funcs.color_string_to_color(self._start_color)
+        value = self._text_var.get()
+        color_info = tks.color_funcs.color_string_to_color(value)
 
-        color_mode = color_info[0]
-        color = color_info[1][:3]
-        if color_mode in ['rgb', 'rgbhex']:
-            rgb = color
-        elif color_mode == 'hsv':
-            rgb = colorsys.hsv_to_rgb(*color)
-        elif color_mode == 'hls':
-            rgb = colorsys.hls_to_rgb(*color)
+        if color_info[1]:
+            color_format = color_info[0]
+            color = color_info[1]
+            if color_format in ['rgb', 'rgbhex']:
+                rgb = color
+            elif color_format == 'hsv':
+                rgb = colorsys.hsv_to_rgb(*color)
+            elif color_format == 'hls':
+                rgb = colorsys.hls_to_rgb(*color)
+        else:
+            rgb = DEFAULT_RGB
+
+        self._color_format = color_format
 
         dlg = ColorDialog(self, _("Select a Color"),
                           start_color=rgb)
         self.wait_window(dlg)
         if dlg.color is not None:
-            if color_mode == 'rgbhex':
-                self.color_var.set(color_funcs.rgb_to_hex_string(dlg.color))
-            elif color_mode == 'rgb':
-                self.color_var.set(color_funcs.rgb_to_rgb_string(dlg.color))
-            elif color_mode == 'hsv':
-                self.color_var.set(color_funcs.rgb_to_hsv_string(dlg.color))
-            elif color_mode == 'hls':
-                self.color_var.set(color_funcs.rgb_to_hls_string(dlg.color))
+            self._variable.set(dlg.color)
 
 
 class ColorDialog(tk.Toplevel, object):
@@ -188,11 +237,15 @@ class ColorDialog(tk.Toplevel, object):
     """
 
     def __init__(self, master, title,
-                 start_color=(0.5, 0.5, 0.5)):
+                 start_color=(0.5, 0.5, 0.5),
+                 fonts=None):
         super(ColorDialog, self).__init__(master)
 
         self.withdraw()
         self.title(title)
+
+        if not fonts:
+            fonts = tks.load_fonts()
 
         self.color = None
 
@@ -202,21 +255,30 @@ class ColorDialog(tk.Toplevel, object):
         start_color, self._scaled = self._scale_color_var(start_color)
         self.color_var = ColorVar(value=start_color)
 
-        self._color_selector = ColorWheel(self, variable=self.color_var)
+        self._color_selector = tks.color_wheel.ColorWheel(self, variable=self.color_var)
         self._color_selector.grid(row=0, column=0, rowspan=3,
                                   padx=4, pady=4, sticky=tk.NW)
 
-        rgb_slider = RGBSlider(self, variable=self.color_var)
+        rgb_slider = tks.color_slider.RGBSlider(self,
+                                                variable=self.color_var,
+                                                fonts=fonts)
         rgb_slider.grid(row=0, column=1, padx=4, pady=4, sticky=tk.NSEW)
 
-        hsv_slider = HSVSlider(self, variable=self.color_var)
+        hsv_slider = tks.color_slider.HSVSlider(self,
+                                                variable=self.color_var,
+                                                fonts=fonts)
         hsv_slider.grid(row=1, column=1, padx=4, pady=4, sticky=tk.NSEW)
 
-        hls_slider = HLSSlider(self, variable=self.color_var)
+        hls_slider = tks.color_slider.HLSSlider(self,
+                                                variable=self.color_var,
+                                                fonts=fonts)
         hls_slider.grid(row=2, column=1, padx=4, pady=4, sticky=tk.NSEW)
 
-        self.lbl = ColorSquare(self, variable=self.color_var, mode='rw',
-                               color_info=('rgbhex', 'rgb', 'hsv', 'hls'))
+        self.lbl = tks.color_square.ColorSquare(self, variable=self.color_var,
+                                                mode='rw',
+                                                color_info=('rgbhex', 'rgb',
+                                                            'hsv', 'hls'),
+                                                fonts=fonts)
         self.lbl.grid(row=0, column=2, rowspan=2, padx=4, pady=4, sticky=tk.NE)
 
         okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='tks.TFrame')
