@@ -10,7 +10,7 @@ try:
 except ImportError:
     import Tkinter as tk
 
-from tks.password import PasswordEntry
+from tks.passwords import PasswordEntry
 
 if __name__ == '__main__':
     root = tk.Tk()
