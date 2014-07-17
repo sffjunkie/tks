@@ -76,14 +76,6 @@ class PasswordEntry(ttk.Frame, object):
                                 width=13)
         self._entry.grid(row=0, column=0, sticky=tk.EW)
 
-        if show_hide:
-            self._show_password_var = tk.IntVar()
-            self._show_password = ttk.Checkbutton(self, text=_("Show"),
-                                                  variable=self._show_password_var)
-
-            self._show_password.grid(row=0, column=3)
-            self._show_password_var.trace_variable('w', self._show_password_toggle)
-
         if compare:
             self._status_lbl = tk.Label(self, text='==',
                                         font=fonts.monospace)
@@ -99,6 +91,14 @@ class PasswordEntry(ttk.Frame, object):
                                      font=fonts.text,
                                      width=13)
             self._entry2.grid(row=0, column=2, sticky=tk.EW)
+
+        if show_hide:
+            self._show_password_var = tk.IntVar()
+            self._show_password = ttk.Checkbutton(self, text=_("Show"),
+                                                  variable=self._show_password_var)
+
+            self._show_password.grid(row=0, column=3)
+            self._show_password_var.trace_variable('w', self._show_password_toggle)
 
         if generate:
             self._generate_btn = ttk.Button(self, text="Generate...",
