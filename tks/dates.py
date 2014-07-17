@@ -76,7 +76,7 @@ class DateEntry(ttk.Frame, object):
     :type master:    :class:`ttk.Frame`
     :param variable: The variable which hold the date to display in
                      the entry boxes.
-    :type variable:  :class:`tks.vars.DateVar`
+    :type variable:  :class:`tks.dates.DateVar`
     :param locale:   Determines the order of the widgets in the entry.
                      Either a locale name e.g. 'en' or a babel Locale
                      instance. If :mod:`babel` is not installed ISO 8601
