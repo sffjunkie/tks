@@ -2,21 +2,22 @@ Time Handling
 =============
 
 .. automodule:: tks.times
+   
+.. autoclass:: tks.times.TimeVar
+   :members:
 
 .. _time-entry-class:
    
 .. autoclass:: tks.times.TimeEntry
    :members:
-   :member-order: bysource
    
 .. _time-dialog-class:
    
 .. autoclass:: tks.times.TimeDialog
    :members:
-   :member-order: bysource
+   :exclude-members: ok, cancel
    
 .. _time-selector-class:
    
 .. autoclass:: tks.times.TimeSelector
    :members:
-   :member-order: bysource

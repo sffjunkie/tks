@@ -43,6 +43,12 @@ sys.path.insert(0, os.path.abspath('..'))
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx']
 
+python_docs_url = 'http://docs.python.org/%d.%d' % sys.version_info[:2]
+intersphinx_mapping = {
+    'python': (python_docs_url, None),
+    'babel': ('http://babel.pocoo.org/docs/', None),
+}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
 

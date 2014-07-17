@@ -2,6 +2,9 @@ Color Handling
 ==============
 
 .. automodule:: tks.colors
+   
+.. autoclass:: tks.colors.ColorVar
+   :members:
 
 .. _color-entry-class:
    

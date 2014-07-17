@@ -92,4 +92,18 @@ Color
    
    Tints and Shades Widgets (See the :ref:`ColorTint <color-tint-class>`
    and :ref:`ColorShade <color-shade-class>` classes)
+
    
+Passwords
+---------
+
+
+.. figure:: .static/password_entry.png
+   :class: example
+   
+   Password Entry Widget (See the :ref:`PasswordEntry <password-entry-class>` class)
+
+.. figure:: .static/password_dialog.png
+   :class: example
+   
+   Password Generation Dialog (See the :ref:`PasswordDialog <password-dialog-class>` class)

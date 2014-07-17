@@ -81,9 +81,9 @@ class DateEntry(ttk.Frame, object):
                      Either a locale name e.g. 'en' or a babel Locale
                      instance. If :mod:`babel` is not installed ISO 8601
                      format will be used.
-    :type locale:    str
+    :type locale:    str or :class:`babel.Locale <babel.core.Locale>`
     :param fonts:    Fonts to use.
-    :type font:      :class:`~tks.DefaultFonts`
+    :type fonts:      :class:`~tks.DefaultFonts`
     """
 
     def __init__(self, master,
@@ -295,7 +295,7 @@ class DateDialog(tks.dialog.Dialog):
                    Either a locale name e.g. 'en' or a babel Locale
                    instance. If :mod:`babel` is not installed ISO 8601
                    format will be used.
-    :type locale:  str or :class:`babel.Locale`
+    :type locale:  str or :class:`babel.Locale <babel.core.Locale>`
     :param fonts: Font definitions to use
     :type fonts: :class:`tks.DefaultFonts`
     :param target_type: `TargetShape.Square`, `TargetShape.Rectangle` or
@@ -349,7 +349,7 @@ class DateSelector(ttk.Frame, object):
                    Either a locale name e.g. 'en' or a babel Locale
                    instance. If :mod:`babel` is not installed ISO 8601
                    format will be used.
-    :type locale:  str or :class:`babel.Locale`
+    :type locale:  str or :class:`babel.Locale <babel.core.Locale>`
     :param target_type: `TargetShape.Square`, `TargetShape.Rectangle` or
                         `TargetShape.Circle`
     :type target_type:  :class:`TargetShape`

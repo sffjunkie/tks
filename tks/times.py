@@ -72,7 +72,7 @@ class TimeEntry(ttk.Frame, object):
                      Either a locale name e.g. 'en' or a babel Locale instance.
                      If :mod:`babel` is not installed ISO 8601 format will be
                      used i.e. 24 hours (no am/pm) and ':' as a separator.
-    :type locale:    str or :class:`babel.Locale`
+    :type locale:    str or :class:`babel.Locale <babel.core.Locale>`
     :param fonts:    Fonts to use
     :type font:      :class:`~tks.DefaultFonts`
     :param show_seconds: If True a seconds value can be entered.
@@ -341,7 +341,7 @@ class TimeDialog(tks.dialog.Dialog):
                    Either a locale name e.g. 'en' or a babel Locale instance.
                    If :mod:`babel` is not installed ISO 8601 format will be
                    used i.e. 24 hours (no am/pm) and ':' as a separator.
-    :type locale:  str or :class:`babel.Locale`
+    :type locale:  str or :class:`babel.Locale <babel.core.Locale>`
     :param time_position: Controls if and where a text representation of the
                           time is displayed. Can be one of the following
 
@@ -404,7 +404,7 @@ class TimeSelector(ttk.Frame, object):
                    Either a locale name e.g. 'en' or a babel Locale instance.
                    If :mod:`babel` is not installed ISO 8601 format will be
                    used i.e. 24 hours (no am/pm) and ':' as a separator.
-    :type locale:  str or :class:`babel.Locale`
+    :type locale:  str or :class:`babel.Locale <babel.core.Locale>`
     :param ampm: If not None display a 12 hour clock face with am/pm selection
                  where the 1st element of the tuple is the text for AM and the
                  2nd element for PM.

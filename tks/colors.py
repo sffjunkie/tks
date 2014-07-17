@@ -76,7 +76,7 @@ class ColorEntry(ttk.Frame, object):
     :param master: Tk master widget
     :param variable: The variable which hold the color to display in
                      the entry box.
-    :type variable:  :class:`tks.vars.ColorVar`
+    :type variable:  :class:`tks.colors.ColorVar`
     :param color_format: How to display the color in the entry box. One of the
                          following ``rgbhex``, ``rgb``, ``hsv`` or ``hls``
     :type color_format:  str

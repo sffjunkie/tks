@@ -2,25 +2,25 @@ Date Handling
 =============
 
 .. automodule:: tks.dates
+   
+.. autoclass:: tks.dates.DateVar
+   :members:
 
 .. _date-entry-class:
    
 .. autoclass:: tks.dates.DateEntry
    :members:
-   :member-order: bysource
    
 .. _date-dialog-class:
    
 .. autoclass:: tks.dates.DateDialog
    :members:
-   :member-order: bysource
+   :exclude-members: ok, cancel
    
 .. _date-selector-class:
    
 .. autoclass:: tks.dates.DateSelector
    :members:
-   :member-order: bysource
    
 .. autoclass:: tks.dates.TargetShape
-   :members:
    

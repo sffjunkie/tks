@@ -12,6 +12,7 @@ Welcome to tkStuff
    times
    colors
    fs
+   passwords
    misc
 
 tkStuff is a collection of Tkinter widgets for dates, times and colors.
@@ -58,7 +59,8 @@ Installation is performed from `PyPi`_ via :command:`pip` ::
    pip install tks
    
 This doesn't automatically install Babel. To do this either install it
-separately or use the following command for the improved date/time handling ::
+separately or use the following command for the
+**i**\mproved **d**\ate/**t**\ime **h**\andling ::
 
    pip install tks[idth]
 
@@ -73,13 +75,13 @@ Version History
 ======== =======================================================================
 Version  Description
 ======== =======================================================================
-0.2      * Added `value` property as an alias, to the
-           :class:`~tks.dates.DateEntry`,
-           :class:`~tks.times.TimeEntry` and
-           :class:`~tks.colors.ColorEntry`
-           classes.
+0.2      * :class:`\*Entry` classes now take a Tk variable subclass
+           instead of a value.
+         * Colors and fonts to be used for interface elements can be specified
+           using an `rc` file.
          * Added a decimal places parameter to the color to string conversion
            functions.
+         * Added :class:`\*Entry` classes for files and directories.
          * Added functions to set a Tk window icon.
 -------- -----------------------------------------------------------------------
 0.1      Initial release
