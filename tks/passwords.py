@@ -26,7 +26,7 @@ class PasswordEntry(ttk.Frame, object):
         * A checkbox to show and hide the password
         * A second entry box to make sure the password was entered as the user
           thought.
-        * A button which displays a dialog to generate a password.
+        * A button which displays a dialog to generate a random password.
 
     :param master:   The master frame
     :type master:    :class:`ttk.Frame`
@@ -39,7 +39,7 @@ class PasswordEntry(ttk.Frame, object):
     :param compare:  If True a second entry box is shown to as a comparison.
     :type compare:    bool
     :param generate:  If True a button is shown which displays a password
-                      generator.
+                      generator when clicked.
     :type generate:    bool
     :param fonts:    Fonts to use.
     :type font:      :class:`~tks.DefaultFonts`
