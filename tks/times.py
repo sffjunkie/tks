@@ -40,6 +40,7 @@ from .i18n import language
 _ = language.gettext
 
 import tks
+import tks.dialog
 
 PADDING = 4
 FACE_RADIUS = 150
@@ -326,7 +327,7 @@ class TimeEntry(ttk.Frame, object):
             self.value = new_time
 
 
-class TimeDialog(tk.Toplevel, object):
+class TimeDialog(tks.dialog.Dialog):
     """Display a dialog to obtain a time from the user
 
     :param master: The master frame
@@ -364,10 +365,7 @@ class TimeDialog(tk.Toplevel, object):
                  show_seconds=False,
                  ampm=None,
                  fonts=None):
-        super(TimeDialog, self).__init__(master)
-
-        self.withdraw()
-        self.title(title)
+        super(TimeDialog, self).__init__(master, title)
 
         self.time = None
 
@@ -381,62 +379,20 @@ class TimeDialog(tk.Toplevel, object):
         if start_time is None:
             start_time = datetime.datetime.time.now()
 
-        self._selector = TimeSelector(self, start_time,
+        self.selector = TimeSelector(self, start_time,
                                       locale=locale,
                                       time_position=time_position,
                                       show_seconds=show_seconds,
                                       ampm=ampm,
                                       fonts=fonts)
-        self._selector.grid(row=0, column=0, sticky=tk.NSEW)
 
-        okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='tks.TFrame')
-
-        # Swap the order of buttons for Windows
-        if sys.platform.startswith('win32'):
-            btn_column = (1, 2)
-        else:
-            btn_column = (2, 1)
-
-        self.ok_btn = ttk.Button(okcancel, text=_('OK'), width=10,
-                                 command=self._ok)
-        self.ok_btn.grid(column=btn_column[0], row=0, padx=(3, 0))
-        cancel = ttk.Button(okcancel, text=_('Cancel'), width=10,
-                            command=self._cancel)
-        cancel.grid(column=btn_column[1], row=0, padx=(3, 0))
-
-        okcancel.columnconfigure(0, weight=1)
-        okcancel.columnconfigure(1, weight=0)
-        okcancel.columnconfigure(2, weight=0)
-
-        okcancel.grid(column=0, row=2, sticky=(tk.E, tk.W, tk.S))
-        self.columnconfigure(0, weight=1)
-
-        self.update_idletasks()
-        self.deiconify()
-
-        geometry_info = tks.parse_geometry(self.winfo_geometry())
-        self.minsize(geometry_info[0], geometry_info[1])
-        self.resizable(width=False, height=False)
-
-        self.bind('<Escape>', self._cancel)
-        self.protocol('WM_DELETE_WINDOW', self._cancel)
-        self.focus()
-        self.transient(master)
-        self.grab_set()
-
-    def _ok(self, event=None):
+    def ok(self, event=None):
         """Called when the OK button is pressed"""
 
-        self.time = self._selector.time
-        self.grab_release()
-        self.destroy()
+        self.time = self.selector.time
 
-    def _cancel(self, event=None):
+    def cancel(self, event=None):
         """Called when either the Escape key or the Cancel button is pressed"""
-
-        self.time = None
-        self.grab_release()
-        self.destroy()
 
 
 class TimeSelector(ttk.Frame, object):
