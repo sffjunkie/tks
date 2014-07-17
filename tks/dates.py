@@ -42,6 +42,7 @@ from tks.i18n import language
 _ = language.gettext
 
 import tks
+import tks.dialog
 
 
 class TargetShape():
@@ -280,7 +281,7 @@ class DateEntry(ttk.Frame, object):
             self.value = new_date
 
 
-class DateDialog(tk.Toplevel, object):
+class DateDialog(tks.dialog.Dialog):
     """Display a dialog to obtain a date from the user
 
     :param master: The master frame
@@ -308,10 +309,7 @@ class DateDialog(tk.Toplevel, object):
                  fonts=None,
                  colors=None,
                  target_type=TargetShape.Circle):
-        super(DateDialog, self).__init__(master)
-
-        self.withdraw()
-        self.title(title)
+        super(DateDialog, self).__init__(master, title)
 
         self.date = None
 
@@ -324,63 +322,19 @@ class DateDialog(tk.Toplevel, object):
         if babel and not isinstance(locale, babel.Locale):
             locale = babel.Locale(locale)
 
-        self._selector = DateSelector(self, start_date,
-                                      locale=locale,
-                                      target_type=target_type,
-                                      fonts=fonts,
-                                      colors=colors)
-        self._selector.grid(row=0, column=0, sticky=tk.NSEW)
+        self.selector = DateSelector(self, start_date,
+                                     locale=locale,
+                                     target_type=target_type,
+                                     fonts=fonts,
+                                     colors=colors)
 
-        okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='TFrame')
-
-        # Swap the order of buttons for Windows
-        if 'win32' in sys.platform:
-            btn_column = (1, 2)
-        else:
-            btn_column = (2, 1)
-
-        self.ok_btn = ttk.Button(okcancel, text=_('OK'), width=10,
-                                 command=self._ok)
-        self.ok_btn.grid(column=btn_column[0], row=0, padx=(6, 0), sticky=tk.SE)
-
-        cancel = ttk.Button(okcancel, text=_('Cancel'), width=10,
-                            command=self._cancel)
-        cancel.grid(column=btn_column[1], row=0, padx=(6, 0), sticky=tk.SE)
-
-        okcancel.columnconfigure(0, weight=1)
-        okcancel.columnconfigure(1, weight=0)
-        okcancel.columnconfigure(2, weight=0)
-
-        okcancel.grid(column=0, row=2, sticky=(tk.EW, tk.S))
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure(2, weight=1)
-
-        self.update_idletasks()
-        self.deiconify()
-
-        gi = tks.parse_geometry(self.winfo_geometry())
-        self.minsize(gi[0], gi[1])
-        self.resizable(width=False, height=False)
-
-        self.bind('<Escape>', self._cancel)
-        self.protocol('WM_DELETE_WINDOW', self._cancel)
-        self.focus()
-        self.transient(master)
-        self.grab_set()
-
-    def _ok(self):
+    def ok(self):
         """Called when the OK button is pressed"""
 
         self.date = self._selector.date
-        self.grab_release()
-        self.destroy()
 
-    def _cancel(self):
+    def cancel(self):
         """Called when either the Escape key or the Cancel button is pressed"""
-
-        self.date = None
-        self.grab_release()
-        self.destroy()
 
 
 class DateSelector(ttk.Frame, object):
