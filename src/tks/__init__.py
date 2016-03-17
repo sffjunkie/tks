@@ -136,7 +136,7 @@ class PickleVar(tk.Variable, object):
 
     def get(self):
         value = super(PickleVar, self).get()
-        if value and sys.version_info >= (3, 0):
+        if value and not isinstance(value, bytes) and sys.version_info >= (3, 0):
             value = bytes(value, encoding='ASCII')
 
         value = decodebytes(value)
