@@ -218,14 +218,6 @@ class DateEntry(ttk.Frame, object):
         self._internal_value_change = True
         self._variable.set(value)
 
-    def __str__(self):
-        if babel:
-            return babel.dates.format_date(self.value,
-                                           self._pattern,
-                                           self._locale)
-        else:
-            self.value.strftime('%Y-%m-%d')
-
     def _update_day_values(self, year, month, day):
         """Update the day combo box with the correct values
         """
