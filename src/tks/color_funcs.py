@@ -31,7 +31,7 @@ def rgb_to_hex_string(value):
 
     R, G and B should be in the range 0.0 - 1.0
     """
-    color = ''.join(['%02x' % x1 for x1 in [x * 255 for x in value]])
+    color = ''.join(['%02x' % x1 for x1 in [int(x * 255) for x in value]])
     return '#%s' % color
 
 
