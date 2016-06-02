@@ -36,7 +36,7 @@ try:
 except ImportError:
     babel = None
 
-from .i18n import language
+from tks.i18n import language
 _ = language.gettext
 
 import tks
