@@ -158,4 +158,4 @@ class ColorShade(_TintAndShadeBase):
         super(ColorShade, self).__init__(master, variable, _('Shades'),
                                          count=count,
                                          percent=percent,
-                                         func=color_funcs.rgb_shades)
+                                         func=tks.color_funcs.rgb_shades)
