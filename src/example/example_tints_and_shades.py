@@ -10,7 +10,7 @@ try:
 except ImportError:
     import Tkinter as tk
 
-from tks.color_var import ColorVar
+from tks.colors import ColorVar
 from tks.color_tints_and_shades import ColorTint, ColorShade
 
 if __name__ == '__main__':
