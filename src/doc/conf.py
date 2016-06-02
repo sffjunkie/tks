@@ -24,13 +24,6 @@ import sphinx_bootstrap_theme
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-doc_root = os.path.abspath(os.path.dirname(__file__))
-
-theme_root = [os.path.abspath(os.path.join(doc_root,
-                                          '..', '..', '..',
-                                          'sphinx-theme', 'sffjunkie',
-                                          'trunk')), ]
-
 sys.path.insert(0, os.path.abspath('..'))
 
 # -- General configuration ------------------------------------------------
@@ -122,10 +115,27 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-if on_rtd:
-    html_theme = 'default'
-else:
+
+html_theme_options = {}
+if not on_rtd:
+    project_home = os.environ.get('PROJECT_HOME', None)
+    if not project_home:
+        dev_home = os.environ.get('DEV_HOME', None)
+        if dev_home:
+            project_home = os.path.join(os.path.expanduser(dev_home), 'projects')
+    else:
+        project_home = os.path.expanduser(project_home)
+
+    if project_home:
+        theme_root = os.path.join(project_home, 'sphinx-theme', 'sffjunkie', 'trunk')
+        html_theme_path = [theme_root]
+    else:
+        raise OSError('Unable to find theme root: Please set the PROJECT_HOME environment variable')
+
     html_theme = 'sffjunkie'
+    html_theme_options = {'logo_shadow': True, 'fixed_header': False}
+else:
+    html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -134,15 +144,11 @@ else:
 #    'bootstrap_version': "3",
 #    'bootswatch_theme': "yeti",
 #}
-html_theme_options = {}
 
 extra_css = '%s/%s.css' % (html_static_path, project)
 
 if os.path.exists(extra_css):
     html_theme_options['custom_stylesheet'] = [extra_css]
-
-# Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path() + theme_root
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
