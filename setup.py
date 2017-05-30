@@ -14,6 +14,8 @@
 
 from setuptools import setup, find_packages
 
+PACKAGE_DIR = 'src'
+
 setup(name='tks',
       version='0.2',
       description="""A collection of Tk widgets""",
@@ -22,8 +24,8 @@ setup(name='tks',
       author_email='sffjunkie+code@gmail.com',
       url="https://launchpad.net/tkstuff",
       license='Apache-2.0',
-      package_dir={'': 'src'},
-      packages=find_packages(),
+      package_dir={'': PACKAGE_DIR},
+      packages=find_packages(PACKAGE_DIR),
       package_data={'tks': ['tks/*.txt'], },
       include_package_data=True,
       requires=['PIL'],

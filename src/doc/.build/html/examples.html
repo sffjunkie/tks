@@ -1,0 +1,216 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Code Examples &mdash; tkStuff 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sffjunkie.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-scrollspy.js"></script>
+    <script type="text/javascript" src="_static/sffjunkie.js"></script>
+    <script type="text/javascript">$('#sidebarwrapper').scrollspy();</script>
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+    <link rel="top" title="tkStuff 0.1.1 documentation" href="index.html" />
+    <link rel="next" title="Date Handling" href="dates.html" />
+    <link rel="prev" title="Gallery" href="gallery.html" /> 
+  </head>
+  <body data-spy="scroll">
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="index.html">tkStuff 0.1.1 documentation</a> &raquo;</li>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dates.html" title="Date Handling"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gallery.html" title="Gallery"
+             accesskey="P">previous</a> |</li>
+        
+<li class="right">
+<form class="navbar-form" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" data-spy="scroll">
+            
+  <div class="section" id="code-examples">
+<span id="id1"></span><h1>Code Examples<a class="headerlink" href="#code-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="a-date-entry">
+<h2>A Date Entry<a class="headerlink" href="#a-date-entry" title="Permalink to this headline">¶</a></h2>
+<p>To display the date entry and dialog shown
+<a class="reference internal" href="gallery.html#gallery-date"><em>in the gallery</em></a> the following code can be used.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">Tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+
+<span class="kn">from</span> <span class="nn">tks.dates</span> <span class="kn">import</span> <span class="n">DateEntry</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Date Test&#39;</span><span class="p">)</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">DateEntry</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">locale</span><span class="o">=</span><span class="s">&#39;pt&#39;</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="n">tk</span><span class="o">.</span><span class="n">EW</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="a-time-entry">
+<h2>A Time Entry<a class="headerlink" href="#a-time-entry" title="Permalink to this headline">¶</a></h2>
+<p>To display the time entry and dialog shown
+<a class="reference internal" href="gallery.html#gallery-time"><em>in the gallery</em></a> the following code can be used.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">Tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+
+<span class="kn">from</span> <span class="nn">tks.times</span> <span class="kn">import</span> <span class="n">TimeEntry</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Time Test&#39;</span><span class="p">)</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">TimeEntry</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">locale</span><span class="o">=</span><span class="s">&#39;en_US&#39;</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="n">tk</span><span class="o">.</span><span class="n">EW</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="a-color-entry">
+<h2>A Color Entry<a class="headerlink" href="#a-color-entry" title="Permalink to this headline">¶</a></h2>
+<p>To display the color entry and dialog shown
+<a class="reference internal" href="gallery.html#gallery-color"><em>in the gallery</em></a> the following code can be used.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">Tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+
+<span class="kn">from</span> <span class="nn">tks.colors</span> <span class="kn">import</span> <span class="n">ColorEntry</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Color Test&#39;</span><span class="p">)</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">ColorEntry</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">start_color</span><span class="o">=</span><span class="s">&#39;#fedcba&#39;</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="n">tk</span><span class="o">.</span><span class="n">EW</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="a-color-palette-widget">
+<h2>A Color Palette Widget<a class="headerlink" href="#a-color-palette-widget" title="Permalink to this headline">¶</a></h2>
+<p>To display the color palette widget shown
+<a class="reference internal" href="gallery.html#gallery-color-palette"><em>in the gallery</em></a> the following code can be used.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">Tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+
+<span class="kn">from</span> <span class="nn">tks.color_palette</span> <span class="kn">import</span> <span class="n">PaletteSelector</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Color Palette&#39;</span><span class="p">)</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="n">PaletteSelector</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">entry</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Code Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dates.html">Date Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="times.html">Time Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="colors.html">Color Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fs.html">Filesystem Entry Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="passwords.html">Password Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">Miscellaneous Stuff</a></li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="dates.html"
+                        title="next chapter">Date Handling</a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gallery.html"
+                        title="previous chapter">Gallery</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/examples.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="index.html">tkStuff 0.1.1 documentation</a> &raquo;</li>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dates.html" title="Date Handling"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gallery.html" title="Gallery"
+             >previous</a> |</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Simon Kennedy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

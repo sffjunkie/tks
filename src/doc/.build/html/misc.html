@@ -1,0 +1,460 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Miscellaneous Stuff &mdash; tkStuff 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sffjunkie.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/bootstrap-scrollspy.js"></script>
+    <script type="text/javascript" src="_static/sffjunkie.js"></script>
+    <script type="text/javascript">$('#sidebarwrapper').scrollspy();</script>
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+    <link rel="top" title="tkStuff 0.1.1 documentation" href="index.html" />
+    <link rel="prev" title="Password Handling" href="passwords.html" /> 
+  </head>
+  <body data-spy="scroll">
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="index.html">tkStuff 0.1.1 documentation</a> &raquo;</li>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="passwords.html" title="Password Handling"
+             accesskey="P">previous</a> |</li>
+        
+<li class="right">
+<form class="navbar-form" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" data-spy="scroll">
+            
+  <div class="section" id="miscellaneous-stuff">
+<h1>Miscellaneous Stuff<a class="headerlink" href="#miscellaneous-stuff" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="module-tks">
+<span id="the-tks-module"></span><h2>The tks Module<a class="headerlink" href="#module-tks" title="Permalink to this headline">¶</a></h2>
+<p>tkStuff - A collection of Tk widgets</p>
+<dl class="class">
+<dt id="tks.DefaultColors">
+<em class="property">class </em><tt class="descclassname">tks.</tt><tt class="descname">DefaultColors</tt><a class="headerlink" href="#tks.DefaultColors" title="Permalink to this definition">¶</a></dt>
+<dd><p>A container for color names.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="tks.DefaultFonts">
+<em class="property">class </em><tt class="descclassname">tks.</tt><tt class="descname">DefaultFonts</tt><a class="headerlink" href="#tks.DefaultFonts" title="Permalink to this definition">¶</a></dt>
+<dd><p>A container for font information.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="tks.PickleVar">
+<em class="property">class </em><tt class="descclassname">tks.</tt><tt class="descname">PickleVar</tt><big>(</big><em>master=None</em>, <em>value=None</em>, <em>name=None</em><big>)</big><a class="headerlink" href="#tks.PickleVar" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Tkinter variable which stores values as pickled objects.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.load_colors">
+<tt class="descclassname">tks.</tt><tt class="descname">load_colors</tt><big>(</big><big>)</big><a class="headerlink" href="#tks.load_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load color definitions from the <cite>.tksrc</cite> file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.load_fonts">
+<tt class="descclassname">tks.</tt><tt class="descname">load_fonts</tt><big>(</big><big>)</big><a class="headerlink" href="#tks.load_fonts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load font definitions from the <cite>.tksrc</cite> file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.parse_geometry">
+<tt class="descclassname">tks.</tt><tt class="descname">parse_geometry</tt><big>(</big><em>geom</em><big>)</big><a class="headerlink" href="#tks.parse_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a width, height, x, y tuple from a Tk geometry.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.rect_at">
+<tt class="descclassname">tks.</tt><tt class="descname">rect_at</tt><big>(</big><em>point</em>, <em>size</em>, <em>size_y=-1</em><big>)</big><a class="headerlink" href="#tks.rect_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a rectangle centred at <cite>point</cite>. If only <cite>size</cite> is provided then
+the rectangle will be a square. The dimensions will be <cite>size</cite> * 2.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.rect_center">
+<tt class="descclassname">tks.</tt><tt class="descname">rect_center</tt><big>(</big><em>rect</em><big>)</big><a class="headerlink" href="#tks.rect_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the centre of a rectangle as an (x, y) tuple.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tks.color_funcs">
+<span id="color-functions-tks-color-funcs"></span><h2>Color Functions (tks.color_funcs)<a class="headerlink" href="#module-tks.color_funcs" title="Permalink to this headline">¶</a></h2>
+<p>Various functions to manipulate RGB hex, RGB, HSV and HLS colors.</p>
+<dl class="function">
+<dt id="tks.color_funcs.clamp">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">clamp</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#tks.color_funcs.clamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clamp a float between 0.0 and 1.0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.clamped_tuple">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">clamped_tuple</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#tks.color_funcs.clamped_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clamps the values in a tuple between 0.0 and 1.0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.color_string_to_color">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">color_string_to_color</tt><big>(</big><em>value</em>, <em>allow_short_hex=True</em><big>)</big><a class="headerlink" href="#tks.color_funcs.color_string_to_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a color string to a (color format, value) tuple where the
+color format is one of <cite>rgbhex</cite>, <cite>rgb</cite>, <cite>hsv</cite> or <cite>hls</cite></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.color_string_to_rgb">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">color_string_to_rgb</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#tks.color_funcs.color_string_to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an RGB tuple from a color string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.color_string_to_tuple">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">color_string_to_tuple</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#tks.color_funcs.color_string_to_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a color string to a tuple of floats.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.contrast_color">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">contrast_color</tt><big>(</big><em>rgb</em><big>)</big><a class="headerlink" href="#tks.color_funcs.contrast_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return either white or black whichever provides the most contrast</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.hex_string_to_rgb">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">hex_string_to_rgb</tt><big>(</big><em>value</em>, <em>allow_short=True</em><big>)</big><a class="headerlink" href="#tks.color_funcs.hex_string_to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert from a hex color string of the form <cite>#abc</cite> or <cite>#abcdef</cite> to an
+RGB tuple.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The value to convert</li>
+<li><strong>allow_short</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If True then the short of form of an hex value is
+accepted e.g. #fff</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.luminosity_transform">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">luminosity_transform</tt><big>(</big><em>color</em>, <em>luminosity=0.05</em><big>)</big><a class="headerlink" href="#tks.color_funcs.luminosity_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform an RGB color by a luminosity.</p>
+<p>If luminosity is a tuple then the 3 elements are used to transform the red,
+green and blue values individually. If a float then the same value is used
+to transform all 3 elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_intensity">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_intensity</tt><big>(</big><em>rgb</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_intensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an RGB color to its intensity</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_shade">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_shade</tt><big>(</big><em>rgb</em>, <em>percent=5</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_shade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a shade of the RGB color</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rgb</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The RGB value for which to calculate the tint</li>
+<li><strong>percent</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Determines the percent between the specified color and
+the shade</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_shades">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_shades</tt><big>(</big><em>rgb</em>, <em>base_percent</em>, <em>count</em>, <em>linear=True</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_shades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a list of shades from the base color</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rgb</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The RGB value for which to calculate the shades</li>
+<li><strong>base_percent</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Determines the factor between the returned colors</li>
+<li><strong>count</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of shades to return</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_tint">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_tint</tt><big>(</big><em>rgb</em>, <em>percent=5</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_tint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a tinted version of the RGB color</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rgb</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The RGB value for which to calculate the tint</li>
+<li><strong>percent</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Determines the percent between the specified color and
+the tint</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_tints">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_tints</tt><big>(</big><em>rgb</em>, <em>base_percent</em>, <em>count</em>, <em>linear=True</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_tints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a list of tints from the base color</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rgb</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The RGB value for which to calculate the tints</li>
+<li><strong>base_percent</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Determines the factor between the returned colors</li>
+<li><strong>count</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of tints to return</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_to_hex_string">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_to_hex_string</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_to_hex_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert from an (R, G, B) tuple to a hex color.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The RGB value to convert</td>
+</tr>
+</tbody>
+</table>
+<p>R, G and B should be in the range 0.0 - 1.0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_to_hls_string">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_to_hls_string</tt><big>(</big><em>value</em>, <em>dp=3</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_to_hls_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert from an (R, G, B) tuple to an HLS string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The RGB value to convert</li>
+<li><strong>dp</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of decimal places in the string</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>R, G and B should be in the range 0.0 - 1.0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_to_hsv_string">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_to_hsv_string</tt><big>(</big><em>value</em>, <em>dp=3</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_to_hsv_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert from an (R, G, B) tuple to an HSV string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The RGB value to convert</li>
+<li><strong>dp</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of decimal places in the string</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>R, G and B should be in the range 0.0 - 1.0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.color_funcs.rgb_to_rgb_string">
+<tt class="descclassname">tks.color_funcs.</tt><tt class="descname">rgb_to_rgb_string</tt><big>(</big><em>value</em>, <em>dp=3</em><big>)</big><a class="headerlink" href="#tks.color_funcs.rgb_to_rgb_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert from an (R, G, B) tuple to an RGB string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The RGB value to convert</li>
+<li><strong>dp</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of decimal places in the string</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>R, G and B should be in the range 0.0 - 1.0</p>
+</dd></dl>
+
+</div>
+<div class="section" id="icon-functions-tks-icon">
+<h2>Icon Functions (tks.icon)<a class="headerlink" href="#icon-functions-tks-icon" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="tks.icon.set_icon_from_data">
+<tt class="descclassname">tks.icon.</tt><tt class="descname">set_icon_from_data</tt><big>(</big><em>root</em>, <em>image_data</em><big>)</big><a class="headerlink" href="#tks.icon.set_icon_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the icon for a root window from image data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> &#8211; Toplevel window for which to set the icon.</li>
+<li><strong>image_data</strong> (<em>bytes</em>) &#8211; The image data to use</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.icon.set_icon_from_file">
+<tt class="descclassname">tks.icon.</tt><tt class="descname">set_icon_from_file</tt><big>(</big><em>root</em>, <em>filename</em><big>)</big><a class="headerlink" href="#tks.icon.set_icon_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the icon for a root window from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> &#8211; Toplevel window for which to set the icon.</li>
+<li><strong>filename</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The filename to read the image data from</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tks.icon.set_icon_from_resource">
+<tt class="descclassname">tks.icon.</tt><tt class="descname">set_icon_from_resource</tt><big>(</big><em>root</em>, <em>package</em>, <em>resource</em><big>)</big><a class="headerlink" href="#tks.icon.set_icon_from_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the icon for a root window to a resource</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> &#8211; Toplevel window for which to set the icon.</li>
+<li><strong>package</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The package in which to find the resource</li>
+<li><strong>resource</strong> (<a class="reference external" href="http://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The name of the resource</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Code Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dates.html">Date Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="times.html">Time Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="colors.html">Color Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fs.html">Filesystem Entry Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="passwords.html">Password Handling</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Miscellaneous Stuff</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="passwords.html"
+                        title="previous chapter">Password Handling</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/misc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="index.html">tkStuff 0.1.1 documentation</a> &raquo;</li>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="passwords.html" title="Password Handling"
+             >previous</a> |</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Simon Kennedy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
