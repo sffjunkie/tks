@@ -95,14 +95,14 @@ class Dialog(tk.Toplevel, object):
         self._selector = value
         self._selector.grid(row=0, column=0)
 
-    def _ok(self):
+    def _ok(self, event=None):
         """Called when the OK button is pressed"""
 
         self.ok()
         self.grab_release()
         self.destroy()
 
-    def _cancel(self):
+    def _cancel(self, event=None):
         """Called when either the Escape key or the Cancel button is pressed"""
 
         self.cancel()

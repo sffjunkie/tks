@@ -133,9 +133,9 @@ class DateEntry(ttk.Frame, object):
 
         self.fonts = fonts
 
-        self._year_var = tk.IntVar()
-        self._month_var = tk.IntVar()
-        self._day_var = tk.IntVar()
+        self._year_var = tk.StringVar()
+        self._month_var = tk.StringVar()
+        self._day_var = tk.StringVar()
 
         self._year_entry = ttk.Entry(self,
                                      textvariable=self._year_var,
@@ -237,16 +237,16 @@ class DateEntry(ttk.Frame, object):
 
     def _year_changed(self, *args):
         value = self._variable.get()
-        new_date = datetime.datetime(year=self._year_var.get(),
-                                     month=value.month,
-                                     day=value.day)
+        new_date = datetime.date(year=int(self._year_var.get()),
+                                 month=value.month,
+                                 day=value.day)
         self.value = new_date
 
     def _month_changed(self, *args):
         value = self._variable.get()
-        new_date = datetime.datetime(year=value.year,
-                                     month=self._month_var.get(),
-                                     day=value.day)
+        new_date = datetime.date(year=value.year,
+                                 month=int(self._month_var.get()),
+                                 day=value.day)
         self.value = new_date
         #self._update_day_values(self._year_var.get(),
         #                        self._month_var.get(),
@@ -254,9 +254,9 @@ class DateEntry(ttk.Frame, object):
 
     def _day_changed(self, *args):
         value = self._variable.get()
-        new_date = datetime.datetime(year=value.year,
-                                     month=value.month,
-                                     day=self._day_var.get())
+        new_date = datetime.date(year=value.year,
+                                 month=value.month,
+                                 day=int(self._day_var.get()))
         self.value = new_date
 
     def _value_changed(self, *args):
@@ -267,9 +267,9 @@ class DateEntry(ttk.Frame, object):
     def _select_date(self):
         """Display the date selection dialog"""
 
-        d = datetime.date(year=self._year_var.get(),
-                          month=self._month_var.get(),
-                          day=self._day_var.get())
+        d = datetime.date(year=int(self._year_var.get()),
+                          month=int(self._month_var.get()),
+                          day=int(self._day_var.get()))
 
         dlg = DateDialog(self,
                          _('Select a Date...'),

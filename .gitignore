@@ -1,5 +1,12 @@
 setup.cfg
+setup-dev.cfg
 tox.ini
+.tox
+_version.py
+.coveragerc
+.coveralls.yml
+.atom-build.yaml
+.atom-build.yml
 
 # Numerous always-ignore extensions
 *.diff
@@ -13,6 +20,7 @@ tox.ini
 *.vi
 *~
 *.sass-cache
+*.egg-info
 
 # OS or Editor folders
 .DS_Store
@@ -28,6 +36,7 @@ nbproject
 *.sublime-project
 *.sublime-workspace
 *.iml
+.vscode
 
 # Dreamweaver added files
 _notes
@@ -41,11 +50,15 @@ dwsync.xml
 .bzr
 .hg
 .svn
+.eggs
 .CVS
 intermediate
 publish
 .idea
 __pycache__
+build
+dist
+MANIFEST
 
 # build script local files
 build/buildinfo.properties
