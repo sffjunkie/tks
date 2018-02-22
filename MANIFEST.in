@@ -1,3 +1,4 @@
 include src/tks/x11.txt
 include src/tks/css3.txt
 recursive-include src/tks/i18n *.mo
+include monkeypatch.py
