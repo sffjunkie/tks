@@ -1,9 +1,9 @@
-# Copyright 2014, Simon Kennedy, sffjunkie+code@gmail.com
+# Copyright 2014-2018, Simon Kennedy, sffjunkie+code@gmail.com
 
 """tkStuff - A collection of Tk widgets"""
 
-__version__ = '0.2'
-__author__ = 'Simon Kennedy <code@sffjunkie.co.uk>'
+__version__ = '0.2.1'
+__author__ = 'Simon Kennedy <sffjunkie+code@gmail.com>'
 
 import re
 import sys

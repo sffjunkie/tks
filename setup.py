@@ -19,7 +19,7 @@ import monkeypatch # pylint: disable=W0611
 PACKAGE_DIR = 'src'
 
 setup(name='tks',
-      version='0.2',
+      version='0.2.1',
       description="""A collection of Tk widgets""",
       long_description=
         """A collection of Tk widgets for dates, times and colors.
