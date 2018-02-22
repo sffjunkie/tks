@@ -14,6 +14,8 @@
 
 from setuptools import setup, find_packages
 
+import monkeypatch # pylint: disable=W0611
+
 PACKAGE_DIR = 'src'
 
 setup(name='tks',
