@@ -21,7 +21,9 @@ PACKAGE_DIR = 'src'
 setup(name='tks',
       version='0.2',
       description="""A collection of Tk widgets""",
-      long_description="""A collection of Tk widgets for dates, times and colors.""",
+      long_description=
+        """A collection of Tk widgets for dates, times and colors.
+        For documentation see https://tks.readthedocs.io/en/latest/index.html""",
       author='Simon Kennedy',
       author_email='sffjunkie+code@gmail.com',
       url="https://github.com/sffjunkie/tks",
