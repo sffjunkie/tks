@@ -3,7 +3,7 @@ tks - Tkinter Stuff
 
 This is 'tks' a collection of Tkinter widgets
 
-For documentation see https://tks.readthedocs.org/latest/
+For documentation see https://tks.readthedocs.io/en/latest/index.html
 
 .. image:: src/doc/.static/date_dialog.png
 
