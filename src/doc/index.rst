@@ -1,11 +1,10 @@
-==================
-Welcome to tkStuff
-==================
+tkStuff v\ |release|
+====================
 
 .. toctree::
    :maxdepth: 1
    :includehidden:
-   
+
    gallery
    examples
    dates
@@ -38,7 +37,7 @@ License
 =======
 
 This module is licensed under the terms of the `Apache`_ V2.0 license.
-    
+
 Dependencies
 ============
 
@@ -57,7 +56,7 @@ Installation
 Installation is performed from `PyPi`_ via :command:`pip` ::
 
    pip install tks
-   
+
 This doesn't automatically install Babel. To do this either install it
 separately or use the following command for the
 **i**\mproved **d**\ate/**t**\ime **h**\andling ::
