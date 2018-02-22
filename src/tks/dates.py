@@ -330,6 +330,13 @@ class DateDialog(tks.dialog.Dialog):
                                      target_type=target_type,
                                      fonts=fonts,
                                      colors=colors)
+        self.deiconify()
+
+        selector_size = self.selector.size
+        # gi = tks.parse_geometry(self.winfo_geometry())
+        # self.minsize(gi[0], gi[1])
+        self.minsize(self.winfo_reqwidth(), self.winfo_reqheight())
+        self.resizable(width=False, height=False)
 
     def ok(self):
         """Called when the OK button is pressed"""
@@ -412,10 +419,10 @@ class DateSelector(ttk.Frame, object):
         self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
         self._prev_selector = self._ds
 
-        self.update_idletasks()
-
         self._ms = MonthSelector(self, locale)
+        self._ms.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
         self._ys = YearSelector(self)
+        self._ys.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
 
         if start_date is None:
             self.date = today
@@ -423,6 +430,19 @@ class DateSelector(ttk.Frame, object):
             self.date = start_date
 
         self.columnconfigure(0, weight=1)
+        self.grid(row=1, column=0)
+
+        self.update_idletasks()
+        self._ds_size = self._ds.winfo_reqwidth(), self._ds.winfo_reqheight()
+        self._ms_size = self._ms.winfo_reqwidth(), self._ms.winfo_reqheight()
+        self._ys_size = self._ys.winfo_reqwidth(), self._ys.winfo_reqheight()
+
+        max_width = max(self._ds_size[0], self._ms_size[0], self._ys_size[0])
+        max_height = max(self._ds_size[1], self._ms_size[1], self._ys_size[1])
+        self.size = max_width, max_height
+
+        self.tk.call("grid", "remove", self._ms)
+        self.tk.call("grid", "remove", self._ys)
 
     @property
     def date(self):

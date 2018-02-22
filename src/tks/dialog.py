@@ -63,16 +63,12 @@ class Dialog(tk.Toplevel, object):
         okcancel.columnconfigure(1, weight=0)
         okcancel.columnconfigure(2, weight=0)
 
-        okcancel.grid(column=0, row=2, sticky=(tk.EW, tk.S))
+        okcancel.grid(column=0, row=1, sticky=(tk.EW, tk.S))
         self.columnconfigure(0, weight=1)
-        self.rowconfigure(2, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=0)
 
         self.update_idletasks()
-        self.deiconify()
-
-        gi = tks.parse_geometry(self.winfo_geometry())
-        self.minsize(gi[0], gi[1])
-        self.resizable(width=False, height=False)
 
         self.bind('<Escape>', self._cancel)
         self.protocol('WM_DELETE_WINDOW', self._cancel)
@@ -94,6 +90,7 @@ class Dialog(tk.Toplevel, object):
     def selector(self, value):
         self._selector = value
         self._selector.grid(row=0, column=0)
+        s = self._selector.size
 
     def _ok(self, event=None):
         """Called when the OK button is pressed"""
