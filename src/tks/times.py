@@ -127,7 +127,7 @@ class TimeEntry(ttk.Frame, object):
         self._locale = locale
 
         self._hour_var = tk.IntVar()
-        self._minute_var = tk.IntVar()
+        self._minute_var = tk.StringVar(value='00')
         if show_seconds:
             self._second_var = tk.IntVar()
 
@@ -205,11 +205,15 @@ class TimeEntry(ttk.Frame, object):
         self.value = self._variable.get()
 
     @property
+    def _minute_var_int_value(self):
+        return int(self._minute_var.get(), base=10)
+
+    @property
     def value(self):
         """The :class:`~datetime.time` represented by the entry."""
 
         h = self._hour_var.get()
-        m = self._minute_var.get()
+        m = self._minute_var_int_value
         if self._show_seconds:
             s = self._second_var.get()
         else:
@@ -238,7 +242,7 @@ class TimeEntry(ttk.Frame, object):
             else:
                 self._hour_var.set('%02d' % (value.hour % 24))
 
-        if value.minute != self._minute_var.get():
+        if value.minute != self._minute_var_int_value:
             self._minute_var.set('%02d' % value.minute)
 
         if self._show_seconds and value.second != self._second_var.get():
@@ -267,7 +271,7 @@ class TimeEntry(ttk.Frame, object):
     def _minute_changed(self, *args):
         value = self._variable.get()
         old_hour = value.hour
-        new_minute = self._minute_var.get()
+        new_minute = self._minute_var_int_value
 
         if self._show_seconds:
             old_second = value.second
@@ -312,7 +316,7 @@ class TimeEntry(ttk.Frame, object):
             second = 0
 
         t = datetime.time(hour=h,
-                          minute=self._minute_var.get(),
+                          minute=self._minute_var_int_value,
                           second=second)
 
         dlg = TimeDialog(self,
