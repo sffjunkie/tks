@@ -59,6 +59,16 @@ class TimeVar(tks.PickleVar):
 
         super(TimeVar, self).__init__(master, value, name)
 
+class DecimalVar(tk.StringVar):
+    """Return the value of the variable as a decimal integer, avoid errors with the '08...' and '09...' numbers."""
+    _default = 0
+    def get(self):
+        value = super().get()
+        try:
+            return int(value, base=10)
+        except (TypeError):
+            return int(float(value))
+
 
 class TimeEntry(ttk.Frame, object):
     """A time entry widget
@@ -126,8 +136,8 @@ class TimeEntry(ttk.Frame, object):
 
         self._locale = locale
 
-        self._hour_var = tk.IntVar()
-        self._minute_var = tk.IntVar()
+        self._hour_var = DecimalVar()
+        self._minute_var = DecimalVar()
         if show_seconds:
             self._second_var = tk.IntVar()
 
