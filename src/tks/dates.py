@@ -169,11 +169,11 @@ class DateEntry(ttk.Frame, object):
             self.columnconfigure(idx, weight=0)
         self.columnconfigure(5, weight=1)
 
-        self._year_var.trace_variable('w', self._year_changed)
-        self._month_var.trace_variable('w', self._month_changed)
-        self._day_var.trace_variable('w', self._day_changed)
+        self._year_var.trace_add('write', self._year_changed)
+        self._month_var.trace_add('write', self._month_changed)
+        self._day_var.trace_add('write', self._day_changed)
 
-        self._variable.trace_variable('w', self._value_changed)
+        self._variable.trace_add('write', self._value_changed)
 
         self._time = None
         self._internal_value_change = True
@@ -195,28 +195,54 @@ class DateEntry(ttk.Frame, object):
     @value.setter
     def value(self, value):
         changed = False
-        if value.year != self._year_var.get():
-            self._year_var.set(value.year)
+
+        # Ensure comparison is integer to integer for year
+        try:
+            year_var_value = int(self._year_var.get())
+        except ValueError:
+            year_var_value = None # Handle empty or invalid current year value
+
+        # Proceed with update only if there's an actual change
+        if year_var_value is None or value.year != year_var_value:
+            self._year_var.set(str(value.year))
             changed = True
 
-        if value.month != self._month_var.get():
+       # Apply similar logic for month and day, ensuring type consistency
+        try:
+            month_var_value = int(self._month_var.get())
+        except ValueError:
+            month_var_value = None
+
+        if month_var_value is None or value.month != month_var_value:
             self._month_var.set('%02d' % value.month)
             changed = True
 
-        if value.day != self._day_var.get():
+        try:
+            day_var_value = int(self._day_var.get())
+        except ValueError:
+            day_var_value = None
+
+        if day_var_value is None or value.day != day_var_value:
             self._day_var.set('%02d' % value.day)
             changed = True
 
         if changed:
             self._update_day_values(value.year, value.month, value.day)
+            # Only set the variable if there's a change to prevent echo
+            self._internal_value_change = True
+            self._variable.set(value)
+        else:
+            self._internal_value_change = False
 
         if isinstance(value, datetime.datetime):
             self._time = value.time()
         else:
             self._time = None
-
-        self._internal_value_change = True
-        self._variable.set(value)
+        
+        print('DATE DISPLAYED:')
+        print('Year: ' + str(value.year))
+        print('Month: ' + str(month_var_value))
+        print('Day: ' + str(day_var_value))
 
     def _update_day_values(self, year, month, day):
         """Update the day combo box with the correct values
@@ -235,34 +261,58 @@ class DateEntry(ttk.Frame, object):
         if new_day:
             self._day_var.set('%02d' % new_day)
 
+    # def _year_changed(self, *args):
+    #     value = self._variable.get()
+    #     new_date = datetime.date(year=int(self._year_var.get()),
+    #                              month=value.month,
+    #                              day=value.day)
+    #     self.value = new_date
+            
+
     def _year_changed(self, *args):
-        value = self._variable.get()
-        new_date = datetime.date(year=int(self._year_var.get()),
-                                 month=value.month,
-                                 day=value.day)
-        self.value = new_date
+        try:
+            new_year = int(self._year_var.get())
+            new_month = int(self._month_var.get())
+            new_day = int(self._day_var.get())
+            # Construct the new date with the most current values of all components.
+            new_date = datetime.date(year=new_year, month=new_month, day=new_day)
+            if new_date != self._variable.get():  # Check if the date has actually changed.
+                self._internal_value_change = True
+                self.value = new_date
+        except ValueError:
+            # This block catches conversion errors, which can happen if the fields are incomplete.
+            pass
 
     def _month_changed(self, *args):
-        value = self._variable.get()
-        new_date = datetime.date(year=value.year,
-                                 month=int(self._month_var.get()),
-                                 day=value.day)
-        self.value = new_date
-        #self._update_day_values(self._year_var.get(),
-        #                        self._month_var.get(),
-        #                        self._day_var.get())
+        try:
+            new_year = int(self._year_var.get())
+            new_month = int(self._month_var.get())
+            new_day = int(self._day_var.get())
+            new_date = datetime.date(year=new_year, month=new_month, day=new_day)
+            if new_date != self._variable.get():
+                self._internal_value_change = True
+                self.value = new_date
+        except ValueError:
+            pass
 
     def _day_changed(self, *args):
-        value = self._variable.get()
-        new_date = datetime.date(year=value.year,
-                                 month=value.month,
-                                 day=int(self._day_var.get()))
-        self.value = new_date
+        try:
+            new_year = int(self._year_var.get())
+            new_month = int(self._month_var.get())
+            new_day = int(self._day_var.get())
+            new_date = datetime.date(year=new_year, month=new_month, day=new_day)
+            if new_date != self._variable.get():
+                self._internal_value_change = True
+                self.value = new_date
+        except ValueError:
+            pass
+
 
     def _value_changed(self, *args):
         if not self._internal_value_change:
             self.value = self._variable.get()
-        self._internal_value_change = False
+        else:
+            self._internal_value_change = False  # Ensure this is reset after handling changes
 
     def _select_date(self):
         """Display the date selection dialog"""
@@ -340,7 +390,6 @@ class DateDialog(tks.dialog.Dialog):
 
     def ok(self):
         """Called when the OK button is pressed"""
-
         self.date = self._selector.date
 
     def cancel(self):
