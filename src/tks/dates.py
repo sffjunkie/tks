@@ -238,11 +238,6 @@ class DateEntry(ttk.Frame, object):
             self._time = value.time()
         else:
             self._time = None
-        
-        print('DATE DISPLAYED:')
-        print('Year: ' + str(value.year))
-        print('Month: ' + str(month_var_value))
-        print('Day: ' + str(day_var_value))
 
     def _update_day_values(self, year, month, day):
         """Update the day combo box with the correct values
