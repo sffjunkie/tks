@@ -44,6 +44,8 @@ _ = language.gettext
 import tks
 import tks.dialog
 
+import darkdetect
+
 
 class TargetShape():
     """How to draw the target round a date"""
@@ -445,12 +447,11 @@ class DateSelector(ttk.Frame, object):
                               font=fonts.text,
                               anchor=tk.CENTER)
         ttk.Style().configure('Month.Selector.tks.TButton',
-                              padding=(0, 10))
+                              padding=(0, 10)) # NOTE: Adds vertical padding to buttons on month screen
         ttk.Style().configure('Year.Selector.tks.TButton',
-                              padding=(0, 10))
+                              padding=(0, 10)) # NOTE: Adds vertical padding to buttons on the day screen
 
-        self._today_btn = ttk.Button(self, text=today_txt,
-                                     width=len(today_txt) + 4,
+        self._today_btn = ttk.Button(self, text='Jump to today',
                                      command=self._today_clicked)
         self._today_btn.grid(row=0, column=0, sticky=tk.N,
                              padx=3, pady=3)
@@ -670,7 +671,7 @@ class DaySelector(ttk.Frame, object):
         self._header.columnconfigure(3, weight=0)
         self._header.grid(row=0, column=0, sticky=tk.EW)
 
-        self._canvas = tk.Canvas(self, background=self._canvas_color)
+        self._canvas = tk.Canvas(self, background=self._canvas_color) # NOTE: controls background color of calendar (date area specifically)
         self._canvas.grid(row=1, column=0, columnspan=3, pady=(4, 0))
         self._create_canvas(target_type)
 
@@ -837,20 +838,25 @@ class DaySelector(ttk.Frame, object):
             for day_number, date_ in enumerate(days_in_week):
                 txt_tag = 'txt%d:%d' % (week_number, day_number)
 
-                if babel:
-                    text = babel.numbers.format_number(date_.day, self._locale)
+                # Determine the text color based on whether the date is the selected date
+                if date_ == self._date:  # This is the selected date
+                    if darkdetect.isLight() or darkdetect.isLight() is None:
+                        text_color = 'white' # Light mode or undetected mode defaults to light mode configuration
+                    else:
+                        text_color = 'black' # Dark mode
+                elif self._date.month == date_.month: # Default color for non-selected dates within the current month
+                    if darkdetect.isLight() or darkdetect.isLight() is None:
+                        text_color = 'black' # Light mode or undetected mode defaults to light mode configuration
+                    else:
+                        text_color = 'white' # Dark mode
                 else:
-                    text = str(date_.day)
+                    text_color = self.colors.other_month  # Color for dates not in the current month
 
-                if self._date.month == date_.month:
-                    self._canvas.itemconfigure(txt_tag,
-                                               text=text,
-                                               fill='black',
-                                               font=self._font)
-                else:
-                    self._canvas.itemconfigure(txt_tag,
-                                               text=text,
-                                               fill=self.colors.other_month)
+                # Apply the determined text color
+                self._canvas.itemconfigure(txt_tag,
+                                        text=str(date_.day),
+                                        fill=text_color,
+                                        font=self._font)
 
                 tgt_tag = 'tgt%s:%s' % (week_number, day_number)
 
