@@ -949,7 +949,7 @@ class MonthSelector(ttk.Frame, object):
                                  command=partial(self._btn_selected, month))
 
                 self._buttons.append(btn)
-                btn.grid(row=y, column=x, pady=(0, 4))
+                btn.grid(row=y, column=x, sticky=tk.EW, pady=(0, 4))
 
         btn_frame.columnconfigure(0, weight=1)
         btn_frame.columnconfigure(1, weight=1)
