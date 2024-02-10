@@ -41,7 +41,7 @@ class Dialog(tk.Toplevel, object):
         if not colors:
             colors = tks.load_colors()
 
-        okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='TFrame')
+        okcancel = ttk.Frame(self, padding=(3, 3, 6, 5), style='TFrame')
 
         # Swap the order of buttons for Windows
         if 'win32' in sys.platform:
