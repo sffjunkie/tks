@@ -52,12 +52,12 @@ class Dialog(tk.Toplevel, object):
         btn_width = max(8, len(ok_text)) + 2
         self.ok_btn = ttk.Button(okcancel, text=ok_text, width=btn_width,
                                  command=self._ok)
-        self.ok_btn.grid(column=btn_column[0], row=0, padx=(6, 0), sticky=tk.SE)
+        self.ok_btn.grid(column=btn_column[0], row=0, padx=(2, 0), sticky=tk.SE)
 
         btn_width = max(8, len(cancel_text)) + 2
         cancel = ttk.Button(okcancel, text=cancel_text, width=btn_width,
                             command=self._cancel)
-        cancel.grid(column=btn_column[1], row=0, padx=(6, 0), sticky=tk.SE)
+        cancel.grid(column=btn_column[1], row=0, padx=(2, 0), sticky=tk.SE)
 
         okcancel.columnconfigure(0, weight=1)
         okcancel.columnconfigure(1, weight=0)
@@ -65,8 +65,8 @@ class Dialog(tk.Toplevel, object):
 
         okcancel.grid(column=0, row=1, sticky=(tk.EW, tk.S))
         self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=0)
+        # self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
 
         self.update_idletasks()
 
