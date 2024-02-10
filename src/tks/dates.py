@@ -643,27 +643,27 @@ class DaySelector(ttk.Frame, object):
 
         self._header = ttk.Frame(self, padding=(3, 0), style='tks.TFrame')
 
-        self._prev_btn = ttk.Button(self._header, text='<', width=2,
+        self._prev_btn = ttk.Button(self._header, text='<', width=1,
                                     command=self._prev_month,
                                     style='Selector.tks.TButton')
-        self._prev_btn.grid(row=0, column=0, sticky=tk.W)
+        self._prev_btn.grid(row=0, column=0, sticky=tk.W, padx=(0, 1))
 
-        self._month_btn = ttk.Button(self._header,
+        self._month_btn = ttk.Button(self._header, width=8,
                                      style='Selector.tks.TButton')
-        self._month_btn.grid(row=0, column=1, sticky=tk.EW, padx=(0, 2))
+        self._month_btn.grid(row=0, column=1, sticky=tk.EW, padx=(1, 1))
         self._month_btn.bind('<ButtonRelease-1>',
                              self._master.month_btn_clicked)
 
-        self._year_btn = ttk.Button(self._header,
+        self._year_btn = ttk.Button(self._header, width=8,
                                     style='Selector.tks.TButton')
-        self._year_btn.grid(row=0, column=2, sticky=tk.EW, padx=(2, 0))
+        self._year_btn.grid(row=0, column=2, sticky=tk.EW, padx=(1, 1))
         self._year_btn.bind('<ButtonRelease-1>',
                             self._master.year_btn_clicked)
 
-        self._next_btn = ttk.Button(self._header, text='>', width=2,
+        self._next_btn = ttk.Button(self._header, text='>', width=1,
                                     command=self._next_month,
                                     style='Selector.tks.TButton')
-        self._next_btn.grid(row=0, column=3, sticky=tk.W)
+        self._next_btn.grid(row=0, column=3, sticky=tk.W, padx=(1, 0))
 
         self._header.columnconfigure(0, weight=0)
         self._header.columnconfigure(1, weight=1)
@@ -922,21 +922,21 @@ class MonthSelector(ttk.Frame, object):
             self._months = calendar.month_name
 
 
-        self._prev_btn = ttk.Button(self, text='<', width=2,
+        self._prev_btn = ttk.Button(self, text='<', width=1,
                                     command=self._prev_year,
                                     style='Selector.tks.TButton')
-        self._prev_btn.grid(row=0, column=0, sticky=tk.W, padx=(0, 4))
+        self._prev_btn.grid(row=0, column=0, sticky=tk.W, padx=(0, 1))
 
         self._year_btn = ttk.Button(self,
                                     style='Selector.tks.TButton')
-        self._year_btn.grid(row=0, column=1, sticky=tk.EW)
+        self._year_btn.grid(row=0, column=1, sticky=tk.EW, padx=(1, 1))
         self._year_btn.bind('<ButtonRelease-1>',
                             self._master.year_btn_clicked)
 
-        self._next_btn = ttk.Button(self, text='>', width=2,
+        self._next_btn = ttk.Button(self, text='>', width=1,
                                     command=self._next_year,
                                     style='Selector.tks.TButton')
-        self._next_btn.grid(row=0, column=2, sticky=tk.E, padx=(4, 0))
+        self._next_btn.grid(row=0, column=2, sticky=tk.E, padx=(1, 0))
 
         btn_frame = ttk.Frame(self, style='tks.TFrame')
         self._buttons = []
@@ -949,7 +949,12 @@ class MonthSelector(ttk.Frame, object):
                                  command=partial(self._btn_selected, month))
 
                 self._buttons.append(btn)
-                btn.grid(row=y, column=x, sticky=tk.EW, pady=(0, 4))
+                if x == 0:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(0, 1)) # Left column buttons
+                elif x == 1:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(1, 1)) # Middle column buttons
+                else:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(1, 0)) # Right column buttons
 
         btn_frame.columnconfigure(0, weight=1)
         btn_frame.columnconfigure(1, weight=1)
