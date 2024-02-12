@@ -55,9 +55,8 @@ class Dialog(tk.Toplevel, object):
         self.ok_btn.grid(column=btn_column[0], row=0, padx=(2, 0), sticky=tk.SE)
 
         btn_width = max(8, len(cancel_text)) + 2
-        cancel = ttk.Button(okcancel, text=cancel_text, width=btn_width,
-                            command=self._cancel)
-        cancel.grid(column=btn_column[1], row=0, padx=(2, 0), sticky=tk.SE)
+        self.cancel_btn = ttk.Button(okcancel, text=cancel_text, width=btn_width, command=self._cancel)
+        self.cancel_btn.grid(column=btn_column[1], row=0, padx=(2, 0), sticky=tk.SE)
 
         okcancel.columnconfigure(0, weight=1)
         okcancel.columnconfigure(1, weight=0)
@@ -81,6 +80,15 @@ class Dialog(tk.Toplevel, object):
 
     def cancel(self):
         raise NotImplementedError
+    
+    def set_ok_cancel_button_state(self, state):
+        """Enable or disable the OK and Cancel buttons"""
+        if state == 'disabled':
+            self.ok_btn.state(['disabled'])
+            self.cancel_btn.state(['disabled'])
+        else:
+            self.ok_btn.state(['!disabled'])
+            self.cancel_btn.state(['!disabled'])
 
     @property
     def selector(self):
