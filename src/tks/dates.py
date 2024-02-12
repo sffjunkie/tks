@@ -147,14 +147,15 @@ class DateEntry(ttk.Frame, object):
 
         self._month_entry = ttk.Combobox(self,
                                          textvariable=self._month_var,
-                                         width=3,
+                                         width=2,
                                          font=self.fonts.text)
-        self._month_entry['values'] = ['%02d' % (x + 1) for x in range(12)]
+        self._month_entry['values'] = [(x + 1) for x in range(12)]
+        # self._month_entry['values'] = ['%02d' % (x + 1) for x in range(12)]
         self._month_entry.grid(row=0, column=month_column * 2)
 
         self._day_entry = ttk.Combobox(self,
                                        textvariable=self._day_var,
-                                       width=3,
+                                       width=2,
                                        font=self.fonts.text)
         self._day_entry.grid(row=0, column=day_column * 2)
 
@@ -216,7 +217,8 @@ class DateEntry(ttk.Frame, object):
             month_var_value = None
 
         if month_var_value is None or value.month != month_var_value:
-            self._month_var.set('%02d' % value.month)
+            self._month_var.set(value.month)
+            # self._month_var.set('%02d' % value.month)
             changed = True
 
         try:
@@ -225,7 +227,8 @@ class DateEntry(ttk.Frame, object):
             day_var_value = None
 
         if day_var_value is None or value.day != day_var_value:
-            self._day_var.set('%02d' % value.day)
+            self._day_var.set(value.day)
+            # self._day_var.set('%02d' % value.day)
             changed = True
 
         if changed:
@@ -253,10 +256,13 @@ class DateEntry(ttk.Frame, object):
                 new_day = days_in_month
 
         self._day_entry['values'] = \
-            ['%02d' % (x + 1) for x in range(days_in_month)]
+            [(x + 1) for x in range(days_in_month)]
+            # ['%02d' % (x + 1) for x in range(days_in_month)]
+            
 
         if new_day:
-            self._day_var.set('%02d' % new_day)
+            self._day_var.set(new_day)
+            # self._day_var.set('%02d' % new_day)
 
     # def _year_changed(self, *args):
     #     value = self._variable.get()
