@@ -373,6 +373,7 @@ class DateDialog(tks.dialog.Dialog):
             locale = babel.Locale(locale)
 
         self.selector = DateSelector(self, start_date,
+                                     date_dialog=self,
                                      locale=locale,
                                      target_type=target_type,
                                      fonts=fonts,
@@ -391,6 +392,9 @@ class DateDialog(tks.dialog.Dialog):
 
     def cancel(self):
         """Called when either the Escape key or the Cancel button is pressed"""
+
+    def update_ok_cancel_button_state(self, state):
+        self.set_ok_cancel_button_state(state)
 
 
 class DateSelector(ttk.Frame, object):
@@ -417,11 +421,13 @@ class DateSelector(ttk.Frame, object):
 
     def __init__(self, master,
                  start_date,
+                 date_dialog,
                  locale='en',
                  target_type=TargetShape.Circle,
                  fonts=None,
                  colors=None):
         self._master = master
+        self.date_dialog = date_dialog
         super(DateSelector, self).__init__(master, style='tks.TFrame')
         self._date = None
 
@@ -458,15 +464,16 @@ class DateSelector(ttk.Frame, object):
 
         self._ds = DaySelector(self, start_date,
                                locale,
+                               date_dialog=self.date_dialog,
                                target_type=target_type,
                                fonts=fonts,
                                colors=colors)
         self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
         self._prev_selector = self._ds
 
-        self._ms = MonthSelector(self, locale)
+        self._ms = MonthSelector(self, locale, date_dialog=self.date_dialog)
         self._ms.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
-        self._ys = YearSelector(self)
+        self._ys = YearSelector(self, date_dialog=self.date_dialog)
         self._ys.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
 
         if start_date is None:
@@ -530,41 +537,52 @@ class DateSelector(ttk.Frame, object):
                                   self.date.month,
                                   value)
 
+    def show_selector(self, selector_to_show):
+        # Hide all selectors
+        self._ds.grid_forget()
+        self._ms.grid_forget()
+        self._ys.grid_forget()
+        
+        # Show the requested selector
+        selector_to_show.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        
+        # Update OK/Cancel button state based on which selector is being shown
+        if selector_to_show == self._ds:
+            self.date_dialog.update_ok_cancel_button_state('enabled')
+        else:
+            self.date_dialog.update_ok_cancel_button_state('disabled') # Disable buttons on Month and Year selector
+
     def _today_clicked(self):
         self.date = datetime.date.today()
+        # self.show_selector(self._ds) <- this results in visual glitch when Today button is clicked twice. Thus replicated show_selector code below
         self._ms.grid_forget()
         self._ys.grid_forget()
         self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        self.date_dialog.update_ok_cancel_button_state('enabled')
 
     def day_selected(self):
         self.date = self._ds.date
 
     def month_btn_clicked(self, event):
         self._prev_selector = self._ds
-        self._ds.grid_forget()
         self.date = self.date
-        self._ms.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        self.show_selector(self._ms)
 
-    def month_selected(self):
-        self._ms.grid_forget()
+    def month_selected(self, event=None):
         self.date = self._ms.date
-        self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        self.show_selector(self._ds)
 
     def year_btn_clicked(self, event):
         if event.widget.master.master == self._ds:
             self._prev_selector = self._ds
         else:
             self._prev_selector = self._ms
-
-        self._prev_selector.grid_forget()
         self._ys.date = self.date
-        self._ys.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        self.show_selector(self._ys)
 
     def year_selected(self):
-        self._ys.grid_forget()
         self.date = self._ys.date
-        self._prev_selector.grid(row=1, column=0, sticky=(tk.N, tk.EW),
-                                 padx=3, pady=3)
+        self.show_selector(self._prev_selector)
 
     def new_month_selected(self, date_):
         self._date = date_
@@ -592,10 +610,12 @@ class DaySelector(ttk.Frame, object):
     def __init__(self, master,
                  start_date,
                  locale,
+                 date_dialog,
                  target_type=TargetShape.Circle,
                  fonts=None,
                  colors=None):
         self._master = master
+        self.date_dialog = date_dialog
         super(DaySelector, self).__init__(master, style='tks.TFrame')
 
         self._canvas_color = ttk.Style(master).lookup('tks.TFrame',
@@ -906,11 +926,12 @@ class MonthSelector(ttk.Frame, object):
     :type calendar:    :class:`calendar.LocaleTextCalendar
     """
 
-    def __init__(self, master, locale):
+    def __init__(self, master, locale, date_dialog):
         super(MonthSelector, self).__init__(master,
                                             style='Selector.tks.TFrame')
 
         self._master = master
+        self.date_dialog = date_dialog
         self._date = None
 
         if babel:
@@ -996,8 +1017,9 @@ class MonthSelector(ttk.Frame, object):
 
 
 class YearSelector(ttk.Frame, object):
-    def __init__(self, master):
+    def __init__(self, master, date_dialog):
         self._master = master
+        self.date_dialog = date_dialog
         super(YearSelector, self).__init__(master, style='tks.TFrame')
 
         self._date = None
