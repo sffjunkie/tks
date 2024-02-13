@@ -139,25 +139,32 @@ class DateEntry(ttk.Frame, object):
         self._month_var = tk.StringVar()
         self._day_var = tk.StringVar()
 
-        self._year_entry = ttk.Entry(self,
-                                     textvariable=self._year_var,
-                                     width=4,
-                                     font=self.fonts.text)
-        self._year_entry.grid(row=0, column=year_column * 2)
+        # Mapping of entries to their grid positions and properties
+        entry_configs = {
+            'year': {'widget': ttk.Entry, 'variable': self._year_var, 'width': 4, 'column': year_column * 2},
+            'month': {'widget': ttk.Combobox, 'variable': self._month_var, 'width': 2, 'column': month_column * 2, 'special': True},
+            'day': {'widget': ttk.Combobox, 'variable': self._day_var, 'width': 2, 'column': day_column * 2},
+        }
 
-        self._month_entry = ttk.Combobox(self,
-                                         textvariable=self._month_var,
-                                         width=2,
-                                         font=self.fonts.text)
-        self._month_entry['values'] = [(x + 1) for x in range(12)]
-        # self._month_entry['values'] = ['%02d' % (x + 1) for x in range(12)]
-        self._month_entry.grid(row=0, column=month_column * 2)
+        # Sort entry_configs by 'column' value before iterating to ensure correct tab order
+        sorted_configs = sorted(entry_configs.items(), key=lambda x: x[1]['column'])
 
-        self._day_entry = ttk.Combobox(self,
-                                       textvariable=self._day_var,
-                                       width=2,
-                                       font=self.fonts.text)
-        self._day_entry.grid(row=0, column=day_column * 2)
+        # Create and grid each widget based on its configuration, and directly assign instances
+        for key, config in sorted_configs:
+            # Instantiate the widget with common properties
+            entry_widget = config['widget'](self, textvariable=config['variable'], width=config['width'], font=self.fonts.text)
+            
+            # Special handling for the month widget
+            if config.get('special'):
+                entry_widget['values'] = [(x + 1) for x in range(12)]
+            
+            # Grid the widget
+            entry_widget.grid(row=0, column=config['column'])
+
+            # Save reference to the widget instance for later use
+            # i.e. dynamically creates self._day_entry, self._month_entry, and self._year_entry
+            setattr(self, f"_{key}_entry", entry_widget)
+
 
         lbl = ttk.Label(self, text=separator, width=1)
         lbl.grid(row=0, column=1)
