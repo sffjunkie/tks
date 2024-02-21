@@ -41,7 +41,7 @@ class Dialog(tk.Toplevel, object):
         if not colors:
             colors = tks.load_colors()
 
-        okcancel = ttk.Frame(self, padding=(3, 3, 3, 3), style='TFrame')
+        okcancel = ttk.Frame(self, padding=(3, 3, 6, 5), style='TFrame')
 
         # Swap the order of buttons for Windows
         if 'win32' in sys.platform:
@@ -52,12 +52,11 @@ class Dialog(tk.Toplevel, object):
         btn_width = max(8, len(ok_text)) + 2
         self.ok_btn = ttk.Button(okcancel, text=ok_text, width=btn_width,
                                  command=self._ok)
-        self.ok_btn.grid(column=btn_column[0], row=0, padx=(6, 0), sticky=tk.SE)
+        self.ok_btn.grid(column=btn_column[0], row=0, padx=(2, 0), sticky=tk.SE)
 
         btn_width = max(8, len(cancel_text)) + 2
-        cancel = ttk.Button(okcancel, text=cancel_text, width=btn_width,
-                            command=self._cancel)
-        cancel.grid(column=btn_column[1], row=0, padx=(6, 0), sticky=tk.SE)
+        self.cancel_btn = ttk.Button(okcancel, text=cancel_text, width=btn_width, command=self._cancel)
+        self.cancel_btn.grid(column=btn_column[1], row=0, padx=(2, 0), sticky=tk.SE)
 
         okcancel.columnconfigure(0, weight=1)
         okcancel.columnconfigure(1, weight=0)
@@ -65,8 +64,8 @@ class Dialog(tk.Toplevel, object):
 
         okcancel.grid(column=0, row=1, sticky=(tk.EW, tk.S))
         self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=0)
+        # self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
 
         self.update_idletasks()
 
@@ -81,6 +80,15 @@ class Dialog(tk.Toplevel, object):
 
     def cancel(self):
         raise NotImplementedError
+    
+    def set_ok_cancel_button_state(self, state):
+        """Enable or disable the OK and Cancel buttons"""
+        if state == 'disabled':
+            self.ok_btn.state(['disabled'])
+            self.cancel_btn.state(['disabled'])
+        else:
+            self.ok_btn.state(['!disabled'])
+            self.cancel_btn.state(['!disabled'])
 
     @property
     def selector(self):

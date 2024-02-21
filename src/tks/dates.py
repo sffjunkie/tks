@@ -44,6 +44,8 @@ _ = language.gettext
 import tks
 import tks.dialog
 
+import darkdetect
+
 
 class TargetShape():
     """How to draw the target round a date"""
@@ -137,24 +139,32 @@ class DateEntry(ttk.Frame, object):
         self._month_var = tk.StringVar()
         self._day_var = tk.StringVar()
 
-        self._year_entry = ttk.Entry(self,
-                                     textvariable=self._year_var,
-                                     width=4,
-                                     font=self.fonts.text)
-        self._year_entry.grid(row=0, column=year_column * 2)
+        # Mapping of entries to their grid positions and properties
+        entry_configs = {
+            'year': {'widget': ttk.Entry, 'variable': self._year_var, 'width': 4, 'column': year_column * 2},
+            'month': {'widget': ttk.Combobox, 'variable': self._month_var, 'width': 2, 'column': month_column * 2, 'special': True},
+            'day': {'widget': ttk.Combobox, 'variable': self._day_var, 'width': 2, 'column': day_column * 2},
+        }
 
-        self._month_entry = ttk.Combobox(self,
-                                         textvariable=self._month_var,
-                                         width=3,
-                                         font=self.fonts.text)
-        self._month_entry['values'] = ['%02d' % (x + 1) for x in range(12)]
-        self._month_entry.grid(row=0, column=month_column * 2)
+        # Sort entry_configs by 'column' value before iterating to ensure correct tab order
+        sorted_configs = sorted(entry_configs.items(), key=lambda x: x[1]['column'])
 
-        self._day_entry = ttk.Combobox(self,
-                                       textvariable=self._day_var,
-                                       width=3,
-                                       font=self.fonts.text)
-        self._day_entry.grid(row=0, column=day_column * 2)
+        # Create and grid each widget based on its configuration, and directly assign instances
+        for key, config in sorted_configs:
+            # Instantiate the widget with common properties
+            entry_widget = config['widget'](self, textvariable=config['variable'], width=config['width'], font=self.fonts.text)
+            
+            # Special handling for the month widget
+            if config.get('special'):
+                entry_widget['values'] = [(x + 1) for x in range(12)]
+            
+            # Grid the widget
+            entry_widget.grid(row=0, column=config['column'])
+
+            # Save reference to the widget instance for later use
+            # i.e. dynamically creates self._day_entry, self._month_entry, and self._year_entry
+            setattr(self, f"_{key}_entry", entry_widget)
+
 
         lbl = ttk.Label(self, text=separator, width=1)
         lbl.grid(row=0, column=1)
@@ -169,11 +179,11 @@ class DateEntry(ttk.Frame, object):
             self.columnconfigure(idx, weight=0)
         self.columnconfigure(5, weight=1)
 
-        self._year_var.trace_variable('w', self._year_changed)
-        self._month_var.trace_variable('w', self._month_changed)
-        self._day_var.trace_variable('w', self._day_changed)
+        self._year_var.trace_add('write', self._year_changed)
+        self._month_var.trace_add('write', self._month_changed)
+        self._day_var.trace_add('write', self._day_changed)
 
-        self._variable.trace_variable('w', self._value_changed)
+        self._variable.trace_add('write', self._value_changed)
 
         self._time = None
         self._internal_value_change = True
@@ -195,28 +205,51 @@ class DateEntry(ttk.Frame, object):
     @value.setter
     def value(self, value):
         changed = False
-        if value.year != self._year_var.get():
-            self._year_var.set(value.year)
+
+        # Ensure comparison is integer to integer for year
+        try:
+            year_var_value = int(self._year_var.get())
+        except ValueError:
+            year_var_value = None # Handle empty or invalid current year value
+
+        # Proceed with update only if there's an actual change
+        if year_var_value is None or value.year != year_var_value:
+            self._year_var.set(str(value.year))
             changed = True
 
-        if value.month != self._month_var.get():
-            self._month_var.set('%02d' % value.month)
+       # Apply similar logic for month and day, ensuring type consistency
+        try:
+            month_var_value = int(self._month_var.get())
+        except ValueError:
+            month_var_value = None
+
+        if month_var_value is None or value.month != month_var_value:
+            self._month_var.set(value.month)
+            # self._month_var.set('%02d' % value.month)
             changed = True
 
-        if value.day != self._day_var.get():
-            self._day_var.set('%02d' % value.day)
+        try:
+            day_var_value = int(self._day_var.get())
+        except ValueError:
+            day_var_value = None
+
+        if day_var_value is None or value.day != day_var_value:
+            self._day_var.set(value.day)
+            # self._day_var.set('%02d' % value.day)
             changed = True
 
         if changed:
             self._update_day_values(value.year, value.month, value.day)
+            # Only set the variable if there's a change to prevent echo
+            self._internal_value_change = True
+            self._variable.set(value)
+        else:
+            self._internal_value_change = False
 
         if isinstance(value, datetime.datetime):
             self._time = value.time()
         else:
             self._time = None
-
-        self._internal_value_change = True
-        self._variable.set(value)
 
     def _update_day_values(self, year, month, day):
         """Update the day combo box with the correct values
@@ -230,39 +263,66 @@ class DateEntry(ttk.Frame, object):
                 new_day = days_in_month
 
         self._day_entry['values'] = \
-            ['%02d' % (x + 1) for x in range(days_in_month)]
+            [(x + 1) for x in range(days_in_month)]
+            # ['%02d' % (x + 1) for x in range(days_in_month)]
+            
 
         if new_day:
-            self._day_var.set('%02d' % new_day)
+            self._day_var.set(new_day)
+            # self._day_var.set('%02d' % new_day)
+
+    # def _year_changed(self, *args):
+    #     value = self._variable.get()
+    #     new_date = datetime.date(year=int(self._year_var.get()),
+    #                              month=value.month,
+    #                              day=value.day)
+    #     self.value = new_date
+            
 
     def _year_changed(self, *args):
-        value = self._variable.get()
-        new_date = datetime.date(year=int(self._year_var.get()),
-                                 month=value.month,
-                                 day=value.day)
-        self.value = new_date
+        try:
+            new_year = int(self._year_var.get())
+            new_month = int(self._month_var.get())
+            new_day = int(self._day_var.get())
+            # Construct the new date with the most current values of all components.
+            new_date = datetime.date(year=new_year, month=new_month, day=new_day)
+            if new_date != self._variable.get():  # Check if the date has actually changed.
+                self._internal_value_change = True
+                self.value = new_date
+        except ValueError:
+            # This block catches conversion errors, which can happen if the fields are incomplete.
+            pass
 
     def _month_changed(self, *args):
-        value = self._variable.get()
-        new_date = datetime.date(year=value.year,
-                                 month=int(self._month_var.get()),
-                                 day=value.day)
-        self.value = new_date
-        #self._update_day_values(self._year_var.get(),
-        #                        self._month_var.get(),
-        #                        self._day_var.get())
+        try:
+            new_year = int(self._year_var.get())
+            new_month = int(self._month_var.get())
+            new_day = int(self._day_var.get())
+            new_date = datetime.date(year=new_year, month=new_month, day=new_day)
+            if new_date != self._variable.get():
+                self._internal_value_change = True
+                self.value = new_date
+        except ValueError:
+            pass
 
     def _day_changed(self, *args):
-        value = self._variable.get()
-        new_date = datetime.date(year=value.year,
-                                 month=value.month,
-                                 day=int(self._day_var.get()))
-        self.value = new_date
+        try:
+            new_year = int(self._year_var.get())
+            new_month = int(self._month_var.get())
+            new_day = int(self._day_var.get())
+            new_date = datetime.date(year=new_year, month=new_month, day=new_day)
+            if new_date != self._variable.get():
+                self._internal_value_change = True
+                self.value = new_date
+        except ValueError:
+            pass
+
 
     def _value_changed(self, *args):
         if not self._internal_value_change:
             self.value = self._variable.get()
-        self._internal_value_change = False
+        else:
+            self._internal_value_change = False  # Ensure this is reset after handling changes
 
     def _select_date(self):
         """Display the date selection dialog"""
@@ -326,6 +386,7 @@ class DateDialog(tks.dialog.Dialog):
             locale = babel.Locale(locale)
 
         self.selector = DateSelector(self, start_date,
+                                     date_dialog=self,
                                      locale=locale,
                                      target_type=target_type,
                                      fonts=fonts,
@@ -340,11 +401,13 @@ class DateDialog(tks.dialog.Dialog):
 
     def ok(self):
         """Called when the OK button is pressed"""
-
         self.date = self._selector.date
 
     def cancel(self):
         """Called when either the Escape key or the Cancel button is pressed"""
+
+    def update_ok_cancel_button_state(self, state):
+        self.set_ok_cancel_button_state(state)
 
 
 class DateSelector(ttk.Frame, object):
@@ -371,11 +434,13 @@ class DateSelector(ttk.Frame, object):
 
     def __init__(self, master,
                  start_date,
+                 date_dialog,
                  locale='en',
                  target_type=TargetShape.Circle,
                  fonts=None,
                  colors=None):
         self._master = master
+        self.date_dialog = date_dialog
         super(DateSelector, self).__init__(master, style='tks.TFrame')
         self._date = None
 
@@ -401,27 +466,27 @@ class DateSelector(ttk.Frame, object):
                               font=fonts.text,
                               anchor=tk.CENTER)
         ttk.Style().configure('Month.Selector.tks.TButton',
-                              padding=(0, 10))
+                              padding=(0, 10)) # NOTE: Adds vertical padding to buttons on month screen
         ttk.Style().configure('Year.Selector.tks.TButton',
-                              padding=(0, 10))
+                              padding=(0, 10)) # NOTE: Adds vertical padding to buttons on the day (typo? year?) screen
 
-        self._today_btn = ttk.Button(self, text=today_txt,
-                                     width=len(today_txt) + 4,
+        self._today_btn = ttk.Button(self, text='Jump to today',
                                      command=self._today_clicked)
         self._today_btn.grid(row=0, column=0, sticky=tk.N,
                              padx=3, pady=3)
 
         self._ds = DaySelector(self, start_date,
                                locale,
+                               date_dialog=self.date_dialog,
                                target_type=target_type,
                                fonts=fonts,
                                colors=colors)
         self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
         self._prev_selector = self._ds
 
-        self._ms = MonthSelector(self, locale)
+        self._ms = MonthSelector(self, locale, date_dialog=self.date_dialog)
         self._ms.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
-        self._ys = YearSelector(self)
+        self._ys = YearSelector(self, date_dialog=self.date_dialog)
         self._ys.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
 
         if start_date is None:
@@ -485,41 +550,52 @@ class DateSelector(ttk.Frame, object):
                                   self.date.month,
                                   value)
 
+    def show_selector(self, selector_to_show):
+        # Hide all selectors
+        self._ds.grid_forget()
+        self._ms.grid_forget()
+        self._ys.grid_forget()
+        
+        # Show the requested selector
+        selector_to_show.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        
+        # Update OK/Cancel button state based on which selector is being shown
+        if selector_to_show == self._ds:
+            self.date_dialog.update_ok_cancel_button_state('enabled')
+        else:
+            self.date_dialog.update_ok_cancel_button_state('disabled') # Disable buttons on Month and Year selector
+
     def _today_clicked(self):
         self.date = datetime.date.today()
+        # self.show_selector(self._ds) <- this results in visual glitch when Today button is clicked twice. Thus replicated show_selector code below
         self._ms.grid_forget()
         self._ys.grid_forget()
         self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        self.date_dialog.update_ok_cancel_button_state('enabled')
 
     def day_selected(self):
         self.date = self._ds.date
 
     def month_btn_clicked(self, event):
         self._prev_selector = self._ds
-        self._ds.grid_forget()
         self.date = self.date
-        self._ms.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        self.show_selector(self._ms)
 
-    def month_selected(self):
-        self._ms.grid_forget()
+    def month_selected(self, event=None):
         self.date = self._ms.date
-        self._ds.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        self.show_selector(self._ds)
 
     def year_btn_clicked(self, event):
         if event.widget.master.master == self._ds:
             self._prev_selector = self._ds
         else:
             self._prev_selector = self._ms
-
-        self._prev_selector.grid_forget()
         self._ys.date = self.date
-        self._ys.grid(row=1, column=0, sticky=(tk.N, tk.EW), padx=3, pady=3)
+        self.show_selector(self._ys)
 
     def year_selected(self):
-        self._ys.grid_forget()
         self.date = self._ys.date
-        self._prev_selector.grid(row=1, column=0, sticky=(tk.N, tk.EW),
-                                 padx=3, pady=3)
+        self.show_selector(self._prev_selector)
 
     def new_month_selected(self, date_):
         self._date = date_
@@ -547,10 +623,12 @@ class DaySelector(ttk.Frame, object):
     def __init__(self, master,
                  start_date,
                  locale,
+                 date_dialog,
                  target_type=TargetShape.Circle,
                  fonts=None,
                  colors=None):
         self._master = master
+        self.date_dialog = date_dialog
         super(DaySelector, self).__init__(master, style='tks.TFrame')
 
         self._canvas_color = ttk.Style(master).lookup('tks.TFrame',
@@ -598,27 +676,27 @@ class DaySelector(ttk.Frame, object):
 
         self._header = ttk.Frame(self, padding=(3, 0), style='tks.TFrame')
 
-        self._prev_btn = ttk.Button(self._header, text='<', width=2,
+        self._prev_btn = ttk.Button(self._header, text='<', width=1,
                                     command=self._prev_month,
                                     style='Selector.tks.TButton')
-        self._prev_btn.grid(row=0, column=0, sticky=tk.W)
+        self._prev_btn.grid(row=0, column=0, sticky=tk.W, padx=(0, 1))
 
-        self._month_btn = ttk.Button(self._header,
+        self._month_btn = ttk.Button(self._header, width=8,
                                      style='Selector.tks.TButton')
-        self._month_btn.grid(row=0, column=1, sticky=tk.EW, padx=(0, 2))
+        self._month_btn.grid(row=0, column=1, sticky=tk.EW, padx=(1, 1))
         self._month_btn.bind('<ButtonRelease-1>',
                              self._master.month_btn_clicked)
 
-        self._year_btn = ttk.Button(self._header,
+        self._year_btn = ttk.Button(self._header, width=8,
                                     style='Selector.tks.TButton')
-        self._year_btn.grid(row=0, column=2, sticky=tk.EW, padx=(2, 0))
+        self._year_btn.grid(row=0, column=2, sticky=tk.EW, padx=(1, 1))
         self._year_btn.bind('<ButtonRelease-1>',
                             self._master.year_btn_clicked)
 
-        self._next_btn = ttk.Button(self._header, text='>', width=2,
+        self._next_btn = ttk.Button(self._header, text='>', width=1,
                                     command=self._next_month,
                                     style='Selector.tks.TButton')
-        self._next_btn.grid(row=0, column=3, sticky=tk.W)
+        self._next_btn.grid(row=0, column=3, sticky=tk.W, padx=(1, 0))
 
         self._header.columnconfigure(0, weight=0)
         self._header.columnconfigure(1, weight=1)
@@ -626,7 +704,7 @@ class DaySelector(ttk.Frame, object):
         self._header.columnconfigure(3, weight=0)
         self._header.grid(row=0, column=0, sticky=tk.EW)
 
-        self._canvas = tk.Canvas(self, background=self._canvas_color)
+        self._canvas = tk.Canvas(self, background=self._canvas_color) # NOTE: controls background color of calendar (date area specifically)
         self._canvas.grid(row=1, column=0, columnspan=3, pady=(4, 0))
         self._create_canvas(target_type)
 
@@ -793,20 +871,25 @@ class DaySelector(ttk.Frame, object):
             for day_number, date_ in enumerate(days_in_week):
                 txt_tag = 'txt%d:%d' % (week_number, day_number)
 
-                if babel:
-                    text = babel.numbers.format_number(date_.day, self._locale)
+                # Determine the text color based on whether the date is the selected date
+                if date_ == self._date:  # This is the selected date
+                    if darkdetect.isLight() or darkdetect.isLight() is None:
+                        text_color = 'white' # Light mode or undetected mode defaults to light mode configuration
+                    else:
+                        text_color = 'black' # Dark mode
+                elif self._date.month == date_.month: # Default color for non-selected dates within the current month
+                    if darkdetect.isLight() or darkdetect.isLight() is None:
+                        text_color = 'black' # Light mode or undetected mode defaults to light mode configuration
+                    else:
+                        text_color = 'white' # Dark mode
                 else:
-                    text = str(date_.day)
+                    text_color = self.colors.other_month  # Color for dates not in the current month
 
-                if self._date.month == date_.month:
-                    self._canvas.itemconfigure(txt_tag,
-                                               text=text,
-                                               fill='black',
-                                               font=self._font)
-                else:
-                    self._canvas.itemconfigure(txt_tag,
-                                               text=text,
-                                               fill=self.colors.other_month)
+                # Apply the determined text color
+                self._canvas.itemconfigure(txt_tag,
+                                        text=str(date_.day),
+                                        fill=text_color,
+                                        font=self._font)
 
                 tgt_tag = 'tgt%s:%s' % (week_number, day_number)
 
@@ -856,11 +939,12 @@ class MonthSelector(ttk.Frame, object):
     :type calendar:    :class:`calendar.LocaleTextCalendar
     """
 
-    def __init__(self, master, locale):
+    def __init__(self, master, locale, date_dialog):
         super(MonthSelector, self).__init__(master,
                                             style='Selector.tks.TFrame')
 
         self._master = master
+        self.date_dialog = date_dialog
         self._date = None
 
         if babel:
@@ -872,18 +956,18 @@ class MonthSelector(ttk.Frame, object):
             self._months = calendar.month_name
 
 
-        self._prev_btn = ttk.Button(self, text='<', width=2,
+        self._prev_btn = ttk.Button(self, text='<', width=1,
                                     command=self._prev_year,
                                     style='Selector.tks.TButton')
         self._prev_btn.grid(row=0, column=0, sticky=tk.W, padx=(0, 4))
 
-        self._year_btn = ttk.Button(self,
+        self._year_btn = ttk.Button(self, width=20,
                                     style='Selector.tks.TButton')
-        self._year_btn.grid(row=0, column=1, sticky=tk.EW)
+        self._year_btn.grid(row=0, column=1, sticky=tk.EW, padx=(1, 1))
         self._year_btn.bind('<ButtonRelease-1>',
                             self._master.year_btn_clicked)
 
-        self._next_btn = ttk.Button(self, text='>', width=2,
+        self._next_btn = ttk.Button(self, text='>', width=1,
                                     command=self._next_year,
                                     style='Selector.tks.TButton')
         self._next_btn.grid(row=0, column=2, sticky=tk.E, padx=(4, 0))
@@ -899,12 +983,17 @@ class MonthSelector(ttk.Frame, object):
                                  command=partial(self._btn_selected, month))
 
                 self._buttons.append(btn)
-                btn.grid(row=y, column=x, pady=(0, 4))
+                if x == 0:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(0, 1)) # Left column buttons
+                elif x == 1:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(1, 1)) # Middle column buttons
+                else:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(1, 0)) # Right column buttons
 
         btn_frame.columnconfigure(0, weight=1)
         btn_frame.columnconfigure(1, weight=1)
         btn_frame.columnconfigure(2, weight=1)
-        btn_frame.grid(row=1, column=0, columnspan=3, pady=(4, 0),
+        btn_frame.grid(row=1, column=0, columnspan=3, padx=0,
                        sticky=tk.NSEW)
 
         self.columnconfigure(0, weight=0)
@@ -941,38 +1030,47 @@ class MonthSelector(ttk.Frame, object):
 
 
 class YearSelector(ttk.Frame, object):
-    def __init__(self, master):
+    def __init__(self, master, date_dialog):
         self._master = master
+        self.date_dialog = date_dialog
         super(YearSelector, self).__init__(master, style='tks.TFrame')
 
         self._date = None
-        self._prev_btn = ttk.Button(self, text='<', width=2,
+        self._prev_btn = ttk.Button(self, text='<', width=1,
                                     command=self._prev_decade,
                                     style='Selector.tks.TButton')
         self._prev_btn.grid(row=0, column=0, sticky=tk.W, padx=(0, 4))
 
-        self._year_btn = ttk.Label(self,
-                                   style='Selector.tks.TLabel')
-        self._year_btn.grid(row=0, column=1, sticky=tk.EW)
+        self._year_btn = ttk.Label(self, width=24,
+                                   style='Selector.tks.TLabel', anchor='center')
+        self._year_btn.grid(row=0, column=1, sticky=tk.EW, padx=(1, 1))
         # self._year_btn.bind('<Button-1>', self.year_btn_clicked)
 
-        self._next_btn = ttk.Button(self, text='>', width=2,
+        self._next_btn = ttk.Button(self, text='>', width=1,
                                     command=self._next_decade,
                                     style='Selector.tks.TButton')
-        self._next_btn.grid(row=0, column=2, sticky=tk.E, padx=(4, 0))
+        # Below line makes YearSelector 1px less in size than MonthSelector, which fixes a strange bug where switching between 
+        # YS and MS results in a grey box that only redraws the UI once the mouse is clicked. This solution is not perfect 
+        # as there now a small amount of UI movement when switching between the two – however it is v small (1px).
+        self._next_btn.grid(row=0, column=2, sticky=tk.E, padx=(3, 0))
 
         btn_frame = ttk.Frame(self, style='tks.TFrame')
         self._buttons = []
         for y in range(4):
             for x in range(3):
                 btn = ttk.Button(btn_frame, style='Year.Selector.tks.TButton')
-                btn.grid(row=y, column=x, padx=1, pady=1)
                 self._buttons.append(btn)
+                if x == 0:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(0, 1)) # Left column buttons
+                elif x == 1:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(1, 1)) # Middle column buttons
+                else:
+                    btn.grid(row=y, column=x, sticky=tk.EW, padx=(1, 0)) # Right column buttons
 
         btn_frame.columnconfigure(0, weight=1)
         btn_frame.columnconfigure(1, weight=1)
         btn_frame.columnconfigure(2, weight=1)
-        btn_frame.grid(row=1, column=0, columnspan=3, pady=(4, 0),
+        btn_frame.grid(row=1, column=0, columnspan=3,
                        sticky=tk.NSEW)
 
         self.columnconfigure(0, weight=0)

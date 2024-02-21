@@ -23,10 +23,10 @@ class DefaultColors(object):
     """A container for color names."""
 
     fill = 'white'
-    select = '#9de5eb'
+    select = '#FF453A' # Current date circle, originally #9de5eb
     select_dark = '#58B1B7'
-    header = 'white'
-    outline = '#ccc'
+    header = '' # Header container with days of the week
+    outline = '#fff'
     invalid = 'red'
 
 
