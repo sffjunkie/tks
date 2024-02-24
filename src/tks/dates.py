@@ -270,27 +270,28 @@ class DateEntry(ttk.Frame, object):
         if new_day:
             self._day_var.set(new_day)
             # self._day_var.set('%02d' % new_day)
-
-    # def _year_changed(self, *args):
-    #     value = self._variable.get()
-    #     new_date = datetime.date(year=int(self._year_var.get()),
-    #                              month=value.month,
-    #                              day=value.day)
-    #     self.value = new_date
             
-
     def _year_changed(self, *args):
         try:
             new_year = int(self._year_var.get())
             new_month = int(self._month_var.get())
             new_day = int(self._day_var.get())
+
+            print(f"_year_changed triggered: {new_year}, {new_month}, {new_day}")  # Debug print
+
             # Construct the new date with the most current values of all components.
             new_date = datetime.date(year=new_year, month=new_month, day=new_day)
             if new_date != self._variable.get():  # Check if the date has actually changed.
+
+                print(f"Year change detected, updating to {new_date}")  # Debug print
+
                 self._internal_value_change = True
                 self.value = new_date
         except ValueError:
             # This block catches conversion errors, which can happen if the fields are incomplete.
+
+            print("_year_changed: ValueError encountered")  # Debug print
+
             pass
 
     def _month_changed(self, *args):
@@ -298,11 +299,20 @@ class DateEntry(ttk.Frame, object):
             new_year = int(self._year_var.get())
             new_month = int(self._month_var.get())
             new_day = int(self._day_var.get())
+
+            print(f"_month_changed triggered: {new_year}, {new_month}, {new_day}")  # Debug print
+
             new_date = datetime.date(year=new_year, month=new_month, day=new_day)
             if new_date != self._variable.get():
+
+                print(f"Month change detected, updating to {new_date}")  # Debug print
+
                 self._internal_value_change = True
                 self.value = new_date
         except ValueError:
+
+            print("_month_changed: ValueError encountered")  # Debug print
+
             pass
 
     def _day_changed(self, *args):
@@ -310,18 +320,32 @@ class DateEntry(ttk.Frame, object):
             new_year = int(self._year_var.get())
             new_month = int(self._month_var.get())
             new_day = int(self._day_var.get())
+
+            print(f"_day_changed triggered: {new_year}, {new_month}, {new_day}")  # Debug print
+
             new_date = datetime.date(year=new_year, month=new_month, day=new_day)
             if new_date != self._variable.get():
+
+                print(f"Day change detected, updating to {new_date}")  # Debug print
+
                 self._internal_value_change = True
                 self.value = new_date
         except ValueError:
-            pass
 
+            print("_day_changed: ValueError encountered")  # Debug print
+            
+            pass
 
     def _value_changed(self, *args):
         if not self._internal_value_change:
+
+            print(f"_value_changed triggered without internal change, updating to {self._variable.get()}")  # Debug print
+
             self.value = self._variable.get()
         else:
+
+            print("_value_changed triggered by internal change, resetting flag")  # Debug print
+
             self._internal_value_change = False  # Ensure this is reset after handling changes
 
     def _select_date(self):
@@ -340,6 +364,22 @@ class DateEntry(ttk.Frame, object):
         new_date = dlg.date
         if new_date != None:
             self.value = new_date
+    
+    def disable(self):
+        """Disable the date entry widget and all its children"""
+        for child in self.winfo_children():
+            try:
+                child.configure(state='disabled')
+            except tk.TclError:
+                pass
+    
+    def enable(self):
+        """Enable the date entry widget and all its children"""
+        for child in self.winfo_children():
+            try:
+                child.configure(state='normal')
+            except tk.TclError:
+                pass
 
 
 class DateDialog(tks.dialog.Dialog):
