@@ -153,7 +153,8 @@ class DateEntry(ttk.Frame, object):
         for key, config in sorted_configs:
             # Instantiate the widget with common properties
             entry_widget = config['widget'](self, textvariable=config['variable'], width=config['width'], font=self.fonts.text)
-            
+            entry_widget.bind('<FocusOut>', self._update_value_from_entry_widget)
+
             # Special handling for the month widget
             if config.get('special'):
                 entry_widget['values'] = [(x + 1) for x in range(12)]
@@ -204,52 +205,66 @@ class DateEntry(ttk.Frame, object):
 
     @value.setter
     def value(self, value):
-        changed = False
+        self._year_var.set(str(value.year))
+        self._month_var.set(value.month)
+        self._day_var.set(value.day)
+        self._update_day_values(value.year, value.month, value.day)
 
-        # Ensure comparison is integer to integer for year
-        try:
-            year_var_value = int(self._year_var.get())
-        except ValueError:
-            year_var_value = None # Handle empty or invalid current year value
-
-        # Proceed with update only if there's an actual change
-        if year_var_value is None or value.year != year_var_value:
-            self._year_var.set(str(value.year))
-            changed = True
-
-       # Apply similar logic for month and day, ensuring type consistency
-        try:
-            month_var_value = int(self._month_var.get())
-        except ValueError:
-            month_var_value = None
-
-        if month_var_value is None or value.month != month_var_value:
-            self._month_var.set(value.month)
-            # self._month_var.set('%02d' % value.month)
-            changed = True
-
-        try:
-            day_var_value = int(self._day_var.get())
-        except ValueError:
-            day_var_value = None
-
-        if day_var_value is None or value.day != day_var_value:
-            self._day_var.set(value.day)
-            # self._day_var.set('%02d' % value.day)
-            changed = True
-
-        if changed:
-            self._update_day_values(value.year, value.month, value.day)
-            # Only set the variable if there's a change to prevent echo
+        new_date = datetime.date(year=value.year, month=value.month, day=value.day)
+        if new_date != self._variable.get():
             self._internal_value_change = True
             self._variable.set(value)
-        else:
+            # self._update_day_values(value.year, value.month, value.day)
+            if isinstance(value, datetime.datetime):
+                self._time = value.time()
+            else:
+                self._time = None
             self._internal_value_change = False
+        
+    #     changed = False
 
-        if isinstance(value, datetime.datetime):
-            self._time = value.time()
-        else:
-            self._time = None
+    #     # Ensure comparison is integer to integer for year
+    #     try:
+    #         year_var_value = int(self._year_var.get())
+    #     except ValueError:
+    #         year_var_value = None # Handle empty or invalid current year value
+
+    #     # Proceed with update only if there's an actual change
+    #     if year_var_value is None or value.year != year_var_value:
+    #         self._year_var.set(str(value.year))
+    #         changed = True
+
+    #    # Apply similar logic for month and day, ensuring type consistency
+    #     try:
+    #         month_var_value = int(self._month_var.get())
+    #     except ValueError:
+    #         month_var_value = None
+
+    #     if month_var_value is None or value.month != month_var_value:
+    #         self._month_var.set(value.month)
+    #         changed = True
+
+    #     try:
+    #         day_var_value = int(self._day_var.get())
+    #     except ValueError:
+    #         day_var_value = None
+
+    #     if day_var_value is None or value.day != day_var_value:
+    #         self._day_var.set(value.day)
+    #         changed = True
+
+    #     if changed:
+    #         self._update_day_values(value.year, value.month, value.day)
+    #         # Only set the variable if there's a change to prevent echo
+    #         self._internal_value_change = True
+    #         self._variable.set(value)
+    #     else:
+    #         self._internal_value_change = False
+
+    #     if isinstance(value, datetime.datetime):
+    #         self._time = value.time()
+    #     else:
+    #         self._time = None
 
     def _update_day_values(self, year, month, day):
         """Update the day combo box with the correct values
@@ -264,12 +279,9 @@ class DateEntry(ttk.Frame, object):
 
         self._day_entry['values'] = \
             [(x + 1) for x in range(days_in_month)]
-            # ['%02d' % (x + 1) for x in range(days_in_month)]
             
-
         if new_day:
             self._day_var.set(new_day)
-            # self._day_var.set('%02d' % new_day)
             
     def _year_changed(self, *args):
         try:
@@ -363,7 +375,32 @@ class DateEntry(ttk.Frame, object):
         self.wait_window(dlg)
         new_date = dlg.date
         if new_date != None:
-            self.value = new_date
+            self.value = new_date # W3 -- investigate!
+    
+    # def _dateentry_focusout_update(self, event=None):
+    #     """Update the date when any of the date entries lose focus"""
+    #     try:
+    #         new_year = int(self._year_var.get())
+    #         new_month = int(self._month_var.get())
+    #         new_day = int(self._day_var.get())
+
+    #         new_date = datetime.date(year=new_year, month=new_month, day=new_day)
+
+    #         if new_date != self._variable.get():
+    #             self.value = new_date
+    #     except ValueError:
+    #         pass
+
+    def _update_value_from_entry_widget(self, event=None):
+        try:
+            new_year = int(self._year_var.get())
+            new_month = int(self._month_var.get())
+            new_day = int(self._day_var.get())
+            new_date = datetime.date(year=new_year, month=new_month, day=new_day)
+            if new_date != self.value:
+                self.value = new_date
+        except ValueError as e:
+            print(f"Error updating date from entry widgets: {e}")
     
     def disable(self):
         """Disable the date entry widget and all its children"""
